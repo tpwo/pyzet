@@ -3,9 +3,9 @@ import pytest
 from pyzet.main import main
 
 
-def test_main(capsys):
+def test_overall_help(capsys):
     with pytest.raises(SystemExit):
-        main(["-h"])
+        main(["--help"])
 
     out, err = capsys.readouterr()
 
