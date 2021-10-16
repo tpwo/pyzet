@@ -1,0 +1,11 @@
+.vscode/
+.idea/
+
+venv/
+*.pyc
+src/*.egg-info/
+
+.tox
+.coverage
+coverage.xml
+htmlcov/
