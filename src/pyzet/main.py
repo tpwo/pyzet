@@ -16,4 +16,6 @@ def main(argv: Optional[List[str]] = None) -> int:
     )
 
     parser.parse_args(argv)
+    parser.print_usage()
+
     return 0
