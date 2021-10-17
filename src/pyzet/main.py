@@ -56,7 +56,7 @@ def list_zets(path: Path) -> int:
 def parse_config(config_file: str, is_default: bool) -> Config:
     try:
         config = toml.load(Path(config_file))
-    except (FileNotFoundError, PermissionError):
+    except (FileNotFoundError, PermissionError, IsADirectoryError):
         if is_default:
             return _give_default_config()
         raise SystemExit("ERROR: config file not found on given path")
