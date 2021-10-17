@@ -39,6 +39,8 @@ def main(argv: Optional[List[str]] = None) -> int:
         help="path to alternate config file",
     )
 
+    parser.add_argument("-r", "--repo", help="path to point to any zet repo")
+
     subparsers = parser.add_subparsers(dest="command")
 
     list_parser = subparsers.add_parser("list", help="list zets in given repo")
@@ -57,6 +59,12 @@ def main(argv: Optional[List[str]] = None) -> int:
     args = parser.parse_args(argv)
 
     config = parse_config(args.config, is_default=args.config == const.CONFIG_FILE)
+
+    if args.repo:
+        config.repo_path = Path(args.repo)
+
+    if not config.repo_path.is_dir():
+        raise SystemExit("ERROR: wrong repo path")
 
     if args.command == "list":
         return list_zets(config.repo_path, is_pretty=args.pretty)
