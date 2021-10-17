@@ -11,7 +11,7 @@ from pyzet.constants import MARKDOWN_TITLE, ZET_FILENAME, ZULU_DATETIME_FORMAT
 @dataclass
 class Zet:
     title: str
-    timestamp: datetime
+    id_: datetime
     text: List[str]
 
 
@@ -32,7 +32,7 @@ def get_zet(path: Path) -> Zet:
     with open(Path(path, ZET_FILENAME), "r") as file:
         contents = file.readlines()
     title = get_markdown_title(contents[0].strip("\n"), path.name)
-    return Zet(title=title, timestamp=timestamp, text=contents)
+    return Zet(title=title, id_=timestamp, text=contents)
 
 
 def print_zet(zet: Zet) -> None:
@@ -40,7 +40,7 @@ def print_zet(zet: Zet) -> None:
         print(line, end="")
 
 
-def get_markdown_title(line: str, zet_name: str) -> str:
+def get_markdown_title(line: str, id_: str) -> str:
     """Extracts Markdown title if it is formatted correctly.
 
     Otherwise, returns the whole line and logs a warning.
@@ -48,7 +48,7 @@ def get_markdown_title(line: str, zet_name: str) -> str:
     """
     result = re.match(MARKDOWN_TITLE, line)
     if not result:
-        logging.warning(f"wrong title formatting: {zet_name} {line}")
+        logging.warning(f"wrong title formatting: {id_} {line}")
         return line
 
     return result.groups()[0]

@@ -12,12 +12,12 @@ def test_get_zets():
     assert output == [
         Zet(
             title="Zet test entry",
-            timestamp=datetime(2021, 10, 16, 20, 51, 58),
+            id_=datetime(2021, 10, 16, 20, 51, 58),
             text=["# Zet test entry\n", "\n", "Hello there!\n"],
         ),
         Zet(
             title="Another zet test entry",
-            timestamp=datetime(2021, 10, 16, 22, 36, 43),
+            id_=datetime(2021, 10, 16, 22, 36, 43),
             text=["# Another zet test entry\n", "\n", "Hello everyone\n"],
         ),
     ]
@@ -26,7 +26,7 @@ def test_get_zets():
 def test_open_zet():
     expected = Zet(
         title="Zet test entry",
-        timestamp=datetime(2021, 10, 16, 20, 51, 58),
+        id_=datetime(2021, 10, 16, 20, 51, 58),
         text=["# Zet test entry\n", "\n", "Hello there!\n"],
     )
 
@@ -36,7 +36,7 @@ def test_open_zet():
 def test_print_zet(capsys):
     test_zet = Zet(
         title="Zet test entry",
-        timestamp=datetime(2021, 10, 16, 20, 51, 58),
+        id_=datetime(2021, 10, 16, 20, 51, 58),
         text=["# Zet test entry\n", "\n", "Hello there!\n"],
     )
 
@@ -48,7 +48,7 @@ def test_print_zet(capsys):
 
 
 def test_get_markdown_title():
-    assert get_markdown_title("# Sample title", zet_name="") == "Sample title"
+    assert get_markdown_title("# Sample title", id_="") == "Sample title"
 
 
 @pytest.mark.parametrize(
@@ -69,6 +69,6 @@ def test_get_markdown_title():
     ],
 )
 def test_get_markdown_title_warning(test_input, caplog):
-    timestamp = "20211016205159"
-    assert get_markdown_title(test_input, zet_name=timestamp) == test_input
-    assert f"wrong title formatting: {timestamp} {test_input}" in caplog.text
+    id_ = "20211016205159"
+    assert get_markdown_title(test_input, id_=id_) == test_input
+    assert f"wrong title formatting: {id_} {test_input}" in caplog.text
