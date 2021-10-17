@@ -5,7 +5,7 @@ from pyzet.zet import Zet, get_zet, get_zets
 
 
 def test_get_zets():
-    output = get_zets(path="tests/files/zet")
+    output = get_zets(path=Path("tests/files/zet"))
 
     assert output == [
         Zet(title="Zet test entry", timestamp=datetime(2021, 10, 16, 20, 51, 58)),

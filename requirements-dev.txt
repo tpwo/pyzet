@@ -1,6 +1,6 @@
+coverage==6.0.2
 flake8==4.0.1
 mypy==0.910
 pre-commit==2.15.0
 pytest==6.2.5
-coverage==6.0.2
 tox==3.24.4
