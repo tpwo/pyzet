@@ -1,4 +1,5 @@
 import argparse
+import logging
 import os
 import subprocess
 import sys
@@ -19,6 +20,8 @@ class Config:
 
 
 def main(argv: Optional[List[str]] = None) -> int:
+    logging.basicConfig(level=logging.INFO)
+
     parser = argparse.ArgumentParser(prog="pyzet")
 
     # https://stackoverflow.com/a/8521644/812183
@@ -92,6 +95,8 @@ def add_zet(repo_path: Path) -> int:
         file.write("# ")
 
     open_file(zet_file_path)
+    logging.info(f"{id_} was created")
+
     return 0
 
 
