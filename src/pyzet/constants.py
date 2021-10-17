@@ -7,5 +7,7 @@ else:  # pragma: no cover (PY38+)
 
 VERSION = importlib_metadata.version("pyzet")
 
+CONFIG_FILE = ".pyzet-config.toml"
+
 ZET_FILENAME = "README.md"
 ZULU_DATETIME_FORMAT = "%Y%m%d%H%M%S"

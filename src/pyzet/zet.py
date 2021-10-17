@@ -12,11 +12,9 @@ class Zet:
     timestamp: datetime
 
 
-def get_zets(path: str) -> List[Zet]:
-    zet_repo = Path(path)
-
+def get_zets(path: Path) -> List[Zet]:
     items = []
-    for item in zet_repo.iterdir():
+    for item in path.iterdir():
         if item.is_dir():
             try:
                 items.append(get_zet(item))
