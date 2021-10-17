@@ -26,9 +26,10 @@ def get_zets(path: Path) -> List[Zet]:
         if item.is_dir():
             try:
                 items.append(get_zet(item))
+            except FileNotFoundError:
+                logging.warning(f"empty zet folder {item.name} detected")
             except ValueError:
                 pass  # skip dirs with different naming convention
-
     return items
 
 

@@ -1,5 +1,9 @@
 import argparse
+import os
+import subprocess
+import sys
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
 
@@ -36,6 +40,7 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     list_parser = subparsers.add_parser("list", help="list zets in given repo")
     list_parser.add_argument(
+        "-p",
         "--pretty",
         action="store_true",
         help="use prettier format for printing date and time",
@@ -43,6 +48,8 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     show_parser = subparsers.add_parser("show", help="print zet contents")
     show_parser.add_argument("id", nargs=1, help="zet id (timestamp)")
+
+    subparsers.add_parser("add", help="add a new zet")
 
     args = parser.parse_args(argv)
 
@@ -53,6 +60,9 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     if args.command == "show":
         return show_zet(config.repo_path, args.id[0])
+
+    if args.command == "add":
+        return add_zet(config.repo_path)
 
     parser.print_usage()
 
@@ -70,6 +80,27 @@ def show_zet(repo_path: Path, id_: str) -> int:
     zet = get_zet(Path(repo_path, id_))
     print_zet(zet)
     return 0
+
+
+def add_zet(repo_path: Path) -> int:
+    id_ = datetime.now().strftime(const.ZULU_DATETIME_FORMAT)
+    Path(repo_path, id_).mkdir(parents=True, exist_ok=True)
+
+    zet_file_path = Path(repo_path, id_, const.ZET_FILENAME)
+
+    with open(zet_file_path, "w+") as file:
+        file.write("# ")
+
+    open_file(zet_file_path)
+    return 0
+
+
+def open_file(filename: Path) -> None:
+    if sys.platform == "win32":
+        os.startfile(filename)
+    else:
+        opener = "open" if sys.platform == "darwin" else "xdg-open"
+        subprocess.call([opener, filename])
 
 
 def parse_config(config_file: str, is_default: bool) -> Config:
