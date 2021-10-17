@@ -27,8 +27,7 @@ def test_list_zets(capsys):
     out, err = capsys.readouterr()
 
     assert out == (
-        "2021-10-16 20:51:58 - Zet test entry\n"
-        "2021-10-16 22:36:43 - Another zet test entry\n"
+        "20211016205158 - Zet test entry\n" "20211016223643 - Another zet test entry\n"
     )
     assert err == ""
 

@@ -1,4 +1,3 @@
-from datetime import datetime
 from pathlib import Path
 
 import pytest
@@ -12,12 +11,12 @@ def test_get_zets():
     assert output == [
         Zet(
             title="Zet test entry",
-            id_=datetime(2021, 10, 16, 20, 51, 58),
+            id_="20211016205158",
             text=["# Zet test entry\n", "\n", "Hello there!\n"],
         ),
         Zet(
             title="Another zet test entry",
-            id_=datetime(2021, 10, 16, 22, 36, 43),
+            id_="20211016223643",
             text=["# Another zet test entry\n", "\n", "Hello everyone\n"],
         ),
     ]
@@ -26,7 +25,7 @@ def test_get_zets():
 def test_open_zet():
     expected = Zet(
         title="Zet test entry",
-        id_=datetime(2021, 10, 16, 20, 51, 58),
+        id_="20211016205158",
         text=["# Zet test entry\n", "\n", "Hello there!\n"],
     )
 
@@ -36,7 +35,7 @@ def test_open_zet():
 def test_print_zet(capsys):
     test_zet = Zet(
         title="Zet test entry",
-        id_=datetime(2021, 10, 16, 20, 51, 58),
+        id_="20211016205158",
         text=["# Zet test entry\n", "\n", "Hello there!\n"],
     )
 
