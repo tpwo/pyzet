@@ -54,6 +54,16 @@ def test_show_zet(capsys):
     assert err == ""
 
 
+@pytest.mark.skip
+def test_add_zet(capsys):
+    main(["--config", "tests/files/test-pyzet-config.toml", "add"])
+
+    out, err = capsys.readouterr()
+
+    assert out == ""
+    assert err == ""
+
+
 def test_alternative_config(capsys):
     main(["--config", "tests/files/test-pyzet-config.toml"])
 
