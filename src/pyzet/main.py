@@ -36,7 +36,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     subparsers.add_parser("list", help="list zets in given repo")
 
     show_parser = subparsers.add_parser("show", help="print zet contents")
-    show_parser.add_argument("timestamp", nargs=1, help="zet timestamp")
+    show_parser.add_argument("id", nargs=1, help="zet id (timestamp)")
 
     args = parser.parse_args(argv)
 
@@ -46,7 +46,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         return list_zets(config.repo_path)
 
     if args.command == "show":
-        return show_zet(config.repo_path, args.timestamp[0])
+        return show_zet(config.repo_path, args.id[0])
 
     parser.print_usage()
 
@@ -55,12 +55,12 @@ def main(argv: Optional[List[str]] = None) -> int:
 
 def list_zets(path: Path) -> int:
     for zet in get_zets(path):
-        print(f"{zet.timestamp} - {zet.title}")
+        print(f"{zet.id_} - {zet.title}")
     return 0
 
 
-def show_zet(repo_path: Path, timestamp: str) -> int:
-    zet = get_zet(Path(repo_path, timestamp))
+def show_zet(repo_path: Path, id_: str) -> int:
+    zet = get_zet(Path(repo_path, id_))
     print_zet(zet)
     return 0
 
