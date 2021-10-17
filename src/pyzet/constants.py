@@ -11,3 +11,8 @@ CONFIG_FILE = ".pyzet-config.toml"
 
 ZET_FILENAME = "README.md"
 ZULU_DATETIME_FORMAT = "%Y%m%d%H%M%S"
+
+# Well formatted Markdown title:
+# - single # and a single space between it and the rest of the title
+# - no leading or trailing spaces
+MARKDOWN_TITLE = r"^#\s([\S]+.*[\S])$"
