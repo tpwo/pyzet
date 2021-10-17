@@ -33,7 +33,13 @@ def main(argv: Optional[List[str]] = None) -> int:
     )
 
     subparsers = parser.add_subparsers(dest="command")
-    subparsers.add_parser("list", help="list zets in given repo")
+
+    list_parser = subparsers.add_parser("list", help="list zets in given repo")
+    list_parser.add_argument(
+        "--pretty",
+        action="store_true",
+        help="use prettier format for printing date and time",
+    )
 
     show_parser = subparsers.add_parser("show", help="print zet contents")
     show_parser.add_argument("id", nargs=1, help="zet id (timestamp)")
@@ -43,7 +49,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     config = parse_config(args.config, is_default=args.config == const.CONFIG_FILE)
 
     if args.command == "list":
-        return list_zets(config.repo_path)
+        return list_zets(config.repo_path, is_pretty=args.pretty)
 
     if args.command == "show":
         return show_zet(config.repo_path, args.id[0])
@@ -53,9 +59,10 @@ def main(argv: Optional[List[str]] = None) -> int:
     return 0
 
 
-def list_zets(path: Path) -> int:
+def list_zets(path: Path, is_pretty: bool) -> int:
     for zet in get_zets(path):
-        print(f"{zet.id_} - {zet.title}")
+        representation = zet.timestamp if is_pretty else zet.id_
+        print(f"{representation} - {zet.title}")
     return 0
 
 
