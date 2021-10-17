@@ -66,6 +66,9 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     subparsers.add_parser("add", help="add a new zet")
 
+    edit_parser = subparsers.add_parser("edit", help="edit a zet")
+    edit_parser.add_argument("id", nargs=1, help="zet id (timestamp)")
+
     args = parser.parse_args(argv)
 
     config = parse_config(args.config, is_default=args.config == const.CONFIG_FILE)
@@ -87,6 +90,9 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     if args.command == "add":
         return add_zet(config.repo_path)
+
+    if args.command == "edit":
+        return edit_zet(config.repo_path, args.id[0])
 
     parser.print_usage()
 
@@ -133,7 +139,12 @@ def add_zet(repo_path: Path) -> int:
 
     open_file(zet_file_path)
     logging.info(f"{id_} was created")
+    return 0
 
+
+def edit_zet(repo_path: Path, id_: str) -> int:
+    open_file(Path(repo_path, id_, const.ZET_FILENAME))
+    logging.info(f"{id_} was edited")
     return 0
 
 
