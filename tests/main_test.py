@@ -33,6 +33,15 @@ def test_list_zets(capsys):
     assert err == ""
 
 
+def test_show_zet(capsys):
+    main(["--config", "tests/files/test-pyzet-config.toml", "show", "20211016205158"])
+
+    out, err = capsys.readouterr()
+
+    assert out == "# Zet test entry\n\nHello there!\n"
+    assert err == ""
+
+
 def test_alternative_config(capsys):
     main(["--config", "tests/files/test-pyzet-config.toml"])
 

@@ -6,7 +6,7 @@ from typing import List, Optional
 import toml
 
 import pyzet.constants as const
-from pyzet.zet import get_zets
+from pyzet.zet import get_zet, get_zets, print_zet
 
 
 @dataclass
@@ -35,12 +35,18 @@ def main(argv: Optional[List[str]] = None) -> int:
     subparsers = parser.add_subparsers(dest="command")
     subparsers.add_parser("list", help="list zets in given repo")
 
+    show_parser = subparsers.add_parser("show", help="print zet contents")
+    show_parser.add_argument("timestamp", nargs=1, help="zet timestamp")
+
     args = parser.parse_args(argv)
 
     config = parse_config(args.config, is_default=args.config == const.CONFIG_FILE)
 
     if args.command == "list":
         return list_zets(config.repo_path)
+
+    if args.command == "show":
+        return show_zet(config.repo_path, args.timestamp[0])
 
     parser.print_usage()
 
@@ -50,6 +56,12 @@ def main(argv: Optional[List[str]] = None) -> int:
 def list_zets(path: Path) -> int:
     for zet in get_zets(path):
         print(f"{zet.timestamp} - {zet.title}")
+    return 0
+
+
+def show_zet(repo_path: Path, timestamp: str) -> int:
+    zet = get_zet(Path(repo_path, timestamp))
+    print_zet(zet)
     return 0
 
 
