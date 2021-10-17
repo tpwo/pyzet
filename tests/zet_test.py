@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from pyzet.zet import Zet, get_markdown_title, get_zet, get_zets
+from pyzet.zet import Zet, get_markdown_title, get_zet, get_zets, print_zet
 
 
 def test_get_zets():
@@ -24,14 +24,27 @@ def test_get_zets():
 
 
 def test_open_zet():
-    timestamp = datetime(2021, 10, 16, 20, 51, 58)
     expected = Zet(
         title="Zet test entry",
-        timestamp=timestamp,
+        timestamp=datetime(2021, 10, 16, 20, 51, 58),
         text=["# Zet test entry\n", "\n", "Hello there!\n"],
     )
 
     assert get_zet(Path("tests/files/zet/20211016205158")) == expected
+
+
+def test_print_zet(capsys):
+    test_zet = Zet(
+        title="Zet test entry",
+        timestamp=datetime(2021, 10, 16, 20, 51, 58),
+        text=["# Zet test entry\n", "\n", "Hello there!\n"],
+    )
+
+    print_zet(test_zet)
+
+    out, err = capsys.readouterr()
+    assert out == "# Zet test entry\n\nHello there!\n"
+    assert err == ""
 
 
 def test_get_markdown_title():

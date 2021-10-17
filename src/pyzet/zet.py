@@ -35,6 +35,11 @@ def get_zet(path: Path) -> Zet:
     return Zet(title=title, timestamp=timestamp, text=contents)
 
 
+def print_zet(zet: Zet) -> None:
+    for line in zet.text:
+        print(line, end="")
+
+
 def get_markdown_title(line: str, zet_name: str) -> str:
     """Extracts Markdown title if it is formatted correctly.
 
