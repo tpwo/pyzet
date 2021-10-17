@@ -1,15 +1,18 @@
+import logging
+import re
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import List
 
-from pyzet.constants import ZET_FILENAME, ZULU_DATETIME_FORMAT
+from pyzet.constants import MARKDOWN_TITLE, ZET_FILENAME, ZULU_DATETIME_FORMAT
 
 
 @dataclass
 class Zet:
     title: str
     timestamp: datetime
+    text: List[str]
 
 
 def get_zets(path: Path) -> List[Zet]:
@@ -27,12 +30,20 @@ def get_zets(path: Path) -> List[Zet]:
 def get_zet(path: Path) -> Zet:
     timestamp = datetime.strptime(path.name, ZULU_DATETIME_FORMAT)
     with open(Path(path, ZET_FILENAME), "r") as file:
-        title = _get_markdown_title(file.readline())
-    return Zet(title=title, timestamp=timestamp)
+        contents = file.readlines()
+    title = get_markdown_title(contents[0].strip("\n"), path.name)
+    return Zet(title=title, timestamp=timestamp, text=contents)
 
 
-def _get_markdown_title(line: str) -> str:
-    if line.startswith("#"):
-        return line.lstrip("#").strip()
+def get_markdown_title(line: str, zet_name: str) -> str:
+    """Extracts Markdown title if it is formatted correctly.
 
-    raise ValueError("Zet doesn't start with Markdown title (`#`)")
+    Otherwise, returns the whole line and logs a warning.
+    `line` arg should have newline characters stripped.
+    """
+    result = re.match(MARKDOWN_TITLE, line)
+    if not result:
+        logging.warning(f"wrong title formatting: {zet_name} {line}")
+        return line
+
+    return result.groups()[0]
