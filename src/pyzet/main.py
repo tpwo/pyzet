@@ -170,7 +170,7 @@ def _is_empty(folder: Path) -> bool:
 
 
 def add_zet(repo_path: Path) -> int:
-    id_ = datetime.now().strftime(const.ZULU_DATETIME_FORMAT)
+    id_ = datetime.utcnow().strftime(const.ZULU_DATETIME_FORMAT)
     Path(repo_path, id_).mkdir(parents=True, exist_ok=True)
 
     zet_file_path = Path(repo_path, id_, const.ZET_FILENAME)
