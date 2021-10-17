@@ -9,7 +9,6 @@ from pyzet.main import main
 def test_print_usage(capsys):
     main([])
     out, err = capsys.readouterr()
-
     assert out.startswith("usage: pyzet")
     assert err == ""
 
@@ -19,7 +18,6 @@ def test_overall_help(capsys):
         main(["--help"])
 
     out, err = capsys.readouterr()
-
     assert out.startswith("usage: pyzet")
     assert err == ""
 
@@ -28,7 +26,6 @@ def test_list_zets(capsys):
     main(["--config", "tests/files/test-pyzet-config.toml", "list"])
 
     out, err = capsys.readouterr()
-
     assert (
         out
         == "20211016205158 - Zet test entry\n20211016223643 - Another zet test entry\n"
@@ -40,7 +37,6 @@ def test_list_zets_pretty(capsys):
     main(["--config", "tests/files/test-pyzet-config.toml", "list", "--pretty"])
 
     out, err = capsys.readouterr()
-
     assert out == (
         "2021-10-16 20:51:58 - Zet test entry\n"
         "2021-10-16 22:36:43 - Another zet test entry\n"
@@ -52,7 +48,6 @@ def test_show_zet(capsys):
     main(["--config", "tests/files/test-pyzet-config.toml", "show", "20211016205158"])
 
     out, err = capsys.readouterr()
-
     assert out == "# Zet test entry\n\nHello there!\n"
     assert err == ""
 
@@ -67,12 +62,37 @@ def test_list_zets_warning(caplog):
         assert f"empty zet folder {id_} detected" in caplog.text
 
 
+def test_clean_zets(capsys):
+    id_ = "20211016205158"
+    with tempfile.TemporaryDirectory() as tmpdir:
+        Path(tmpdir, id_).mkdir()
+
+        main(["--repo", tmpdir, "clean"])
+
+        out, err = capsys.readouterr()
+        assert out == f"deleting {id_}\n"
+        assert err == ""
+        assert not Path(tmpdir, id_).exists()
+
+
+def test_clean_zets_dry_run(capsys):
+    id_ = "20211016205158"
+    with tempfile.TemporaryDirectory() as tmpdir:
+        Path(tmpdir, id_).mkdir()
+
+        main(["--repo", tmpdir, "clean", "--dry-run"])
+
+        out, err = capsys.readouterr()
+        assert out == f"will delete {id_}\n"
+        assert err == ""
+        assert Path(tmpdir, id_).exists()
+
+
 @pytest.mark.skip
 def test_add_zet(capsys):
     main(["--config", "tests/files/test-pyzet-config.toml", "add"])
 
     out, err = capsys.readouterr()
-
     assert out == ""
     assert err == ""
 
@@ -103,7 +123,6 @@ def test_alternative_config(capsys):
     main(["--config", "tests/files/test-pyzet-config.toml"])
 
     out, err = capsys.readouterr()
-
     assert out.startswith("usage: pyzet")
     assert err == ""
 

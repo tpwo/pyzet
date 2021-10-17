@@ -54,6 +54,16 @@ def main(argv: Optional[List[str]] = None) -> int:
     show_parser = subparsers.add_parser("show", help="print zet contents")
     show_parser.add_argument("id", nargs=1, help="zet id (timestamp)")
 
+    clean_parser = subparsers.add_parser(
+        "clean", help="delete empty folders in zet repo"
+    )
+    clean_parser.add_argument(
+        "-d",
+        "--dry-run",
+        action="store_true",
+        help="list what will be deleted, but don't delete it",
+    )
+
     subparsers.add_parser("add", help="add a new zet")
 
     args = parser.parse_args(argv)
@@ -71,6 +81,9 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     if args.command == "show":
         return show_zet(config.repo_path, args.id[0])
+
+    if args.command == "clean":
+        return clean_zets(config.repo_path, is_dry_run=args.dry_run)
 
     if args.command == "add":
         return add_zet(config.repo_path)
@@ -91,6 +104,22 @@ def show_zet(repo_path: Path, id_: str) -> int:
     zet = get_zet(Path(repo_path, id_))
     print_zet(zet)
     return 0
+
+
+def clean_zets(repo_path: Path, is_dry_run: bool) -> int:
+    for item in repo_path.iterdir():
+        if item.is_dir() and _is_empty(item):
+            if is_dry_run:
+                print(f"will delete {item.name}")
+            else:
+                print(f"deleting {item.name}")
+                item.rmdir()
+    return 0
+
+
+def _is_empty(folder: Path) -> bool:
+    # https://stackoverflow.com/a/54216885/14458327
+    return not any(Path(folder).iterdir())
 
 
 def add_zet(repo_path: Path) -> int:
