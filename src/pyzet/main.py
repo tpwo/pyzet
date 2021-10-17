@@ -69,6 +69,9 @@ def main(argv: Optional[List[str]] = None) -> int:
     edit_parser = subparsers.add_parser("edit", help="edit a zet")
     edit_parser.add_argument("id", nargs=1, help="zet id (timestamp)")
 
+    remove_parser = subparsers.add_parser("rm", help="remove a zet")
+    remove_parser.add_argument("id", nargs=1, help="zet id (timestamp)")
+
     args = parser.parse_args(argv)
 
     config = parse_config(args.config, is_default=args.config == const.CONFIG_FILE)
@@ -78,6 +81,12 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     if not config.repo_path.is_dir():
         raise SystemExit("ERROR: wrong repo path")
+
+    try:
+        if args.id:
+            _validate_id(args, config)
+    except AttributeError:
+        pass  # command that doesn't use `id` was executed
 
     if args.command == "list":
         return list_zets(config.repo_path, is_pretty=args.pretty)
@@ -94,9 +103,41 @@ def main(argv: Optional[List[str]] = None) -> int:
     if args.command == "edit":
         return edit_zet(config.repo_path, args.id[0])
 
+    if args.command == "rm":
+        return remove_zet(config.repo_path, args.id[0])
+
     parser.print_usage()
 
     return 0
+
+
+def parse_config(config_file: str, is_default: bool) -> Config:
+    try:
+        config = toml.load(Path(config_file))
+    except (FileNotFoundError, PermissionError, IsADirectoryError):
+        if is_default:
+            return _give_default_config()
+        raise SystemExit("ERROR: config file not found on given path")
+    except toml.TomlDecodeError:
+        raise SystemExit("ERROR: cannot parse the file as TOML")
+
+    return Config(repo_path=Path(Path(config_file).parent, config["repo"]["path"]))
+
+
+def _give_default_config() -> Config:
+    return Config(repo_path=Path("."))
+
+
+def _validate_id(args: argparse.Namespace, config: Config) -> None:
+    if not Path(config.repo_path, args.id[0]).is_dir():
+        raise SystemExit(f"ERROR: folder {args.id[0]} doesn't exist")
+    if not Path(config.repo_path, args.id[0], const.ZET_FILENAME).is_file():
+        if args.command == "rm":
+            raise SystemExit(
+                f"ERROR: {const.ZET_FILENAME} in {args.id[0]} doesn't exist. "
+                "Use `pyzet clean` to remove empty folder"
+            )
+        raise SystemExit(f"ERROR: {const.ZET_FILENAME} in {args.id[0]} doesn't exist")
 
 
 def list_zets(path: Path, is_pretty: bool) -> int:
@@ -137,18 +178,18 @@ def add_zet(repo_path: Path) -> int:
     with open(zet_file_path, "w+") as file:
         file.write("# ")
 
-    open_file(zet_file_path)
+    _open_file(zet_file_path)
     logging.info(f"{id_} was created")
     return 0
 
 
 def edit_zet(repo_path: Path, id_: str) -> int:
-    open_file(Path(repo_path, id_, const.ZET_FILENAME))
+    _open_file(Path(repo_path, id_, const.ZET_FILENAME))
     logging.info(f"{id_} was edited")
     return 0
 
 
-def open_file(filename: Path) -> None:
+def _open_file(filename: Path) -> None:
     if sys.platform == "win32":
         os.startfile(filename)
     else:
@@ -156,18 +197,10 @@ def open_file(filename: Path) -> None:
         subprocess.call([opener, filename])
 
 
-def parse_config(config_file: str, is_default: bool) -> Config:
-    try:
-        config = toml.load(Path(config_file))
-    except (FileNotFoundError, PermissionError, IsADirectoryError):
-        if is_default:
-            return _give_default_config()
-        raise SystemExit("ERROR: config file not found on given path")
-    except toml.TomlDecodeError:
-        raise SystemExit("ERROR: cannot parse the file as TOML")
-
-    return Config(repo_path=Path(Path(config_file).parent, config["repo"]["path"]))
-
-
-def _give_default_config() -> Config:
-    return Config(repo_path=Path("."))
+def remove_zet(repo_path: Path, id_: str) -> int:
+    if input(f"{id_} will be deleted. Are you sure? (y/N): ") != "y":
+        raise SystemExit("aborting")
+    Path(repo_path, id_, const.ZET_FILENAME).unlink()
+    Path(repo_path, id_).rmdir()
+    logging.info(f"{id_} was removed")
+    return 0
