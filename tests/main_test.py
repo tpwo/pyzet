@@ -7,7 +7,7 @@ from pyzet.main import main
 
 
 def test_print_usage(capsys):
-    main(["--repo", "tests/files/zet"])
+    main(["--repo", "testing/zet"])
     out, err = capsys.readouterr()
     assert out.startswith("usage: pyzet")
     assert err == ""
@@ -23,7 +23,7 @@ def test_overall_help(capsys):
 
 
 def test_list_zets(capsys):
-    main(["--repo", "tests/files/zet", "list"])
+    main(["--repo", "testing/zet", "list"])
 
     out, err = capsys.readouterr()
     assert (
@@ -34,7 +34,7 @@ def test_list_zets(capsys):
 
 
 def test_list_zets_pretty(capsys):
-    main(["--repo", "tests/files/zet", "list", "--pretty"])
+    main(["--repo", "testing/zet", "list", "--pretty"])
 
     out, err = capsys.readouterr()
     assert out == (
@@ -45,7 +45,7 @@ def test_list_zets_pretty(capsys):
 
 
 def test_show_zet(capsys):
-    main(["--repo", "tests/files/zet", "show", "20211016205158"])
+    main(["--repo", "testing/zet", "show", "20211016205158"])
 
     out, err = capsys.readouterr()
     assert out == "# Zet test entry\n\nHello there!\n"
@@ -89,7 +89,7 @@ def test_clean_zets_dry_run(capsys):
 
 @pytest.mark.skip
 def test_add_zet(capsys):
-    main(["--repo", "tests/files/zet", "add"])
+    main(["--repo", "testing/zet", "add"])
 
     out, err = capsys.readouterr()
     assert out == ""
@@ -97,7 +97,7 @@ def test_add_zet(capsys):
 
 
 def test_alternative_repo(capsys):
-    main(["--repo", "tests/files/zet"])
+    main(["--repo", "testing/zet"])
 
     out, err = capsys.readouterr()
     assert out.startswith("usage: pyzet")
