@@ -23,7 +23,7 @@ def test_overall_help(capsys):
 
 
 def test_list_zets(capsys):
-    main(["--config", "tests/files/test-pyzet-config.toml", "list"])
+    main(["--repo", "tests/files/zet", "list"])
 
     out, err = capsys.readouterr()
     assert (
@@ -34,7 +34,7 @@ def test_list_zets(capsys):
 
 
 def test_list_zets_pretty(capsys):
-    main(["--config", "tests/files/test-pyzet-config.toml", "list", "--pretty"])
+    main(["--repo", "tests/files/zet", "list", "--pretty"])
 
     out, err = capsys.readouterr()
     assert out == (
@@ -45,7 +45,7 @@ def test_list_zets_pretty(capsys):
 
 
 def test_show_zet(capsys):
-    main(["--config", "tests/files/test-pyzet-config.toml", "show", "20211016205158"])
+    main(["--repo", "tests/files/zet", "show", "20211016205158"])
 
     out, err = capsys.readouterr()
     assert out == "# Zet test entry\n\nHello there!\n"
@@ -89,7 +89,7 @@ def test_clean_zets_dry_run(capsys):
 
 @pytest.mark.skip
 def test_add_zet(capsys):
-    main(["--config", "tests/files/test-pyzet-config.toml", "add"])
+    main(["--repo", "tests/files/zet", "add"])
 
     out, err = capsys.readouterr()
     assert out == ""
@@ -113,66 +113,4 @@ def test_alternative_repo_wrong():
 def test_alternative_repo_wrong_list():
     with pytest.raises(SystemExit) as excinfo:
         main(["--repo", "some/nonexistent/path", "list"])
-    assert str(excinfo.value) == "ERROR: wrong repo path"
-
-
-def test_alternative_config(capsys):
-    main(["--config", "tests/files/test-pyzet-config.toml"])
-
-    out, err = capsys.readouterr()
-    assert out.startswith("usage: pyzet")
-    assert err == ""
-
-
-def test_alternative_config_wrong_file_type():
-    with pytest.raises(SystemExit) as excinfo:
-        main(["--config", "README.md"])
-    assert str(excinfo.value) == "ERROR: cannot parse the file as TOML"
-
-
-def test_alternative_config_nonexistent_file():
-    with pytest.raises(SystemExit) as excinfo:
-        main(["--config", "some-nonexistent-file"])
-    assert str(excinfo.value) == "ERROR: config file not found on given path"
-
-
-def test_alternative_config_nonexistent_permission_error():
-    with pytest.raises(SystemExit) as excinfo:
-        main(["--config", "."])
-    assert str(excinfo.value) == "ERROR: config file not found on given path"
-
-
-def test_alternative_config_wrong_contents():
-    with pytest.raises(SystemExit) as excinfo:
-        main(["--config", "tests/files/test-pyzet-config-wrong.toml"])
-    assert str(excinfo.value) == "ERROR: wrong repo path"
-
-
-def test_alternative_config_wrong_contents_list():
-    with pytest.raises(SystemExit) as excinfo:
-        main(["--config", "tests/files/test-pyzet-config-wrong.toml", "list"])
-    assert str(excinfo.value) == "ERROR: wrong repo path"
-
-
-def test_wrong_config_correct_repo():
-    main(
-        [
-            "--config",
-            "tests/files/test-pyzet-config-wrong.toml",
-            "--repo",
-            "tests/files/zet",
-        ]
-    )
-
-
-def test_correct_config_wrong_repo():
-    with pytest.raises(SystemExit) as excinfo:
-        main(
-            [
-                "--config",
-                "tests/files/test-pyzet-config.toml",
-                "--repo",
-                "some/nonexistent/path",
-            ]
-        )
     assert str(excinfo.value) == "ERROR: wrong repo path"
