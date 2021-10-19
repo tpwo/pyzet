@@ -35,6 +35,8 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     subparsers = parser.add_subparsers(dest="command")
 
+    subparsers.add_parser("status", help="run `git status` in zet repo")
+
     list_parser = subparsers.add_parser("list", help="list zettels in given repo")
     list_parser.add_argument(
         "-p",
@@ -83,6 +85,9 @@ def main(argv: Optional[List[str]] = None) -> int:
     except AttributeError:
         pass  # command that doesn't use `id` was executed
 
+    if args.command == "status":
+        get_repo_status(config.repo_path)
+
     if args.command == "list":
         return list_zets(config.repo_path, is_pretty=args.pretty)
 
@@ -118,6 +123,15 @@ def _validate_id(args: argparse.Namespace, config: Config) -> None:
         raise SystemExit(
             f"ERROR: {const.ZETTEL_FILENAME} in {args.id[0]} doesn't exist"
         )
+
+
+def get_repo_status(path: Path) -> int:
+    git_path = shutil.which("git")
+    if git_path is None:
+        raise SystemExit("ERROR: `git` cannot be found by `which` command")
+
+    subprocess.call([git_path, "-C", path, "status"], shell=True)
+    return 0
 
 
 def list_zets(path: Path, is_pretty: bool) -> int:
