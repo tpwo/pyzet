@@ -173,7 +173,12 @@ def _open_file(filename: Path, editor: Path) -> None:
     if sys.platform == "win32":
         subprocess.call([editor, filename], shell=True)
     else:
-        opener = "open" if sys.platform == "darwin" else shutil.which("vi")
+        vim_path = shutil.which("vi")
+
+        if vim_path is None:
+            raise SystemExit("ERROR: `vi` cannot be found by `which` command")
+
+        opener = "open" if sys.platform == "darwin" else vim_path
         subprocess.call([opener, filename])
 
 
