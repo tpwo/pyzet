@@ -1,5 +1,6 @@
 import argparse
 import logging
+import shutil
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -172,7 +173,7 @@ def _open_file(filename: Path, editor: Path) -> None:
     if sys.platform == "win32":
         subprocess.call([editor, filename], shell=True)
     else:
-        opener = "open" if sys.platform == "darwin" else "xdg-open"
+        opener = "open" if sys.platform == "darwin" else shutil.which("vi")
         subprocess.call([opener, filename])
 
 
