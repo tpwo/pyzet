@@ -2,19 +2,25 @@ from pathlib import Path
 
 import pytest
 
-from pyzet.zet import Zet, get_markdown_title, get_zet, get_zets, print_zet
+from pyzet.zettel import (
+    Zettel,
+    get_markdown_title,
+    get_zettel,
+    get_zettels,
+    print_zettel,
+)
 
 
 def test_get_zets():
-    output = get_zets(path=Path("tests/files/zet"))
+    output = get_zettels(path=Path("tests/files/zet"))
 
     assert output == [
-        Zet(
+        Zettel(
             title="Zet test entry",
             id_="20211016205158",
             text=["# Zet test entry\n", "\n", "Hello there!\n"],
         ),
-        Zet(
+        Zettel(
             title="Another zet test entry",
             id_="20211016223643",
             text=["# Another zet test entry\n", "\n", "Hello everyone\n"],
@@ -23,23 +29,23 @@ def test_get_zets():
 
 
 def test_open_zet():
-    expected = Zet(
+    expected = Zettel(
         title="Zet test entry",
         id_="20211016205158",
         text=["# Zet test entry\n", "\n", "Hello there!\n"],
     )
 
-    assert get_zet(Path("tests/files/zet/20211016205158")) == expected
+    assert get_zettel(Path("tests/files/zet/20211016205158")) == expected
 
 
 def test_print_zet(capsys):
-    test_zet = Zet(
+    test_zet = Zettel(
         title="Zet test entry",
         id_="20211016205158",
         text=["# Zet test entry\n", "\n", "Hello there!\n"],
     )
 
-    print_zet(test_zet)
+    print_zettel(test_zet)
 
     out, err = capsys.readouterr()
     assert out == "# Zet test entry\n\nHello there!\n"

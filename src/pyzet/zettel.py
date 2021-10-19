@@ -5,11 +5,11 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
 
-from pyzet.constants import MARKDOWN_TITLE, ZET_FILENAME, ZULU_DATETIME_FORMAT
+from pyzet.constants import MARKDOWN_TITLE, ZETTEL_FILENAME, ZULU_DATETIME_FORMAT
 
 
 @dataclass
-class Zet:
+class Zettel:
     title: str
     id_: str
     text: List[str]
@@ -20,12 +20,12 @@ class Zet:
             self.timestamp = _get_timestamp(self.id_)
 
 
-def get_zets(path: Path) -> List[Zet]:
+def get_zettels(path: Path) -> List[Zettel]:
     items = []
     for item in path.iterdir():
         if item.is_dir():
             try:
-                items.append(get_zet(item))
+                items.append(get_zettel(item))
             except FileNotFoundError:
                 logging.warning(f"empty zet folder {item.name} detected")
             except ValueError:
@@ -33,19 +33,19 @@ def get_zets(path: Path) -> List[Zet]:
     return items
 
 
-def get_zet(path: Path) -> Zet:
+def get_zettel(path: Path) -> Zettel:
     timestamp = _get_timestamp(path.name)
-    with open(Path(path, ZET_FILENAME), "r") as file:
+    with open(Path(path, ZETTEL_FILENAME), "r") as file:
         contents = file.readlines()
     title = get_markdown_title(contents[0].strip("\n"), path.name)
-    return Zet(title=title, id_=path.name, text=contents, timestamp=timestamp)
+    return Zettel(title=title, id_=path.name, text=contents, timestamp=timestamp)
 
 
 def _get_timestamp(id_: str) -> datetime:
     return datetime.strptime(id_, ZULU_DATETIME_FORMAT)
 
 
-def print_zet(zet: Zet) -> None:
+def print_zettel(zet: Zettel) -> None:
     for line in zet.text:
         print(line, end="")
 
