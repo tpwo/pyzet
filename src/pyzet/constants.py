@@ -1,4 +1,5 @@
 import sys
+from pathlib import Path
 
 if sys.version_info < (3, 8):  # pragma: no cover (<PY38)
     import importlib_metadata
@@ -16,4 +17,5 @@ ZULU_DATETIME_FORMAT = "%Y%m%d%H%M%S"
 MARKDOWN_TITLE = r"^#\s([\S]+.*[\S])$"
 
 # Path to vim which is installed with Git for Windows
-VIM_WINDOWS_PATH = "C:/Program Files/Git/usr/bin/vim.exe"
+VIM_WINDOWS_PATH = Path("C:/Program Files/Git/usr/bin/vim.exe")
+DEFAULT_REPO_PATH = Path(Path.home(), "zet")
