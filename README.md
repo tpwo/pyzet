@@ -1,5 +1,7 @@
 # pyzet
 
+[![Tests](https://github.com/trivvz/pyzet/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/trivvz/pyzet/actions/workflows/tests.yml)
+
 A Python app that makes it easier to use Zettelkasten with git repos.
 
 ## How to use?
