@@ -2,6 +2,44 @@
 
 A Python app that makes it easier to use Zettelkasten with git repos.
 
+## How to use?
+
+The current version is very limited in its capabilities. The basic
+commands include listing, adding, editing, and removing zettels.
+
+The default location of zet repo is `~/zet`. For now it's hard-coded
+path that can be changed with `--repo` flag when executing any command.
+In the future, a config file with option to alter the default path will
+be added.
+
+At this point, the editor for working with zettels is also hard-coded.
+On Windows it's the default path to `vim.exe` that is installed with Git
+for Windows. On Linux (and probably also on Mac), it is the default text
+editor.
+
+The option to change editor also will be included in the config file.
+
+Summary of commands:
+
+```none
+$ pyzet -h
+usage: pyzet [-h] [-V] [-r REPO] {list,show,clean,add,edit,rm} ...
+
+positional arguments:
+  {list,show,clean,add,edit,rm}
+    list                list zettels in given repo
+    show                print zettel contents
+    clean               delete empty folders in zet repo
+    add                 add a new zettel
+    edit                edit a zettel
+    rm                  remove a zettel
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -V, --version         show program's version number and exit
+  -r REPO, --repo REPO  path to point to any zet repo
+```
+
 ## How to run?
 
 Python 3.7 or later is needed.
@@ -60,6 +98,14 @@ the repo:
 pip install -e .
 pip install -r requirements-dev.txt
 ```
+
+## TODO
+
+* [ ] add a config file
+* [ ] add integration with Git
+* [ ] autocompletion for commands
+* [ ] autocompletion for zettels (ID and title?)
+* [ ] easier searching through zettels (maybe some interface to grep?)
 
 ## License
 
