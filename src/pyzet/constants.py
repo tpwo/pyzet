@@ -8,7 +8,7 @@ else:  # pragma: no cover (PY38+)
 
 VERSION = importlib_metadata.version("pyzet")
 
-ZET_FILENAME = "README.md"
+ZETTEL_FILENAME = "README.md"
 ZULU_DATETIME_FORMAT = "%Y%m%d%H%M%S"
 
 # Well formatted Markdown title:
