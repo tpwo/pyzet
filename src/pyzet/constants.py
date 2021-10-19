@@ -7,8 +7,6 @@ else:  # pragma: no cover (PY38+)
 
 VERSION = importlib_metadata.version("pyzet")
 
-CONFIG_FILE = ".pyzet-config.toml"
-
 ZET_FILENAME = "README.md"
 ZULU_DATETIME_FORMAT = "%Y%m%d%H%M%S"
 
@@ -16,3 +14,6 @@ ZULU_DATETIME_FORMAT = "%Y%m%d%H%M%S"
 # - single # and a single space between it and the rest of the title
 # - no leading or trailing spaces
 MARKDOWN_TITLE = r"^#\s([\S]+.*[\S])$"
+
+# Path to vim which is installed with Git for Windows
+VIM_WINDOWS_PATH = "C:/Program Files/Git/usr/bin/vim.exe"
