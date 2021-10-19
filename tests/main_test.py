@@ -7,7 +7,7 @@ from pyzet.main import main
 
 
 def test_print_usage(capsys):
-    main([])
+    main(["--repo", "tests/files/zet"])
     out, err = capsys.readouterr()
     assert out.startswith("usage: pyzet")
     assert err == ""
@@ -107,10 +107,10 @@ def test_alternative_repo(capsys):
 def test_alternative_repo_wrong():
     with pytest.raises(SystemExit) as excinfo:
         main(["--repo", "some/nonexistent/path"])
-    assert str(excinfo.value) == "ERROR: wrong repo path"
+    assert str(excinfo.value).startswith("ERROR: wrong repo path")
 
 
 def test_alternative_repo_wrong_list():
     with pytest.raises(SystemExit) as excinfo:
         main(["--repo", "some/nonexistent/path", "list"])
-    assert str(excinfo.value) == "ERROR: wrong repo path"
+    assert str(excinfo.value).startswith("ERROR: wrong repo path")

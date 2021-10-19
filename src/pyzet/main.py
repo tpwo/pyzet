@@ -13,8 +13,8 @@ from pyzet.zet import get_zet, get_zets, print_zet
 
 @dataclass
 class Config:
-    repo_path: Path = Path(Path.home(), "zet")
-    editor: Path = Path(const.VIM_WINDOWS_PATH)
+    repo_path: Path = const.DEFAULT_REPO_PATH
+    editor: Path = const.VIM_WINDOWS_PATH
 
 
 def main(argv: Optional[List[str]] = None) -> int:
@@ -71,7 +71,10 @@ def main(argv: Optional[List[str]] = None) -> int:
         config.repo_path = Path(args.repo)
 
     if not config.repo_path.is_dir():
-        raise SystemExit("ERROR: wrong repo path")
+        raise SystemExit(
+            "ERROR: wrong repo path. "
+            f"Create folder `{config.repo_path}` or use `--repo` flag."
+        )
 
     try:
         if args.id:
