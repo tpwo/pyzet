@@ -25,10 +25,11 @@ Summary of commands:
 
 ```none
 $ pyzet -h
-usage: pyzet [-h] [-V] [-r REPO] {list,show,clean,add,edit,rm} ...
+usage: pyzet [-h] [-V] [-r REPO] {status,list,show,clean,add,edit,rm} ...
 
 positional arguments:
-  {list,show,clean,add,edit,rm}
+  {status,list,show,clean,add,edit,rm}
+    status              run `git status` in zet repo
     list                list zettels in given repo
     show                print zettel contents
     clean               delete empty folders in zet repo
