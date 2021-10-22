@@ -86,7 +86,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         pass  # command that doesn't use `id` was executed
 
     if args.command == "status":
-        get_repo_status(config.repo_path)
+        return get_repo_status(config.repo_path)
 
     if args.command == "list":
         return list_zets(config.repo_path, is_pretty=args.pretty)
