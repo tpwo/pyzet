@@ -130,7 +130,7 @@ def get_repo_status(path: Path) -> int:
     if git_path is None:
         raise SystemExit("ERROR: `git` cannot be found by `which` command")
 
-    subprocess.call([git_path, "-C", path, "status"], shell=True)
+    subprocess.call([git_path, "-C", path, "status"])
     return 0
 
 
@@ -185,7 +185,7 @@ def edit_zettel(id_: str, config: Config) -> int:
 
 def _open_file(filename: Path, editor: Path) -> None:
     if sys.platform == "win32":
-        subprocess.call([editor, filename], shell=True)
+        subprocess.call([editor, filename])
     else:
         vim_path = shutil.which("vi")
 
