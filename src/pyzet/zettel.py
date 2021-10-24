@@ -35,7 +35,7 @@ def get_zettels(path: Path) -> List[Zettel]:
 
 def get_zettel(path: Path) -> Zettel:
     timestamp = _get_timestamp(path.name)
-    with open(Path(path, ZETTEL_FILENAME), "r") as file:
+    with open(Path(path, ZETTEL_FILENAME), "r", encoding="utf-8") as file:
         contents = file.readlines()
     title = get_markdown_title(contents[0].strip("\n"), path.name)
     return Zettel(title=title, id_=path.name, text=contents, timestamp=timestamp)
