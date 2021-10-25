@@ -181,6 +181,12 @@ def add_zettel(config: Config) -> int:
 
     _open_file(zet_file_path, config.editor)
     logging.info(f"{id_} was created")
+
+    zettel = get_zettel(zet_file_path.parent)
+
+    git_cmd = _get_git_cmd()
+    subprocess.call([git_cmd, "-C", config.repo_path, "add", zet_file_path])
+    subprocess.call([git_cmd, "-C", config.repo_path, "commit", "-m", zettel.title])
     return 0
 
 
