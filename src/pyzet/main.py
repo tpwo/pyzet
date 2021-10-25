@@ -137,11 +137,7 @@ def _validate_id(args: argparse.Namespace, config: Config) -> None:
 
 
 def get_repo_status(path: Path, options: List[str]) -> int:
-    git_path = shutil.which("git")
-    if git_path is None:
-        raise SystemExit("ERROR: `git` cannot be found by `which` command")
-
-    subprocess.call([git_path, "-C", path, "status", *options])
+    subprocess.call([_get_git_cmd(), "-C", path, "status", *options])
     return 0
 
 
@@ -214,3 +210,10 @@ def remove_zettel(repo_path: Path, id_: str) -> int:
     Path(repo_path, id_).rmdir()
     logging.info(f"{id_} was removed")
     return 0
+
+
+def _get_git_cmd() -> Path:
+    git_path = shutil.which("git")
+    if git_path is None:
+        raise SystemExit("ERROR: `git` cannot be found by `which` command")
+    return Path(git_path)
