@@ -17,14 +17,14 @@ def test_get_zets():
 
     assert output == [
         Zettel(
-            title="Zet test entry",
-            id_="20211016205158",
-            text=["# Zet test entry\n", "\n", "Hello there!\n"],
-        ),
-        Zettel(
             title="Another zet test entry",
             id_="20211016223643",
             text=["# Another zet test entry\n", "\n", "Hello everyone\n"],
+        ),
+        Zettel(
+            title="Zet test entry",
+            id_="20211016205158",
+            text=["# Zet test entry\n", "\n", "Hello there!\n"],
         ),
     ]
 

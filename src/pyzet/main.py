@@ -156,7 +156,7 @@ def show_zet(repo_path: Path, id_: str) -> int:
 
 
 def clean_zet_repo(repo_path: Path, is_dry_run: bool) -> int:
-    for item in Path(repo_path, const.ZETDIR).iterdir():
+    for item in sorted(Path(repo_path, const.ZETDIR).iterdir(), reverse=True):
         if item.is_dir() and _is_empty(item):
             if is_dry_run:
                 print(f"will delete {item.name}")
