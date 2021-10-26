@@ -172,6 +172,7 @@ def _is_empty(folder: Path) -> bool:
 
 
 def add_zettel(config: Config) -> int:
+    """Adds zettel and commits the changes with zettel title as the commit message."""
     id_ = datetime.utcnow().strftime(const.ZULU_DATETIME_FORMAT)
 
     zettel_dir = Path(config.repo_path, const.ZETDIR, id_)
@@ -192,6 +193,7 @@ def add_zettel(config: Config) -> int:
 
 
 def edit_zettel(id_: str, config: Config) -> int:
+    """Edits zettel and commits the changes with `ED:` in the commit message."""
     zettel_path = Path(config.repo_path, const.ZETDIR, id_, const.ZETTEL_FILENAME)
     _open_file(zettel_path, config.editor)
     logging.info(f"{id_} was edited")
@@ -216,12 +218,19 @@ def _open_file(filename: Path, editor: Path) -> None:
 
 
 def remove_zettel(repo_path: Path, id_: str) -> int:
+    """Removes zettel and commits the changes with `RM:` in the commit message."""
     if input(f"{id_} will be deleted. Are you sure? (y/N): ") != "y":
         raise SystemExit("aborting")
     zettel_path = Path(repo_path, const.ZETDIR, id_, const.ZETTEL_FILENAME)
+    zettel = get_zettel(zettel_path.parent)
+
     zettel_path.unlink()
-    zettel_path.parent.rmdir()
     logging.info(f"{id_} was removed")
+    _commit_zettel(repo_path, zettel_path, f"RM: {zettel.title}")
+
+    # If dir is removed before committing, git raises a warning that dir doesn't exist
+    zettel_path.parent.rmdir()
+
     return 0
 
 
