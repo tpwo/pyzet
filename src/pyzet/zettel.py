@@ -22,7 +22,7 @@ class Zettel:
 
 def get_zettels(path: Path) -> List[Zettel]:
     items = []
-    for item in path.iterdir():
+    for item in sorted(path.iterdir(), reverse=True):
         if item.is_dir():
             try:
                 items.append(get_zettel(item))
