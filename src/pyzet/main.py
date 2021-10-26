@@ -123,9 +123,10 @@ def main(argv: Optional[List[str]] = None) -> int:
 
 
 def _validate_id(args: argparse.Namespace, config: Config) -> None:
-    if not Path(config.repo_path, args.id[0]).is_dir():
+    zettel_dir = Path(config.repo_path, const.ZETDIR, args.id[0])
+    if not zettel_dir.is_dir():
         raise SystemExit(f"ERROR: folder {args.id[0]} doesn't exist")
-    if not Path(config.repo_path, args.id[0], const.ZETTEL_FILENAME).is_file():
+    if not Path(zettel_dir, const.ZETTEL_FILENAME).is_file():
         if args.command == "rm":
             raise SystemExit(
                 f"ERROR: {const.ZETTEL_FILENAME} in {args.id[0]} doesn't exist. "
@@ -142,20 +143,20 @@ def get_repo_status(path: Path, options: List[str]) -> int:
 
 
 def list_zets(path: Path, is_pretty: bool) -> int:
-    for zettel in get_zettels(path):
+    for zettel in get_zettels(Path(path, const.ZETDIR)):
         representation = zettel.timestamp if is_pretty else zettel.id_
         print(f"{representation} - {zettel.title}")
     return 0
 
 
 def show_zet(repo_path: Path, id_: str) -> int:
-    zettel = get_zettel(Path(repo_path, id_))
+    zettel = get_zettel(Path(repo_path, const.ZETDIR, id_))
     print_zettel(zettel)
     return 0
 
 
 def clean_zet_repo(repo_path: Path, is_dry_run: bool) -> int:
-    for item in repo_path.iterdir():
+    for item in Path(repo_path, const.ZETDIR).iterdir():
         if item.is_dir() and _is_empty(item):
             if is_dry_run:
                 print(f"will delete {item.name}")
@@ -172,9 +173,11 @@ def _is_empty(folder: Path) -> bool:
 
 def add_zettel(config: Config) -> int:
     id_ = datetime.utcnow().strftime(const.ZULU_DATETIME_FORMAT)
-    Path(config.repo_path, id_).mkdir(parents=True, exist_ok=True)
 
-    zet_file_path = Path(config.repo_path, id_, const.ZETTEL_FILENAME)
+    zettel_dir = Path(config.repo_path, const.ZETDIR, id_)
+    zettel_dir.mkdir(parents=True, exist_ok=True)
+
+    zet_file_path = Path(zettel_dir, const.ZETTEL_FILENAME)
 
     with open(zet_file_path, "w+") as file:
         file.write("# ")
@@ -191,7 +194,8 @@ def add_zettel(config: Config) -> int:
 
 
 def edit_zettel(id_: str, config: Config) -> int:
-    _open_file(Path(config.repo_path, id_, const.ZETTEL_FILENAME), config.editor)
+    zettel_path = Path(config.repo_path, const.ZETDIR, id_, const.ZETTEL_FILENAME)
+    _open_file(zettel_path, config.editor)
     logging.info(f"{id_} was edited")
     return 0
 
@@ -212,8 +216,9 @@ def _open_file(filename: Path, editor: Path) -> None:
 def remove_zettel(repo_path: Path, id_: str) -> int:
     if input(f"{id_} will be deleted. Are you sure? (y/N): ") != "y":
         raise SystemExit("aborting")
-    Path(repo_path, id_, const.ZETTEL_FILENAME).unlink()
-    Path(repo_path, id_).rmdir()
+    zettel_path = Path(repo_path, const.ZETDIR, id_, const.ZETTEL_FILENAME)
+    zettel_path.unlink()
+    zettel_path.parent.rmdir()
     logging.info(f"{id_} was removed")
     return 0
 

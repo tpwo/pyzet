@@ -8,6 +8,7 @@ else:  # pragma: no cover (PY38+)
 
 VERSION = importlib_metadata.version("pyzet")
 
+ZETDIR = "zettels"
 ZETTEL_FILENAME = "README.md"
 ZULU_DATETIME_FORMAT = "%Y%m%d%H%M%S"
 

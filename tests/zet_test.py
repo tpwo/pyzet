@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pytest
 
+from pyzet.constants import ZETDIR
 from pyzet.zettel import (
     Zettel,
     get_markdown_title,
@@ -12,7 +13,7 @@ from pyzet.zettel import (
 
 
 def test_get_zets():
-    output = get_zettels(path=Path("testing/zet"))
+    output = get_zettels(path=Path("testing/zet", ZETDIR))
 
     assert output == [
         Zettel(
@@ -35,7 +36,7 @@ def test_open_zet():
         text=["# Zet test entry\n", "\n", "Hello there!\n"],
     )
 
-    assert get_zettel(Path("testing/zet/20211016205158")) == expected
+    assert get_zettel(Path(f"testing/zet/{ZETDIR}/20211016205158")) == expected
 
 
 def test_print_zet(capsys):
