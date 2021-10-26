@@ -29,7 +29,7 @@ usage: pyzet [-h] [-V] [-r REPO] {status,list,show,clean,add,edit,rm} ...
 
 positional arguments:
   {status,list,show,clean,add,edit,rm}
-    status              run `git status` in zet repo
+    status              run `git status` in zet repo, use `--` before including git options
     list                list zettels in given repo
     show                print zettel contents
     clean               delete empty folders in zet repo
@@ -42,6 +42,9 @@ optional arguments:
   -V, --version         show program's version number and exit
   -r REPO, --repo REPO  path to point to any zet repo
 ```
+
+By default, an alias `pz` is added that can be used instead of `pyzet`.
+For the sake of readability, only the latter will be used in the docs.
 
 ## How to run?
 
