@@ -177,19 +177,17 @@ def add_zettel(config: Config) -> int:
     zettel_dir = Path(config.repo_path, const.ZETDIR, id_)
     zettel_dir.mkdir(parents=True, exist_ok=True)
 
-    zet_file_path = Path(zettel_dir, const.ZETTEL_FILENAME)
+    zettel_path = Path(zettel_dir, const.ZETTEL_FILENAME)
 
-    with open(zet_file_path, "w+") as file:
+    with open(zettel_path, "w+") as file:
         file.write("# ")
 
-    _open_file(zet_file_path, config.editor)
+    _open_file(zettel_path, config.editor)
     logging.info(f"{id_} was created")
 
-    zettel = get_zettel(zet_file_path.parent)
+    zettel = get_zettel(zettel_path.parent)
+    _commit_zettel(config.repo_path, zettel_path, zettel.title)
 
-    git_cmd = _get_git_cmd()
-    subprocess.call([git_cmd, "-C", config.repo_path, "add", zet_file_path])
-    subprocess.call([git_cmd, "-C", config.repo_path, "commit", "-m", zettel.title])
     return 0
 
 
@@ -197,6 +195,10 @@ def edit_zettel(id_: str, config: Config) -> int:
     zettel_path = Path(config.repo_path, const.ZETDIR, id_, const.ZETTEL_FILENAME)
     _open_file(zettel_path, config.editor)
     logging.info(f"{id_} was edited")
+
+    zettel = get_zettel(zettel_path.parent)
+    _commit_zettel(config.repo_path, zettel_path, f"ED: {zettel.title}")
+
     return 0
 
 
@@ -221,6 +223,12 @@ def remove_zettel(repo_path: Path, id_: str) -> int:
     zettel_path.parent.rmdir()
     logging.info(f"{id_} was removed")
     return 0
+
+
+def _commit_zettel(repo_path: Path, zettel_path: Path, message: str) -> None:
+    git_cmd = _get_git_cmd()
+    subprocess.call([git_cmd, "-C", repo_path, "add", zettel_path])
+    subprocess.call([git_cmd, "-C", repo_path, "commit", "-m", message])
 
 
 def _get_git_cmd() -> Path:
