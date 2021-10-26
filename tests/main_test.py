@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pytest
 
+from pyzet.constants import ZETDIR
 from pyzet.main import main
 
 
@@ -55,7 +56,7 @@ def test_show_zet(capsys):
 def test_list_zets_warning(caplog):
     id_ = "20211016205158"
     with tempfile.TemporaryDirectory() as tmpdir:
-        Path(tmpdir, id_).mkdir()
+        Path(tmpdir, ZETDIR, id_).mkdir(parents=True)
 
         main(["--repo", tmpdir, "list"])
         assert f"empty zet folder {id_} detected" in caplog.text
@@ -64,7 +65,7 @@ def test_list_zets_warning(caplog):
 def test_clean_zets(capsys):
     id_ = "20211016205158"
     with tempfile.TemporaryDirectory() as tmpdir:
-        Path(tmpdir, id_).mkdir()
+        Path(tmpdir, ZETDIR, id_).mkdir(parents=True)
 
         main(["--repo", tmpdir, "clean"])
 
@@ -77,14 +78,14 @@ def test_clean_zets(capsys):
 def test_clean_zets_dry_run(capsys):
     id_ = "20211016205158"
     with tempfile.TemporaryDirectory() as tmpdir:
-        Path(tmpdir, id_).mkdir()
+        Path(tmpdir, ZETDIR, id_).mkdir(parents=True)
 
         main(["--repo", tmpdir, "clean", "--dry-run"])
 
         out, err = capsys.readouterr()
         assert out == f"will delete {id_}\n"
         assert err == ""
-        assert Path(tmpdir, id_).exists()
+        assert Path(tmpdir, ZETDIR, id_).exists()
 
 
 @pytest.mark.skip
