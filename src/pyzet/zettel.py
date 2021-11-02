@@ -1,9 +1,10 @@
+from __future__ import annotations
+
 import logging
 import re
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import List, Optional
 
 from pyzet.constants import MARKDOWN_TITLE, ZETTEL_FILENAME, ZULU_DATETIME_FORMAT
 
@@ -12,15 +13,15 @@ from pyzet.constants import MARKDOWN_TITLE, ZETTEL_FILENAME, ZULU_DATETIME_FORMA
 class Zettel:
     title: str
     id_: str
-    text: List[str]
-    timestamp: Optional[datetime] = None
+    text: list[str]
+    timestamp: datetime | None = None
 
     def __post_init__(self) -> None:
         if not self.timestamp:
             self.timestamp = _get_timestamp(self.id_)
 
 
-def get_zettels(path: Path) -> List[Zettel]:
+def get_zettels(path: Path) -> list[Zettel]:
     items = []
     for item in sorted(path.iterdir(), reverse=True):
         if item.is_dir():
