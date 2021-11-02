@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import argparse
 import logging
 import shutil
@@ -6,7 +8,6 @@ import sys
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import List, Optional
 
 import pyzet.constants as const
 from pyzet.zettel import get_zettel, get_zettels, print_zettel
@@ -18,7 +19,7 @@ class Config:
     editor: Path = const.VIM_WINDOWS_PATH
 
 
-def main(argv: Optional[List[str]] = None) -> int:
+def main(argv: list[str] | None = None) -> int:
     logging.basicConfig(level=logging.INFO)
 
     parser = argparse.ArgumentParser(prog="pyzet")
@@ -137,7 +138,7 @@ def _validate_id(args: argparse.Namespace, config: Config) -> None:
         )
 
 
-def get_repo_status(path: Path, options: List[str]) -> int:
+def get_repo_status(path: Path, options: list[str]) -> int:
     subprocess.call([_get_git_cmd(), "-C", path, "status", *options])
     return 0
 
