@@ -54,7 +54,7 @@ The app is still in early development. However, you can use `pip` to
 install it directly from this repo:
 
 ```bash
-pip install git+https://github.com/trivvz/pyzet.git
+pip install git+https://github.com/wojdatto/pyzet.git
 pyzet --help
 ```
 
@@ -62,7 +62,7 @@ By default, `main` branch will be used. To use `develop` branch you need
 to specify it:
 
 ```bash
-pip install git+https://github.com/trivvz/pyzet.git@develop
+pip install git+https://github.com/wojdatto/pyzet.git@develop
 ```
 
 ### Manual installation
@@ -71,7 +71,7 @@ Manual installation is also possible. Clone the repo and run the install
 command. Using venv/virtualenv is advised.
 
 ```none
-git clone https://github.com/trivvz/pyzet.git
+git clone https://github.com/wojdatto/pyzet.git
 cd pyzet
 ```
 
