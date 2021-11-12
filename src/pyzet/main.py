@@ -6,6 +6,7 @@ import logging
 import shutil
 import subprocess
 import sys
+from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -64,7 +65,13 @@ def main(argv: list[str] | None = None) -> int:
         help="use prettier format for printing date and time",
     )
 
-    subparsers.add_parser("tags", help="list tags in given repo")
+    tags_parser = subparsers.add_parser("tags", help="list tags in given repo")
+    tags_parser.add_argument(
+        "-r",
+        "--reverse",
+        action="store_true",
+        help="reverse the output to be descending",
+    )
 
     show_parser = subparsers.add_parser("show", help="print zettel contents")
     show_parser.add_argument("id", nargs=1, help="zettel id (timestamp)")
@@ -113,7 +120,7 @@ def main(argv: list[str] | None = None) -> int:
         return list_zettels(config.repo_path, is_pretty=args.pretty)
 
     if args.command == "tags":
-        return list_tags(config.repo_path)
+        return list_tags(config.repo_path, is_reversed=args.reverse)
 
     if args.command == "show":
         return show_zettel(config.repo_path, args.id[0])
@@ -162,13 +169,19 @@ def list_zettels(path: Path, is_pretty: bool) -> int:
     return 0
 
 
-def list_tags(path: Path) -> int:
-    tags = set()
+def list_tags(path: Path, is_reversed: bool) -> int:
+    tags: defaultdict[str, int] = defaultdict(int)
     for zettel in get_zettels(Path(path, const.ZETDIR)):
         for tag in zettel.tags:
-            tags.add(tag)
-    for tag in sorted(tags):
-        print(f"#{tag}")
+            tags[tag] += 1
+
+    # sort by occurrence, and then by the tag name
+    # https://stackoverflow.com/a/613230/14458327
+    for occurrences, tag in sorted(
+        ((value, key) for key, value in tags.items()), reverse=is_reversed
+    ):
+        print(f"{occurrences}\t#{tag}")
+
     return 0
 
 
