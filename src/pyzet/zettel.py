@@ -59,7 +59,7 @@ def get_markdown_title(line: str, id_: str) -> str:
     """
     result = re.match(MARKDOWN_TITLE, line)
     if not result:
-        logging.warning(f"wrong title formatting: {id_} {line}")
+        logging.warning(f'wrong title formatting: {id_} "{line}"')
         return line
 
     return result.groups()[0]
