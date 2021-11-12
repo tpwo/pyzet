@@ -108,10 +108,10 @@ def main(argv: list[str] | None = None) -> int:
         return get_repo_status(config.repo_path, args.options)
 
     if args.command == "list":
-        return list_zets(config.repo_path, is_pretty=args.pretty)
+        return list_zettels(config.repo_path, is_pretty=args.pretty)
 
     if args.command == "show":
-        return show_zet(config.repo_path, args.id[0])
+        return show_zettel(config.repo_path, args.id[0])
 
     if args.command == "clean":
         return clean_zet_repo(config.repo_path, is_dry_run=args.dry_run)
@@ -150,14 +150,14 @@ def get_repo_status(path: Path, options: list[str]) -> int:
     return 0
 
 
-def list_zets(path: Path, is_pretty: bool) -> int:
+def list_zettels(path: Path, is_pretty: bool) -> int:
     for zettel in get_zettels(Path(path, const.ZETDIR)):
         representation = zettel.timestamp if is_pretty else zettel.id_
         print(f"{representation} - {zettel.title}")
     return 0
 
 
-def show_zet(repo_path: Path, id_: str) -> int:
+def show_zettel(repo_path: Path, id_: str) -> int:
     zettel = get_zettel(Path(repo_path, const.ZETDIR, id_))
     print_zettel(zettel)
     return 0
