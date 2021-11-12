@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import io
 import logging
 import shutil
 import subprocess
@@ -21,7 +22,10 @@ class Config:
 
 def main(argv: list[str] | None = None) -> int:
     # https://stackoverflow.com/a/60634040/14458327
-    sys.stdout.reconfigure(encoding='utf-8')
+    if isinstance(sys.stdout, io.TextIOWrapper):
+        # if statement is needed to satisfy mypy
+        # https://github.com/python/typeshed/issues/3049
+        sys.stdout.reconfigure(encoding="utf-8")
 
     logging.basicConfig(level=logging.INFO)
 
