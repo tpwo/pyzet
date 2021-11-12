@@ -75,6 +75,5 @@ def test_get_markdown_title():
     ],
 )
 def test_get_markdown_title_warning(test_input, caplog):
-    id_ = "20211016205159"
-    assert get_markdown_title(test_input, id_=id_) == test_input
-    assert f'wrong title formatting: {id_} "{test_input}"' in caplog.text
+    assert get_markdown_title(test_input, id_="20211016205159") == test_input
+    assert f'wrong title formatting: 20211016205159 "{test_input}"' in caplog.text
