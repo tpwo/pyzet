@@ -29,7 +29,8 @@ usage: pyzet [-h] [-V] [-r REPO] {status,list,show,clean,add,edit,rm} ...
 
 positional arguments:
   {status,list,show,clean,add,edit,rm}
-    status              run `git status` in zet repo, use `--` before including git options
+    status              run `git status` in zet repo, use `--` before including
+                        git options
     list                list zettels in given repo
     show                print zettel contents
     clean               delete empty folders in zet repo
@@ -103,6 +104,105 @@ the repo:
 ```bash
 pip install -e .
 pip install -r requirements-dev.txt
+```
+
+## Zettel formatting rules and guidelines
+
+Zettels should use Markdown. It is preferred to use consistent flavor of
+Markdown like [CommonMark](https://commonmark.org/). Pyzet will parse
+zettel's contents trying to extract information like title and tags.
+
+Some of the rules described below are only guidelines, but some of them
+are needed for pyzet to correctly parse zettels.
+
+### General formatting
+
+For a convenient reading zettels in the source form, it's recommended to
+wrap lines. The common standard is to break line after 72 characters.
+
+Ideal zettels shouldn't be too long, and they should be a brief text
+description of pretty much anything. Avoid pasting links in the zettel
+core content and prefer using references section (described below) for
+that.
+
+Pyzet supports tagging zettels with hashtags for easier searching in the
+future. The number of tags shouldn't be too big, and ideally they should
+only use keywords that are not a part of a zettel itself. The tagging
+rules are described below.
+
+Try to use consistent Markdown formatting. We recommend:
+
+* Use only `*` for bold & italics
+
+* Use only `*` for unordered lists
+
+* If items of unordered lists take more than a single line (will happen
+  if you wrap after 72 chars), separate them with a single blank line
+
+* Use `<>` to show that something is a link. GitHub and VSCode will
+  detect it even without it, but this is not true for every tool that
+  supports Markdown
+
+### Title line
+
+The first line of a zettel that should start with `#` and a single
+space, and then the title itself. Title line shouldn't have any leading
+or trailing spaces.
+
+If wrong formatting is detected, a warning will be raised and pyzet will
+show you a raw title line instead of a parsed one.
+
+Ideally, title should not exceed 50 characters. This is because a title
+is also a commit message in a Zettelkasten repo, and GitHub will snip
+messages longer than 50 characters when displaying commit messages next
+to the files. At this point, this is not checked by pyzet, so no warning
+will be raised in that case.
+
+```markdown
+# Example correct zettel title
+```
+
+### References
+
+Pyzet currently doesn't analyze references, but the suggested way to add
+them is as follows:
+
+```markdown
+Refs:
+
+* <http://described-example.com/> -- This is an example description
+* <http://example.com/>
+```
+
+If description is longer, break line after 72 characters and put a blank
+line between references:
+
+```markdown
+Refs:
+
+* <http://described-example.com/> -- This is an example of a longer
+  description
+
+* <http://example.com/>
+```
+
+### Tags
+
+Tags are optional, but if they're used, they should be placed as the
+last line of a zettel that starts from 4 or more leading spaces (it's
+Markdown syntax for a fenced code block that renders as monospaced
+font). Each tag should start with `#` and should be separated with a
+single space from the next one.
+
+Using small letters and `kebab-case` is recommended as a consistent
+tagging style, but it's not forced or checked at this moment. A tag line
+can be preceded by `Tags:` and a single blank line to make zettels more
+structured.
+
+```markdown
+Tags:
+
+    #tag1 #tag2 #another-tag
 ```
 
 ## TODO

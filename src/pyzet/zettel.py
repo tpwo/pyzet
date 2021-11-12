@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
@@ -15,6 +15,7 @@ class Zettel:
     id_: str
     text: list[str]
     timestamp: datetime | None = None
+    tags: list[str] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         if not self.timestamp:
@@ -39,7 +40,10 @@ def get_zettel(path: Path) -> Zettel:
     with open(Path(path, ZETTEL_FILENAME), "r", encoding="utf-8") as file:
         contents = file.readlines()
     title = get_markdown_title(contents[0].strip("\n"), path.name)
-    return Zettel(title=title, id_=path.name, text=contents, timestamp=timestamp)
+    tags = get_tags(contents[-1].strip()) if contents[-1].startswith(4 * " ") else []
+    return Zettel(
+        title=title, id_=path.name, text=contents, timestamp=timestamp, tags=tags
+    )
 
 
 def _get_timestamp(id_: str) -> datetime:
@@ -63,3 +67,10 @@ def get_markdown_title(line: str, id_: str) -> str:
         return line
 
     return result.groups()[0]
+
+
+def get_tags(line: str) -> list[str]:
+    tags = []
+    for tag in line.split(" "):
+        tags.append(tag.lstrip("#"))
+    return tags
