@@ -24,7 +24,16 @@ def test_get_zets():
         Zettel(
             title="Zet test entry",
             id_="20211016205158",
-            text=["# Zet test entry\n", "\n", "Hello there!\n"],
+            text=[
+                "# Zet test entry\n",
+                "\n",
+                "Hello there!\n",
+                "\n",
+                "Tags:\n",
+                "\n",
+                "    #test-tag #another-tag\n",
+            ],
+            tags=["test-tag", "another-tag"],
         ),
     ]
 
@@ -33,7 +42,16 @@ def test_open_zet():
     expected = Zettel(
         title="Zet test entry",
         id_="20211016205158",
-        text=["# Zet test entry\n", "\n", "Hello there!\n"],
+        text=[
+            "# Zet test entry\n",
+            "\n",
+            "Hello there!\n",
+            "\n",
+            "Tags:\n",
+            "\n",
+            "    #test-tag #another-tag\n",
+        ],
+        tags=["test-tag", "another-tag"],
     )
 
     assert get_zettel(Path(f"testing/zet/{ZETDIR}/20211016205158")) == expected

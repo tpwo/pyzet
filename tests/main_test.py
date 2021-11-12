@@ -49,7 +49,10 @@ def test_show_zet(capsys):
     main(["--repo", "testing/zet", "show", "20211016205158"])
 
     out, err = capsys.readouterr()
-    assert out == "# Zet test entry\n\nHello there!\n"
+    assert (
+        out
+        == "# Zet test entry\n\nHello there!\n\nTags:\n\n    #test-tag #another-tag\n"
+    )
     assert err == ""
 
 
