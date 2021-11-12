@@ -34,6 +34,14 @@ def test_list_zettels(capsys):
     assert err == ""
 
 
+def test_list_tags(capsys):
+    main(["--repo", "testing/zet", "tags"])
+
+    out, err = capsys.readouterr()
+    assert out == "#another-tag\n#test-tag\n"
+    assert err == ""
+
+
 def test_list_zettels_pretty(capsys):
     main(["--repo", "testing/zet", "list", "--pretty"])
 

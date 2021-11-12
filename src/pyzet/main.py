@@ -64,6 +64,8 @@ def main(argv: list[str] | None = None) -> int:
         help="use prettier format for printing date and time",
     )
 
+    subparsers.add_parser("tags", help="list tags in given repo")
+
     show_parser = subparsers.add_parser("show", help="print zettel contents")
     show_parser.add_argument("id", nargs=1, help="zettel id (timestamp)")
 
@@ -110,6 +112,9 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "list":
         return list_zettels(config.repo_path, is_pretty=args.pretty)
 
+    if args.command == "tags":
+        return list_tags(config.repo_path)
+
     if args.command == "show":
         return show_zettel(config.repo_path, args.id[0])
 
@@ -154,6 +159,16 @@ def list_zettels(path: Path, is_pretty: bool) -> int:
     for zettel in get_zettels(Path(path, const.ZETDIR)):
         representation = zettel.timestamp if is_pretty else zettel.id_
         print(f"{representation} - {zettel.title}")
+    return 0
+
+
+def list_tags(path: Path) -> int:
+    tags = set()
+    for zettel in get_zettels(Path(path, const.ZETDIR)):
+        for tag in zettel.tags:
+            tags.add(tag)
+    for tag in sorted(tags):
+        print(f"#{tag}")
     return 0
 
 
