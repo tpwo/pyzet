@@ -38,7 +38,15 @@ def test_list_tags(capsys):
     main(["--repo", "testing/zet", "tags"])
 
     out, err = capsys.readouterr()
-    assert out == "#another-tag\n#test-tag\n"
+    assert out == "1\t#another-tag\n1\t#test-tag\n"
+    assert err == ""
+
+
+def test_list_tags_reverse(capsys):
+    main(["--repo", "testing/zet", "tags", "--reverse"])
+
+    out, err = capsys.readouterr()
+    assert out == "1\t#test-tag\n1\t#another-tag\n"
     assert err == ""
 
 
