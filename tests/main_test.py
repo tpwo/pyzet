@@ -23,7 +23,7 @@ def test_overall_help(capsys):
     assert err == ""
 
 
-def test_list_zets(capsys):
+def test_list_zettels(capsys):
     main(["--repo", "testing/zet", "list"])
 
     out, err = capsys.readouterr()
@@ -34,7 +34,7 @@ def test_list_zets(capsys):
     assert err == ""
 
 
-def test_list_zets_pretty(capsys):
+def test_list_zettels_pretty(capsys):
     main(["--repo", "testing/zet", "list", "--pretty"])
 
     out, err = capsys.readouterr()
@@ -45,7 +45,7 @@ def test_list_zets_pretty(capsys):
     assert err == ""
 
 
-def test_show_zet(capsys):
+def test_show_zettel(capsys):
     main(["--repo", "testing/zet", "show", "20211016205158"])
 
     out, err = capsys.readouterr()
@@ -56,7 +56,7 @@ def test_show_zet(capsys):
     assert err == ""
 
 
-def test_list_zets_warning(caplog):
+def test_list_zettels_warning(caplog):
     id_ = "20211016205158"
     with tempfile.TemporaryDirectory() as tmpdir:
         Path(tmpdir, ZETDIR, id_).mkdir(parents=True)
@@ -65,7 +65,7 @@ def test_list_zets_warning(caplog):
         assert f"empty zet folder {id_} detected" in caplog.text
 
 
-def test_clean_zets(capsys):
+def test_clean_zettels(capsys):
     id_ = "20211016205158"
     with tempfile.TemporaryDirectory() as tmpdir:
         Path(tmpdir, ZETDIR, id_).mkdir(parents=True)
@@ -78,7 +78,7 @@ def test_clean_zets(capsys):
         assert not Path(tmpdir, id_).exists()
 
 
-def test_clean_zets_dry_run(capsys):
+def test_clean_zettels_dry_run(capsys):
     id_ = "20211016205158"
     with tempfile.TemporaryDirectory() as tmpdir:
         Path(tmpdir, ZETDIR, id_).mkdir(parents=True)
@@ -92,7 +92,7 @@ def test_clean_zets_dry_run(capsys):
 
 
 @pytest.mark.skip
-def test_add_zet(capsys):
+def test_add_zettel(capsys):
     main(["--repo", "testing/zet", "add"])
 
     out, err = capsys.readouterr()

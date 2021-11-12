@@ -12,7 +12,7 @@ from pyzet.zettel import (
 )
 
 
-def test_get_zets():
+def test_get_zettels():
     output = get_zettels(path=Path("testing/zet", ZETDIR))
 
     assert output == [
@@ -38,7 +38,7 @@ def test_get_zets():
     ]
 
 
-def test_open_zet():
+def test_open_zettel():
     expected = Zettel(
         title="Zet test entry",
         id_="20211016205158",
@@ -57,14 +57,14 @@ def test_open_zet():
     assert get_zettel(Path(f"testing/zet/{ZETDIR}/20211016205158")) == expected
 
 
-def test_print_zet(capsys):
-    test_zet = Zettel(
+def test_print_zettel(capsys):
+    test_zettel = Zettel(
         title="Zet test entry",
         id_="20211016205158",
         text=["# Zet test entry\n", "\n", "Hello there!\n"],
     )
 
-    print_zettel(test_zet)
+    print_zettel(test_zettel)
 
     out, err = capsys.readouterr()
     assert out == "# Zet test entry\n\nHello there!\n"
