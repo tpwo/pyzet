@@ -20,6 +20,9 @@ class Config:
 
 
 def main(argv: list[str] | None = None) -> int:
+    # https://stackoverflow.com/a/60634040/14458327
+    sys.stdout.reconfigure(encoding='utf-8')
+
     logging.basicConfig(level=logging.INFO)
 
     parser = argparse.ArgumentParser(prog="pyzet")
