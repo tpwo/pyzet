@@ -17,6 +17,32 @@ def test_get_zettels():
 
     assert output == [
         Zettel(
+            title="Zet test entry",
+            id_="20211016205158",
+            text=[
+                "# Zet test entry\n",
+                "\n",
+                "Hello there!\n",
+                "\n",
+                "Tags:\n",
+                "\n",
+                "    #test-tag #another-tag\n",
+            ],
+            tags=["test-tag", "another-tag"],
+        ),
+        Zettel(
+            title="Another zet test entry",
+            id_="20211016223643",
+            text=["# Another zet test entry\n", "\n", "Hello everyone\n"],
+        ),
+    ]
+
+
+def test_get_zettels_reverse():
+    output = get_zettels(path=Path("testing/zet", ZETDIR), is_reversed=True)
+
+    assert output == [
+        Zettel(
             title="Another zet test entry",
             id_="20211016223643",
             text=["# Another zet test entry\n", "\n", "Hello everyone\n"],

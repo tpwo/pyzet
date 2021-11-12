@@ -64,6 +64,12 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="use prettier format for printing date and time",
     )
+    list_parser.add_argument(
+        "-r",
+        "--reverse",
+        action="store_true",
+        help="reverse the output (so the newest are first)",
+    )
 
     tags_parser = subparsers.add_parser("tags", help="list tags in given repo")
     tags_parser.add_argument(
@@ -117,7 +123,9 @@ def main(argv: list[str] | None = None) -> int:
         return get_repo_status(config.repo_path, args.options)
 
     if args.command == "list":
-        return list_zettels(config.repo_path, is_pretty=args.pretty)
+        return list_zettels(
+            config.repo_path, is_pretty=args.pretty, is_reversed=args.reverse
+        )
 
     if args.command == "tags":
         return list_tags(config.repo_path, is_reversed=args.reverse)
@@ -162,8 +170,8 @@ def get_repo_status(path: Path, options: list[str]) -> int:
     return 0
 
 
-def list_zettels(path: Path, is_pretty: bool) -> int:
-    for zettel in get_zettels(Path(path, const.ZETDIR)):
+def list_zettels(path: Path, is_pretty: bool, is_reversed: bool) -> int:
+    for zettel in get_zettels(Path(path, const.ZETDIR), is_reversed):
         representation = zettel.timestamp if is_pretty else zettel.id_
         print(f"{representation} - {zettel.title}")
     return 0

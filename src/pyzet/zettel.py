@@ -22,9 +22,9 @@ class Zettel:
             self.timestamp = _get_timestamp(self.id_)
 
 
-def get_zettels(path: Path) -> list[Zettel]:
+def get_zettels(path: Path, is_reversed: bool = False) -> list[Zettel]:
     items = []
-    for item in sorted(path.iterdir(), reverse=True):
+    for item in sorted(path.iterdir(), reverse=is_reversed):
         if item.is_dir():
             try:
                 items.append(get_zettel(item))

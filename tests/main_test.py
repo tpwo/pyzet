@@ -29,6 +29,17 @@ def test_list_zettels(capsys):
     out, err = capsys.readouterr()
     assert (
         out
+        == "20211016205158 - Zet test entry\n20211016223643 - Another zet test entry\n"
+    )
+    assert err == ""
+
+
+def test_list_zettels_reverse(capsys):
+    main(["--repo", "testing/zet", "list", "--reverse"])
+
+    out, err = capsys.readouterr()
+    assert (
+        out
         == "20211016223643 - Another zet test entry\n20211016205158 - Zet test entry\n"
     )
     assert err == ""
@@ -52,6 +63,17 @@ def test_list_tags_reverse(capsys):
 
 def test_list_zettels_pretty(capsys):
     main(["--repo", "testing/zet", "list", "--pretty"])
+
+    out, err = capsys.readouterr()
+    assert out == (
+        "2021-10-16 20:51:58 - Zet test entry\n"
+        "2021-10-16 22:36:43 - Another zet test entry\n"
+    )
+    assert err == ""
+
+
+def test_list_zettels_pretty_reverse(capsys):
+    main(["--repo", "testing/zet", "list", "--pretty", "--reverse"])
 
     out, err = capsys.readouterr()
     assert out == (
