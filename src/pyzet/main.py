@@ -80,6 +80,11 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="reverse the output to be descending",
     )
+    tags_parser.add_argument(
+        "--count",
+        action="store_true",
+        help="count the total number of all tags in zet repo (non-unique)",
+    )
 
     show_parser = subparsers.add_parser("show", help="print zettel contents")
     show_parser.add_argument("id", nargs=1, help="zettel id (timestamp)")
@@ -146,6 +151,8 @@ def main(argv: list[str] | None = None) -> int:
         )
 
     if args.command == "tags":
+        if args.count:
+            return count_tags(config.repo_path)
         return list_tags(config.repo_path, is_reversed=args.reverse)
 
     if args.command == "show":
@@ -213,6 +220,14 @@ def list_tags(path: Path, is_reversed: bool) -> int:
     ):
         print(f"{occurrences}\t#{tag}")
 
+    return 0
+
+
+def count_tags(path: Path) -> int:
+    total_tags = 0
+    for zettel in get_zettels(Path(path, const.ZETDIR)):
+        total_tags += len(zettel.tags)
+    print(total_tags)
     return 0
 
 
