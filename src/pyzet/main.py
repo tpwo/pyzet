@@ -48,7 +48,7 @@ def main(argv: list[str] | None = None) -> int:
 
     status_parser = subparsers.add_parser(
         "status",
-        help="run `git status` in zet repo, use `--` before including git options",
+        help="run `git status` in zet repo,\nuse `--` before including git options",
     )
     status_parser.add_argument(
         "options",
@@ -102,6 +102,19 @@ def main(argv: list[str] | None = None) -> int:
     remove_parser = subparsers.add_parser("rm", help="remove a zettel")
     remove_parser.add_argument("id", nargs=1, help="zettel id (timestamp)")
 
+    push_parser = subparsers.add_parser(
+        "push",
+        help="run `git push` in zet repo,\nuse `--` before including git options",
+    )
+    push_parser.add_argument(
+        "options",
+        action="store",
+        type=str,
+        nargs="*",
+        default=["."],
+        help="`git status` options, use `--` before including them",
+    )
+
     args = parser.parse_args(argv)
 
     config = Config()
@@ -123,6 +136,9 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "status":
         return get_repo_status(config.repo_path, args.options)
+
+    if args.command == "push":
+        return push_to_remote(config.repo_path, args.options)
 
     if args.command == "list":
         return list_zettels(
@@ -169,6 +185,11 @@ def _validate_id(args: argparse.Namespace, config: Config) -> None:
 
 def get_repo_status(path: Path, options: list[str]) -> int:
     subprocess.call([_get_git_cmd(), "-C", path, "status", *options])
+    return 0
+
+
+def push_to_remote(path: Path, options: list[str]) -> int:
+    subprocess.call([_get_git_cmd(), "-C", path, "push", *options])
     return 0
 
 

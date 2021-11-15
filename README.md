@@ -25,12 +25,12 @@ Summary of commands:
 
 ```none
 $ pyzet -h
-usage: pyzet [-h] [-V] [-r REPO] {status,list,tags,show,clean,add,edit,rm} ...
+usage: pyzet [-h] [-V] [-r REPO] {status,list,tags,show,clean,add,edit,rm,push} ...
 
 positional arguments:
-  {status,list,tags,show,clean,add,edit,rm}
-    status              run `git status` in zet repo, use `--` before including
-                        git options
+  {status,list,tags,show,clean,add,edit,rm,push}
+    status              run `git status` in zet repo,
+                        use `--` before including git options
     list                list zettels in given repo
     tags                list tags in given repo
     show                print zettel contents
@@ -38,6 +38,8 @@ positional arguments:
     add                 add a new zettel
     edit                edit a zettel
     rm                  remove a zettel
+    push                run `git push` in zet repo,
+                        use `--` before including git options
 
 optional arguments:
   -h, --help            show this help message and exit
