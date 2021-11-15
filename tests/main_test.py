@@ -61,6 +61,14 @@ def test_list_tags_reverse(capsys):
     assert err == ""
 
 
+def test_list_tags_count(capsys):
+    main(["--repo", "testing/zet", "tags", "--count"])
+
+    out, err = capsys.readouterr()
+    assert out == "2\n"
+    assert err == ""
+
+
 def test_list_zettels_pretty(capsys):
     main(["--repo", "testing/zet", "list", "--pretty"])
 
