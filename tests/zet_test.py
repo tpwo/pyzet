@@ -26,9 +26,9 @@ def test_get_zettels():
                 "\n",
                 "Tags:\n",
                 "\n",
-                "    #test-tag #another-tag\n",
+                "    #test-tag #another-tag  #tag-after-two-spaces\n",
             ],
-            tags=["test-tag", "another-tag"],
+            tags=["test-tag", "another-tag", "tag-after-two-spaces"],
         ),
         Zettel(
             title="Another zet test entry",
@@ -57,9 +57,9 @@ def test_get_zettels_reverse():
                 "\n",
                 "Tags:\n",
                 "\n",
-                "    #test-tag #another-tag\n",
+                "    #test-tag #another-tag  #tag-after-two-spaces\n",
             ],
-            tags=["test-tag", "another-tag"],
+            tags=["test-tag", "another-tag", "tag-after-two-spaces"],
         ),
     ]
 
@@ -75,9 +75,9 @@ def test_open_zettel():
             "\n",
             "Tags:\n",
             "\n",
-            "    #test-tag #another-tag\n",
+            "    #test-tag #another-tag  #tag-after-two-spaces\n",
         ],
-        tags=["test-tag", "another-tag"],
+        tags=["test-tag", "another-tag", "tag-after-two-spaces"],
     )
 
     assert get_zettel(Path(f"testing/zet/{ZETDIR}/20211016205158")) == expected

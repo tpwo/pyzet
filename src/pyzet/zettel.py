@@ -71,6 +71,6 @@ def get_markdown_title(line: str, id_: str) -> str:
 
 def get_tags(line: str) -> list[str]:
     tags = []
-    for tag in line.split(" "):
+    for tag in line.split():
         tags.append(tag.lstrip("#"))
     return tags
