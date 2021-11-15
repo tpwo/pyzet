@@ -30,7 +30,9 @@ def main(argv: list[str] | None = None) -> int:
 
     logging.basicConfig(level=logging.INFO)
 
-    parser = argparse.ArgumentParser(prog="pyzet")
+    parser = argparse.ArgumentParser(
+        prog="pyzet", formatter_class=argparse.RawTextHelpFormatter
+    )
 
     # https://stackoverflow.com/a/8521644/812183
     parser.add_argument(
