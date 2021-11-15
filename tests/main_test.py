@@ -49,7 +49,7 @@ def test_list_tags(capsys):
     main(["--repo", "testing/zet", "tags"])
 
     out, err = capsys.readouterr()
-    assert out == "1\t#another-tag\n1\t#test-tag\n"
+    assert out == "1\t#another-tag\n1\t#tag-after-two-spaces\n1\t#test-tag\n"
     assert err == ""
 
 
@@ -57,7 +57,7 @@ def test_list_tags_reverse(capsys):
     main(["--repo", "testing/zet", "tags", "--reverse"])
 
     out, err = capsys.readouterr()
-    assert out == "1\t#test-tag\n1\t#another-tag\n"
+    assert out == "1\t#test-tag\n1\t#tag-after-two-spaces\n1\t#another-tag\n"
     assert err == ""
 
 
@@ -65,7 +65,7 @@ def test_list_tags_count(capsys):
     main(["--repo", "testing/zet", "tags", "--count"])
 
     out, err = capsys.readouterr()
-    assert out == "2\n"
+    assert out == "3\n"
     assert err == ""
 
 
@@ -96,8 +96,8 @@ def test_show_zettel(capsys):
 
     out, err = capsys.readouterr()
     assert (
-        out
-        == "# Zet test entry\n\nHello there!\n\nTags:\n\n    #test-tag #another-tag\n"
+        out == "# Zet test entry\n\nHello there!\n\nTags:\n\n"
+        "    #test-tag #another-tag  #tag-after-two-spaces\n"
     )
     assert err == ""
 
