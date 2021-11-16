@@ -55,7 +55,7 @@ def main(argv: list[str] | None = None) -> int:
         action="store",
         type=str,
         nargs="*",
-        default=["."],
+        default=[],
         help="`git status` options, use `--` before including them",
     )
 
@@ -116,7 +116,7 @@ def main(argv: list[str] | None = None) -> int:
         action="store",
         type=str,
         nargs="*",
-        default=["."],
+        default=[],
         help="`git status` options, use `--` before including them",
     )
 
