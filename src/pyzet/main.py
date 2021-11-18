@@ -6,6 +6,7 @@ import logging
 import shutil
 import subprocess
 import sys
+from argparse import ArgumentParser, Namespace
 from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime
@@ -30,6 +31,18 @@ def main(argv: list[str] | None = None) -> int:
 
     logging.basicConfig(level=logging.INFO)
 
+    parser = _get_parser()
+    args = parser.parse_args(argv)
+    return_code = _parse_args(args)
+
+    if return_code is None:
+        parser.print_usage()
+        return 0
+
+    return return_code
+
+
+def _get_parser() -> ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="pyzet", formatter_class=argparse.RawTextHelpFormatter
     )
@@ -120,8 +133,10 @@ def main(argv: list[str] | None = None) -> int:
         help="`git status` options, use `--` before including them",
     )
 
-    args = parser.parse_args(argv)
+    return parser
 
+
+def _parse_args(args: Namespace) -> int | None:
     config = Config()
 
     if args.repo:
@@ -170,9 +185,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "rm":
         return remove_zettel(config.repo_path, args.id[0])
 
-    parser.print_usage()
-
-    return 0
+    return None
 
 
 def _validate_id(args: argparse.Namespace, config: Config) -> None:
