@@ -103,7 +103,7 @@ def test_get_markdown_title():
 
 @pytest.mark.parametrize(
     "test_input",
-    [
+    (
         "#  Additional space",
         "#   Additional two spaces",
         "## Wrong title level",
@@ -116,7 +116,7 @@ def test_get_markdown_title():
         " # Leading space",
         "# Trailing space ",
         " # Leading and trailing space ",
-    ],
+    ),
 )
 def test_get_markdown_title_warning(test_input, caplog):
     assert get_markdown_title(test_input, id_="20211016205159") == test_input
