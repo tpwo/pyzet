@@ -137,15 +137,6 @@ def test_clean_zettels_dry_run(capsys):
         assert Path(tmpdir, ZETDIR, id_).exists()
 
 
-@pytest.mark.skip
-def test_add_zettel(capsys):
-    main(["--repo", "testing/zet", "add"])
-
-    out, err = capsys.readouterr()
-    assert out == ""
-    assert err == ""
-
-
 def test_alternative_repo(capsys):
     main(["--repo", "testing/zet"])
 
