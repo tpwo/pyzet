@@ -166,13 +166,13 @@ def _parse_args_with_id(id_: str, command: str, config: Config) -> int:
     _validate_id(id_, command, config)
 
     if command == "show":
-        return show_zettel(config.repo_path, id_)
+        return show_zettel(id_, config.repo_path)
 
     if command == "edit":
-        return edit_zettel(id_, config)
+        return edit_zettel(id_, config.repo_path, config.editor)
 
     if command == "rm":
-        return remove_zettel(config.repo_path, id_)
+        return remove_zettel(id_, config.repo_path)
 
     raise NotImplementedError
 
@@ -257,7 +257,7 @@ def count_tags(path: Path) -> int:
     return 0
 
 
-def show_zettel(repo_path: Path, id_: str) -> int:
+def show_zettel(id_: str, repo_path: Path) -> int:
     zettel = get_zettel(Path(repo_path, const.ZETDIR, id_))
     print_zettel(zettel)
     return 0
@@ -300,14 +300,14 @@ def add_zettel(config: Config) -> int:
     return 0
 
 
-def edit_zettel(id_: str, config: Config) -> int:
+def edit_zettel(id_: str, repo_path: Path, editor: Path) -> int:
     """Edits zettel and commits the changes with `ED:` in the commit message."""
-    zettel_path = Path(config.repo_path, const.ZETDIR, id_, const.ZETTEL_FILENAME)
-    _open_file(zettel_path, config.editor)
+    zettel_path = Path(repo_path, const.ZETDIR, id_, const.ZETTEL_FILENAME)
+    _open_file(zettel_path, editor)
     logging.info(f"{id_} was edited")
 
     zettel = get_zettel(zettel_path.parent)
-    _commit_zettel(config.repo_path, zettel_path, f"ED: {zettel.title}")
+    _commit_zettel(repo_path, zettel_path, f"ED: {zettel.title}")
 
     return 0
 
@@ -325,7 +325,7 @@ def _open_file(filename: Path, editor: Path) -> None:
         subprocess.call([opener, filename])
 
 
-def remove_zettel(repo_path: Path, id_: str) -> int:
+def remove_zettel(id_: str, repo_path: Path) -> int:
     """Removes zettel and commits the changes with `RM:` in the commit message."""
     if input(f"{id_} will be deleted. Are you sure? (y/N): ") != "y":
         raise SystemExit("aborting")
