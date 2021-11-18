@@ -144,16 +144,7 @@ def _parse_args(args: Namespace) -> int | None:
     except AttributeError:
         pass  # command that doesn't use `id` was executed
     else:
-        _validate_id(id_, args.command, config)
-
-        if args.command == "show":
-            return show_zettel(config.repo_path, id_)
-
-        if args.command == "edit":
-            return edit_zettel(id_, config)
-
-        if args.command == "rm":
-            return remove_zettel(config.repo_path, id_)
+        return _parse_args_with_id(id_, args.command, config)
 
     if args.command == "add":
         return add_zettel(config)
@@ -191,6 +182,21 @@ def _get_config(args_repo_path: str) -> Config:
             f"Create folder `{config.repo_path}` or use `--repo` flag."
         )
     return config
+
+
+def _parse_args_with_id(id_: str, command: str, config: Config) -> int:
+    _validate_id(id_, command, config)
+
+    if command == "show":
+        return show_zettel(config.repo_path, id_)
+
+    if command == "edit":
+        return edit_zettel(id_, config)
+
+    if command == "rm":
+        return remove_zettel(config.repo_path, id_)
+
+    raise NotImplementedError
 
 
 def _validate_id(id_: str, command: str, config: Config) -> None:
