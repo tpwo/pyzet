@@ -149,16 +149,23 @@ def _parse_args(args: Namespace) -> int | None:
         )
 
     try:
-        if args.id:
-            _validate_id(args, config)
+        id_ = args.id[0]
     except AttributeError:
         pass  # command that doesn't use `id` was executed
+    else:
+        _validate_id(id_, args.command, config)
 
-    if args.command == "status":
-        return get_repo_status(config.repo_path, args.options)
+        if args.command == "show":
+            return show_zettel(config.repo_path, id_)
 
-    if args.command == "push":
-        return push_to_remote(config.repo_path, args.options)
+        if args.command == "edit":
+            return edit_zettel(id_, config)
+
+        if args.command == "rm":
+            return remove_zettel(config.repo_path, id_)
+
+    if args.command == "add":
+        return add_zettel(config)
 
     if args.command == "list":
         return list_zettels(
@@ -170,37 +177,29 @@ def _parse_args(args: Namespace) -> int | None:
             return count_tags(config.repo_path)
         return list_tags(config.repo_path, is_reversed=args.reverse)
 
-    if args.command == "show":
-        return show_zettel(config.repo_path, args.id[0])
+    if args.command == "status":
+        return get_repo_status(config.repo_path, args.options)
+
+    if args.command == "push":
+        return push_to_remote(config.repo_path, args.options)
 
     if args.command == "clean":
         return clean_zet_repo(config.repo_path, is_dry_run=args.dry_run)
 
-    if args.command == "add":
-        return add_zettel(config)
-
-    if args.command == "edit":
-        return edit_zettel(args.id[0], config)
-
-    if args.command == "rm":
-        return remove_zettel(config.repo_path, args.id[0])
-
     return None
 
 
-def _validate_id(args: argparse.Namespace, config: Config) -> None:
-    zettel_dir = Path(config.repo_path, const.ZETDIR, args.id[0])
+def _validate_id(id_: str, command: str, config: Config) -> None:
+    zettel_dir = Path(config.repo_path, const.ZETDIR, id_)
     if not zettel_dir.is_dir():
-        raise SystemExit(f"ERROR: folder {args.id[0]} doesn't exist")
+        raise SystemExit(f"ERROR: folder {id_} doesn't exist")
     if not Path(zettel_dir, const.ZETTEL_FILENAME).is_file():
-        if args.command == "rm":
+        if command == "rm":
             raise SystemExit(
-                f"ERROR: {const.ZETTEL_FILENAME} in {args.id[0]} doesn't exist. "
+                f"ERROR: {const.ZETTEL_FILENAME} in {id_} doesn't exist. "
                 "Use `pyzet clean` to remove empty folder"
             )
-        raise SystemExit(
-            f"ERROR: {const.ZETTEL_FILENAME} in {args.id[0]} doesn't exist"
-        )
+        raise SystemExit(f"ERROR: {const.ZETTEL_FILENAME} in {id_} doesn't exist")
 
 
 def get_repo_status(path: Path, options: list[str]) -> int:
