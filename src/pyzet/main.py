@@ -137,16 +137,7 @@ def _get_parser() -> ArgumentParser:
 
 
 def _parse_args(args: Namespace) -> int | None:
-    config = Config()
-
-    if args.repo:
-        config.repo_path = Path(args.repo)
-
-    if not config.repo_path.is_dir():
-        raise SystemExit(
-            "ERROR: wrong repo path. "
-            f"Create folder `{config.repo_path}` or use `--repo` flag."
-        )
+    config = _get_config(args.repo)
 
     try:
         id_ = args.id[0]
@@ -187,6 +178,19 @@ def _parse_args(args: Namespace) -> int | None:
         return clean_zet_repo(config.repo_path, is_dry_run=args.dry_run)
 
     return None
+
+
+def _get_config(args_repo_path: str) -> Config:
+    """Gets config values from CLI or from default value and validates them."""
+    config = Config()
+    if args_repo_path:
+        config.repo_path = Path(args_repo_path)
+    if not config.repo_path.is_dir():
+        raise SystemExit(
+            "ERROR: wrong repo path. "
+            f"Create folder `{config.repo_path}` or use `--repo` flag."
+        )
+    return config
 
 
 def _validate_id(id_: str, command: str, config: Config) -> None:
