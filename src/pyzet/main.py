@@ -137,37 +137,13 @@ def _get_parser() -> ArgumentParser:
 
 def _parse_args(args: Namespace) -> int:
     config = _get_config(args.repo)
-
     try:
         id_ = args.id[0]
     except AttributeError:
         pass  # command that doesn't use `id` was executed
     else:
         return _parse_args_with_id(id_, args.command, config)
-
-    if args.command == "add":
-        return add_zettel(config)
-
-    if args.command == "list":
-        return list_zettels(
-            config.repo_path, is_pretty=args.pretty, is_reversed=args.reverse
-        )
-
-    if args.command == "tags":
-        if args.count:
-            return count_tags(config.repo_path)
-        return list_tags(config.repo_path, is_reversed=args.reverse)
-
-    if args.command == "status":
-        return get_repo_status(config.repo_path, args.options)
-
-    if args.command == "push":
-        return push_to_remote(config.repo_path, args.options)
-
-    if args.command == "clean":
-        return clean_zet_repo(config.repo_path, is_dry_run=args.dry_run)
-
-    raise NotImplementedError
+    return _parse_args_without_id(args, config)
 
 
 def _get_config(args_repo_path: str) -> Config:
@@ -194,6 +170,32 @@ def _parse_args_with_id(id_: str, command: str, config: Config) -> int:
 
     if command == "rm":
         return remove_zettel(config.repo_path, id_)
+
+    raise NotImplementedError
+
+
+def _parse_args_without_id(args: Namespace, config: Config) -> int:
+    if args.command == "add":
+        return add_zettel(config)
+
+    if args.command == "list":
+        return list_zettels(
+            config.repo_path, is_pretty=args.pretty, is_reversed=args.reverse
+        )
+
+    if args.command == "tags":
+        if args.count:
+            return count_tags(config.repo_path)
+        return list_tags(config.repo_path, is_reversed=args.reverse)
+
+    if args.command == "status":
+        return get_repo_status(config.repo_path, args.options)
+
+    if args.command == "push":
+        return push_to_remote(config.repo_path, args.options)
+
+    if args.command == "clean":
+        return clean_zet_repo(config.repo_path, is_dry_run=args.dry_run)
 
     raise NotImplementedError
 
