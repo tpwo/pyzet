@@ -23,12 +23,7 @@ class Config:
 
 
 def main(argv: list[str] | None = None) -> int:
-    # https://stackoverflow.com/a/60634040/14458327
-    if isinstance(sys.stdout, io.TextIOWrapper):
-        # if statement is needed to satisfy mypy
-        # https://github.com/python/typeshed/issues/3049
-        sys.stdout.reconfigure(encoding="utf-8")
-
+    _configure_console_print_utf8()
     logging.basicConfig(level=logging.INFO)
 
     parser = _get_parser()
@@ -39,6 +34,14 @@ def main(argv: list[str] | None = None) -> int:
     except NotImplementedError:
         parser.print_usage()
         return 0
+
+
+def _configure_console_print_utf8() -> None:
+    # https://stackoverflow.com/a/60634040/14458327
+    if isinstance(sys.stdout, io.TextIOWrapper):
+        # if statement is needed to satisfy mypy
+        # https://github.com/python/typeshed/issues/3049
+        sys.stdout.reconfigure(encoding="utf-8")
 
 
 def _get_parser() -> ArgumentParser:
