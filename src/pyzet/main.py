@@ -33,13 +33,12 @@ def main(argv: list[str] | None = None) -> int:
 
     parser = _get_parser()
     args = parser.parse_args(argv)
-    return_code = _parse_args(args)
 
-    if return_code is None:
+    try:
+        return _parse_args(args)
+    except NotImplementedError:
         parser.print_usage()
         return 0
-
-    return return_code
 
 
 def _get_parser() -> ArgumentParser:
@@ -136,7 +135,7 @@ def _get_parser() -> ArgumentParser:
     return parser
 
 
-def _parse_args(args: Namespace) -> int | None:
+def _parse_args(args: Namespace) -> int:
     config = _get_config(args.repo)
 
     try:
@@ -168,7 +167,7 @@ def _parse_args(args: Namespace) -> int | None:
     if args.command == "clean":
         return clean_zet_repo(config.repo_path, is_dry_run=args.dry_run)
 
-    return None
+    raise NotImplementedError
 
 
 def _get_config(args_repo_path: str) -> Config:
