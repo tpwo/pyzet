@@ -309,27 +309,29 @@ def edit_zettel(id_: str, repo_path: Path, editor: Path) -> int:
     zettel = get_zettel(zettel_path.parent)
 
     _commit_zettel(
-        repo_path, zettel_path, _get_edit_commit_msg(zettel.id_, zettel.title)
+        repo_path,
+        zettel_path,
+        _get_edit_commit_msg(zettel.id_, zettel.title, repo_path),
     )
     return 0
 
 
-def _get_edit_commit_msg(id_: str, title: str) -> str:
-    if _check_for_file_in_git(f"{const.ZETDIR}/{id_}/{const.ZETTEL_FILENAME}"):
+def _get_edit_commit_msg(id_: str, title: str, repo_path: Path) -> str:
+    zettel_path = Path(f"{const.ZETDIR}/{id_}/{const.ZETTEL_FILENAME}")
+    if _check_for_file_in_git(zettel_path, repo_path):
         return f"ED: {title}"
     return title
 
 
-def _check_for_file_in_git(path: str) -> bool:
-    try:
-        subprocess.run(
-            [_get_git_cmd(), "ls-files", "--error-unmatch", path],
-            capture_output=True,
-            check=True,
-        )
-    except subprocess.CalledProcessError:
-        return False
-    return True
+def _check_for_file_in_git(filepath: Path, repo_path: Path) -> bool:
+    """Checks if a file was committed to git."""
+    git_log_output = subprocess.run(
+        [_get_git_cmd(), "-C", repo_path, "log", filepath],
+        capture_output=True,
+        check=True,
+    ).stdout
+    # If `git log` output is empty, the file wasn't committed
+    return git_log_output != b""
 
 
 def _open_file(filename: Path, editor: Path) -> None:
