@@ -217,12 +217,12 @@ def _validate_id(id_: str, command: str, config: Config) -> None:
 
 
 def get_repo_status(path: Path, options: list[str]) -> int:
-    subprocess.call([_get_git_cmd(), "-C", path, "status", *options])
+    subprocess.run([_get_git_cmd(), "-C", path, "status", *options])
     return 0
 
 
 def push_to_remote(path: Path, options: list[str]) -> int:
-    subprocess.call([_get_git_cmd(), "-C", path, "push", *options])
+    subprocess.run([_get_git_cmd(), "-C", path, "push", *options])
     return 0
 
 
@@ -334,7 +334,7 @@ def _check_for_file_in_git(path: str) -> bool:
 
 def _open_file(filename: Path, editor: Path) -> None:
     if sys.platform == "win32":
-        subprocess.call([editor, filename])
+        subprocess.run([editor, filename])
     else:
         vim_path = shutil.which("vi")
 
@@ -342,7 +342,7 @@ def _open_file(filename: Path, editor: Path) -> None:
             raise SystemExit("ERROR: `vi` cannot be found by `which` command")
 
         opener = "open" if sys.platform == "darwin" else vim_path
-        subprocess.call([opener, filename])
+        subprocess.run([opener, filename])
 
 
 def remove_zettel(id_: str, repo_path: Path) -> int:
@@ -364,8 +364,8 @@ def remove_zettel(id_: str, repo_path: Path) -> int:
 
 def _commit_zettel(repo_path: Path, zettel_path: Path, message: str) -> None:
     git_cmd = _get_git_cmd()
-    subprocess.call([git_cmd, "-C", repo_path, "add", zettel_path])
-    subprocess.call([git_cmd, "-C", repo_path, "commit", "-m", message])
+    subprocess.run([git_cmd, "-C", repo_path, "add", zettel_path])
+    subprocess.run([git_cmd, "-C", repo_path, "commit", "-m", message])
 
 
 def _get_git_cmd() -> Path:
