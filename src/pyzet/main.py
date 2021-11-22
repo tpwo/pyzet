@@ -307,9 +307,29 @@ def edit_zettel(id_: str, repo_path: Path, editor: Path) -> int:
     logging.info(f"{id_} was edited")
 
     zettel = get_zettel(zettel_path.parent)
-    _commit_zettel(repo_path, zettel_path, f"ED: {zettel.title}")
 
+    _commit_zettel(
+        repo_path, zettel_path, _get_edit_commit_msg(zettel.id_, zettel.title)
+    )
     return 0
+
+
+def _get_edit_commit_msg(id_: str, title: str) -> str:
+    if _check_for_file_in_git(f"{const.ZETDIR}/{id_}/{const.ZETTEL_FILENAME}"):
+        return f"ED: {title}"
+    return title
+
+
+def _check_for_file_in_git(path: str) -> bool:
+    try:
+        subprocess.run(
+            [_get_git_cmd(), "ls-files", "--error-unmatch", path],
+            capture_output=True,
+            check=True,
+        )
+    except subprocess.CalledProcessError:
+        return False
+    return True
 
 
 def _open_file(filename: Path, editor: Path) -> None:
