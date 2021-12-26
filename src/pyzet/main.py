@@ -262,10 +262,7 @@ def list_tags(path: Path, is_reversed: bool) -> int:
 
 
 def count_tags(path: Path) -> int:
-    total_tags = 0
-    for zettel in get_zettels(Path(path, const.ZETDIR)):
-        total_tags += len(zettel.tags)
-    print(total_tags)
+    print(sum(len(zettel.tags) for zettel in get_zettels(Path(path, const.ZETDIR))))
     return 0
 
 
