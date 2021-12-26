@@ -102,6 +102,14 @@ def test_show_zettel(capsys):
     assert err == ""
 
 
+def test_show_zettel_default(capsys):
+    main(["--repo", "testing/zet", "show"])
+
+    out, err = capsys.readouterr()
+    assert out == "# Another zet test entry\n\nHello everyone\n"
+    assert err == ""
+
+
 def test_list_zettels_warning(caplog):
     id_ = "20211016205158"
     with tempfile.TemporaryDirectory() as tmpdir:
