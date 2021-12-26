@@ -129,7 +129,6 @@ def test_get_markdown_title():
         "##Missing space and wrong title level",
         "#",
         "##",
-        "",
         "Title without leading #",
         " # Leading space",
         "# Trailing space ",
@@ -139,3 +138,20 @@ def test_get_markdown_title():
 def test_get_markdown_title_warning(test_input, caplog):
     assert get_markdown_title(test_input, id_="20211016205159") == test_input
     assert f'wrong title formatting: 20211016205159 "{test_input}"' in caplog.text
+
+
+@pytest.mark.parametrize(
+    "test_input",
+    (
+        "",
+        " ",
+        "  ",
+        "\t",
+        "\t ",
+        " \t",
+        " \t ",
+    ),
+)
+def test_get_markdown_value_error(test_input, caplog):
+    with pytest.raises(ValueError):
+        get_markdown_title(test_input, id_="20211016205159")
