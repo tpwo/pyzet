@@ -44,7 +44,11 @@ def get_zettel(path: Path) -> Zettel:
     timestamp = _get_timestamp(path.name)
     with open(Path(path, ZETTEL_FILENAME), "r", encoding="utf-8") as file:
         contents = file.readlines()
-    title = get_markdown_title(contents[0].strip("\n"), path.name)
+    try:
+        title_raw = contents[0].strip("\n")
+    except IndexError:  # We raise ValueError, so it's intercepted by get_zettels()
+        raise ValueError("Empty zettel found, are you in progress of `pyzet add`?")
+    title = get_markdown_title(title_raw, path.name)
     tags = get_tags(contents[-1].strip()) if contents[-1].startswith(4 * " ") else []
     return Zettel(
         title=title, id_=path.name, text=contents, timestamp=timestamp, tags=tags
