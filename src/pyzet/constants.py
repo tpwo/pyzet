@@ -12,6 +12,8 @@ ZETDIR = "zettels"
 ZETTEL_FILENAME = "README.md"
 ZULU_DATETIME_FORMAT = "%Y%m%d%H%M%S"
 
+ZETTEL_WIDTH = 72
+
 # Well formatted Markdown title:
 # - single # and a single space between it and the rest of the title
 # - no leading or trailing spaces
