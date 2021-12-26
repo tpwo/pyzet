@@ -45,7 +45,7 @@ def get_zettel(path: Path) -> Zettel:
     with open(Path(path, ZETTEL_FILENAME), "r", encoding="utf-8") as file:
         contents = file.readlines()
     try:
-        title_raw = contents[0].strip("\n")
+        title_raw = contents[0]
     except IndexError:  # We raise ValueError, so it's intercepted by get_zettels()
         raise ValueError("Empty zettel found, are you in progress of `pyzet add`?")
     title = get_markdown_title(title_raw, path.name)
@@ -70,12 +70,15 @@ def get_markdown_title(line: str, id_: str) -> str:
 
     Otherwise, returns the whole line and logs a warning.
     `line` arg should have newline characters stripped.
+
+    Raises ValueError if empty or whitespace only title is given as input.
     """
+    if line.strip() == "":
+        raise ValueError("Empty zettel title found")
     result = re.match(MARKDOWN_TITLE, line)
     if not result:
         logging.warning(f'wrong title formatting: {id_} "{line}"')
         return line
-
     return result.groups()[0]
 
 
