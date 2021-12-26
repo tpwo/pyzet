@@ -298,14 +298,19 @@ def add_zettel(config: Config) -> int:
     zettel_path = Path(zettel_dir, const.ZETTEL_FILENAME)
 
     with open(zettel_path, "w+") as file:
-        file.write("# ")
+        file.write("")
 
     _open_file(zettel_path, config.editor)
     logging.info(f"{id_} was created")
 
-    zettel = get_zettel(zettel_path.parent)
-    _commit_zettel(config.repo_path, zettel_path, zettel.title)
-
+    try:
+        zettel = get_zettel(zettel_path.parent)
+    except ValueError:
+        logging.info("Adding zettel aborted, cleaning up...")
+        zettel_path.unlink()
+        zettel_dir.rmdir()
+    else:
+        _commit_zettel(config.repo_path, zettel_path, zettel.title)
     return 0
 
 
