@@ -102,7 +102,11 @@ def _get_parser() -> ArgumentParser:
     )
 
     show_parser = subparsers.add_parser("show", help="print zettel contents")
-    show_parser.add_argument("id", nargs=1, help="zettel id (timestamp)")
+    show_parser.add_argument(
+        "id",
+        nargs="?",
+        help="zettel id, by default shows zettel with the newest timestamp",
+    )
 
     clean_parser = subparsers.add_parser(
         "clean", help="delete empty folders in zet repo"
@@ -141,7 +145,10 @@ def _get_parser() -> ArgumentParser:
 def _parse_args(args: Namespace) -> int:
     config = _get_config(args.repo)
     try:
-        id_ = args.id[0]
+        if args.command == "show":
+            id_ = args.id  # show uses nargs="?" which makes it str, not 1-el list
+        else:
+            id_ = args.id[0]
     except AttributeError:
         pass  # command that doesn't use `id` was executed
     else:
@@ -163,6 +170,9 @@ def _get_config(args_repo_path: str) -> Config:
 
 
 def _parse_args_with_id(id_: str, command: str, config: Config) -> int:
+    if id_ is None and command == "show":
+        return show_zettel(_get_last_zettel_id(config.repo_path), config.repo_path)
+
     _validate_id(id_, command, config)
 
     if command == "show":
@@ -175,6 +185,10 @@ def _parse_args_with_id(id_: str, command: str, config: Config) -> int:
         return remove_zettel(id_, config.repo_path)
 
     raise NotImplementedError
+
+
+def _get_last_zettel_id(repo_path: Path) -> str:
+    return get_zettels(Path(repo_path, const.ZETDIR), is_reversed=True)[0].id_
 
 
 def _parse_args_without_id(args: Namespace, config: Config) -> int:
