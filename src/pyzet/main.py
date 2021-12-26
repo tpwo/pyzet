@@ -320,13 +320,17 @@ def edit_zettel(id_: str, repo_path: Path, editor: Path) -> int:
     _open_file(zettel_path, editor)
     logging.info(f"{id_} was edited")
 
-    zettel = get_zettel(zettel_path.parent)
-
-    _commit_zettel(
-        repo_path,
-        zettel_path,
-        _get_edit_commit_msg(zettel.id_, zettel.title, repo_path),
-    )
+    try:
+        zettel = get_zettel(zettel_path.parent)
+    except ValueError:
+        logging.info("Editing zettel aborted, restoring the version from git...")
+        subprocess.run([_get_git_cmd(), "-C", repo_path, "restore", zettel_path])
+    else:
+        _commit_zettel(
+            repo_path,
+            zettel_path,
+            _get_edit_commit_msg(zettel.id_, zettel.title, repo_path),
+        )
     return 0
 
 
