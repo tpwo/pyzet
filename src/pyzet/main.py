@@ -324,7 +324,6 @@ def edit_zettel(id_: str, repo_path: Path, editor: Path) -> int:
     """Edits zettel and commits the changes with `ED:` in the commit message."""
     zettel_path = Path(repo_path, const.ZETDIR, id_, const.ZETTEL_FILENAME)
     _open_file(zettel_path, editor)
-    logging.info(f"{id_} was edited")
 
     try:
         zettel = get_zettel(zettel_path.parent)
@@ -332,11 +331,15 @@ def edit_zettel(id_: str, repo_path: Path, editor: Path) -> int:
         logging.info("Editing zettel aborted, restoring the version from git...")
         subprocess.run([_get_git_cmd(), "-C", repo_path, "restore", zettel_path])
     else:
-        _commit_zettel(
-            repo_path,
-            zettel_path,
-            _get_edit_commit_msg(zettel.id_, zettel.title, repo_path),
-        )
+        if _check_for_file_changes(zettel_path, repo_path):
+            _commit_zettel(
+                repo_path,
+                zettel_path,
+                _get_edit_commit_msg(zettel.id_, zettel.title, repo_path),
+            )
+            logging.info(f"{id_} was edited")
+        else:
+            logging.info(f"{id_} wasn't modified")
     return 0
 
 
@@ -348,7 +351,7 @@ def _get_edit_commit_msg(id_: str, title: str, repo_path: Path) -> str:
 
 
 def _check_for_file_in_git(filepath: Path, repo_path: Path) -> bool:
-    """Checks if a file was committed to git."""
+    """Returns True if a file was committed to git."""
     git_log_output = subprocess.run(
         [_get_git_cmd(), "-C", repo_path, "log", filepath],
         capture_output=True,
@@ -356,6 +359,17 @@ def _check_for_file_in_git(filepath: Path, repo_path: Path) -> bool:
     ).stdout
     # If `git log` output is empty, the file wasn't committed
     return git_log_output != b""
+
+
+def _check_for_file_changes(filepath: Path, repo_path: Path) -> bool:
+    """Returns True if a file was modified in a working dir."""
+    git_diff_output = subprocess.run(
+        [_get_git_cmd(), "-C", repo_path, "diff", filepath],
+        capture_output=True,
+        check=True,
+    ).stdout
+    # If `git diff` output is empty, the file wasn't modified
+    return git_diff_output != b""
 
 
 def _open_file(filename: Path, editor: Path) -> None:
