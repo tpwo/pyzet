@@ -122,7 +122,11 @@ def _get_parser() -> ArgumentParser:
     subparsers.add_parser("add", help="add a new zettel")
 
     edit_parser = subparsers.add_parser("edit", help="edit a zettel")
-    edit_parser.add_argument("id", nargs=1, help="zettel id (timestamp)")
+    edit_parser.add_argument(
+        "id",
+        nargs="?",
+        help="zettel id, by default edits zettel with the newest timestamp",
+    )
 
     remove_parser = subparsers.add_parser("rm", help="remove a zettel")
     remove_parser.add_argument("id", nargs=1, help="zettel id (timestamp)")
@@ -145,9 +149,11 @@ def _get_parser() -> ArgumentParser:
 
 def _parse_args(args: Namespace) -> int:
     config = _get_config(args.repo)
+    id_: str | None
     try:
-        if args.command == "show":
-            id_ = args.id  # show uses nargs="?" which makes it str, not 1-el list
+        # show & edit use nargs="?" which makes it str, rather than single elem list
+        if args.command in ("show", "edit"):
+            id_ = args.id
         else:
             id_ = args.id[0]
     except AttributeError:
@@ -170,9 +176,9 @@ def _get_config(args_repo_path: str) -> Config:
     return config
 
 
-def _parse_args_with_id(id_: str, command: str, config: Config) -> int:
-    if id_ is None and command == "show":
-        return show_zettel(_get_last_zettel_id(config.repo_path), config.repo_path)
+def _parse_args_with_id(id_: str | None, command: str, config: Config) -> int:
+    if id_ is None:
+        id_ = _get_last_zettel_id(config.repo_path)
 
     _validate_id(id_, command, config)
 
