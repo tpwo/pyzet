@@ -95,8 +95,8 @@ def test_show_zettel(capsys):
     main(["--repo", "testing/zet", "show", "20211016205158"])
 
     out, err = capsys.readouterr()
-    assert (
-        out == "# Zet test entry\n\nHello there!\n\nTags:\n\n"
+    assert out.endswith(
+        "# Zet test entry\n\nHello there!\n\nTags:\n\n"
         "    #test-tag #another-tag  #tag-after-two-spaces\n"
     )
     assert err == ""
@@ -106,7 +106,7 @@ def test_show_zettel_default(capsys):
     main(["--repo", "testing/zet", "show"])
 
     out, err = capsys.readouterr()
-    assert out == "# Another zet test entry\n\nHello everyone\n"
+    assert out.endswith("# Another zet test entry\n\nHello everyone\n")
     assert err == ""
 
 

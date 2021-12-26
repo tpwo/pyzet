@@ -93,7 +93,7 @@ def test_print_zettel(capsys):
     print_zettel(test_zettel)
 
     out, err = capsys.readouterr()
-    assert out == "# Zet test entry\n\nHello there!\n"
+    assert out.endswith("# Zet test entry\n\nHello there!\n")
     assert err == ""
 
 
