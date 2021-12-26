@@ -2,12 +2,13 @@ from __future__ import annotations
 
 import argparse
 import io
+import itertools
 import logging
 import shutil
 import subprocess
 import sys
 from argparse import ArgumentParser, Namespace
-from collections import defaultdict
+from collections import Counter
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
@@ -248,18 +249,15 @@ def list_zettels(path: Path, is_pretty: bool, is_reversed: bool) -> int:
 
 
 def list_tags(path: Path, is_reversed: bool) -> int:
-    tags: defaultdict[str, int] = defaultdict(int)
-    for zettel in get_zettels(Path(path, const.ZETDIR)):
-        for tag in zettel.tags:
-            tags[tag] += 1
+    zettels = get_zettels(Path(path, const.ZETDIR))
+    all_tags = itertools.chain(*[t for t in [z.tags for z in zettels]])
 
-    # sort by occurrence, and then by the tag name
-    # https://stackoverflow.com/a/613230/14458327
-    for occurrences, tag in sorted(
-        ((value, key) for key, value in tags.items()), reverse=is_reversed
-    ):
-        print(f"{occurrences}\t#{tag}")
+    # chain is reverse sorted for correct alphabetical displaying for the same
+    # tag counts as Counter's most_common() method remembers the insertion order
+    tags = Counter(sorted(all_tags, reverse=True))
 
+    target = tags.most_common() if is_reversed else reversed(tags.most_common())
+    [print(f"{occurrences}\t#{tag}") for tag, occurrences in target]
     return 0
 
 

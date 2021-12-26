@@ -33,7 +33,16 @@ def test_get_zettels():
         Zettel(
             title="Another zet test entry",
             id_="20211016223643",
-            text=["# Another zet test entry\n", "\n", "Hello everyone\n"],
+            text=[
+                "# Another zet test entry\n",
+                "\n",
+                "Hello everyone\n",
+                "\n",
+                "Tags:\n",
+                "\n",
+                "    #test-tag\n",
+            ],
+            tags=["test-tag"],
         ),
     ]
 
@@ -45,7 +54,16 @@ def test_get_zettels_reverse():
         Zettel(
             title="Another zet test entry",
             id_="20211016223643",
-            text=["# Another zet test entry\n", "\n", "Hello everyone\n"],
+            text=[
+                "# Another zet test entry\n",
+                "\n",
+                "Hello everyone\n",
+                "\n",
+                "Tags:\n",
+                "\n",
+                "    #test-tag\n",
+            ],
+            tags=["test-tag"],
         ),
         Zettel(
             title="Zet test entry",
