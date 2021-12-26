@@ -335,7 +335,7 @@ def edit_zettel(id_: str, repo_path: Path, editor: Path) -> int:
             _commit_zettel(
                 repo_path,
                 zettel_path,
-                _get_edit_commit_msg(zettel.id_, zettel.title, repo_path),
+                _get_edit_commit_msg(zettel_path, zettel.title, repo_path),
             )
             logging.info(f"{id_} was edited")
         else:
@@ -343,8 +343,7 @@ def edit_zettel(id_: str, repo_path: Path, editor: Path) -> int:
     return 0
 
 
-def _get_edit_commit_msg(id_: str, title: str, repo_path: Path) -> str:
-    zettel_path = Path(f"{const.ZETDIR}/{id_}/{const.ZETTEL_FILENAME}")
+def _get_edit_commit_msg(zettel_path: Path, title: str, repo_path: Path) -> str:
     if _check_for_file_in_git(zettel_path, repo_path):
         return f"ED: {title}"
     return title
