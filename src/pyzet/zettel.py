@@ -58,8 +58,7 @@ def _get_timestamp(id_: str) -> datetime:
 def print_zettel(zet: Zettel) -> None:
     """Prints zettel text prepended with centered ID as a header."""
     print(f" {zet.id_} ".center(ZETTEL_WIDTH, "="))
-    for line in zet.text:
-        print(line, end="")
+    [print(line, end="") for line in zet.text]
 
 
 def get_markdown_title(line: str, id_: str) -> str:
