@@ -6,12 +6,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
-from pyzet.constants import (
-    MARKDOWN_TITLE,
-    ZETTEL_FILENAME,
-    ZETTEL_WIDTH,
-    ZULU_DATETIME_FORMAT,
-)
+from pyzet.constants import MARKDOWN_TITLE, ZETTEL_FILENAME, ZULU_DATETIME_FORMAT
 
 
 @dataclass
@@ -57,12 +52,6 @@ def get_zettel(path: Path) -> Zettel:
 
 def _get_timestamp(id_: str) -> datetime:
     return datetime.strptime(id_, ZULU_DATETIME_FORMAT)
-
-
-def print_zettel(zet: Zettel) -> None:
-    """Prints zettel text prepended with centered ID as a header."""
-    print(f" {zet.id_} ".center(ZETTEL_WIDTH, "="))
-    [print(line, end="") for line in zet.text]
 
 
 def get_markdown_title(line: str, id_: str) -> str:
