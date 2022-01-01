@@ -85,18 +85,6 @@ def test_get_markdown_title_warning(test_input, caplog):
     assert f'wrong title formatting: 20211016205159 "{test_input}"' in caplog.text
 
 
-@pytest.mark.parametrize(
-    "test_input",
-    (
-        "",
-        " ",
-        "  ",
-        "\t",
-        "\t ",
-        " \t",
-        " \t ",
-    ),
-)
-def test_get_markdown_value_error(test_input, caplog):
+def test_get_markdown_value_error():
     with pytest.raises(ValueError):
-        get_markdown_title(test_input, id_="20211016205159")
+        get_markdown_title("", id_="20211016205159")

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import os
 import re
 from dataclasses import dataclass, field
 from datetime import datetime
@@ -30,28 +31,46 @@ def get_zettels(path: Path, is_reversed: bool = False) -> list[Zettel]:
             except FileNotFoundError:
                 logging.warning(f"empty zet folder {item.name} detected")
             except ValueError:
-                pass  # skip dirs with different naming convention
+                # skips dirs with different naming convention
+                # skips zettels without a text in the first line (i.e. during editing)
+                pass
     return items
 
 
 def get_zettel(path: Path) -> Zettel:
     timestamp = _get_timestamp(path.name)
-    with open(Path(path, ZETTEL_FILENAME), "r", encoding="utf-8") as file:
-        contents = file.readlines()
-    try:
-        title_raw = contents[0]
-    except IndexError:  # We raise ValueError, so it's intercepted by get_zettels()
-        raise ValueError("Empty zettel found, are you in progress of `pyzet add`?")
-    title = get_markdown_title(title_raw, path.name)
-    tags = get_tags(contents[-1].strip()) if contents[-1].startswith(4 * " ") else []
+    title_line, tags_line = _get_first_and_last_line(Path(path, ZETTEL_FILENAME))
+    title = get_markdown_title(title_line.strip(), path.name)
+    tags = get_tags(tags_line.strip()) if tags_line.startswith(4 * " ") else []
     return Zettel(title=title, id_=path.name, timestamp=timestamp, tags=tags)
+
+
+def _get_first_and_last_line(path: Path) -> tuple[str, str]:
+    """Gets the first and the last line from a given file.
+
+    It uses file.seek() to look from the end of the file. It's fast but requires
+    the file to be opened in binary mode.
+
+    Reference:
+    https://stackoverflow.com/a/54278929/14458327
+    """
+    with open(path, "rb") as file:
+        title_line = file.readline().decode("utf-8")
+        try:
+            file.seek(-2, os.SEEK_END)
+            while file.read(1) != b"\n":
+                file.seek(-2, os.SEEK_CUR)
+        except OSError:  # file has only a single line
+            file.seek(0)
+        tags_line = file.readline().decode("utf-8")
+    return title_line, tags_line
 
 
 def _get_timestamp(id_: str) -> datetime:
     return datetime.strptime(id_, ZULU_DATETIME_FORMAT)
 
 
-def get_markdown_title(line: str, id_: str) -> str:
+def get_markdown_title(title_line: str, id_: str) -> str:
     """Extracts Markdown title if it is formatted correctly.
 
     Otherwise, returns the whole line and logs a warning.
@@ -59,12 +78,12 @@ def get_markdown_title(line: str, id_: str) -> str:
 
     Raises ValueError if empty or whitespace only title is given as input.
     """
-    if line.strip() == "":
+    if title_line == "":
         raise ValueError("Empty zettel title found")
-    result = re.match(MARKDOWN_TITLE, line)
+    result = re.match(MARKDOWN_TITLE, title_line)
     if not result:
-        logging.warning(f'wrong title formatting: {id_} "{line}"')
-        return line
+        logging.warning(f'wrong title formatting: {id_} "{title_line}"')
+        return title_line
     return result.groups()[0]
 
 
