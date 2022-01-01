@@ -291,7 +291,8 @@ def count_tags(path: Path) -> int:
 def show_zettel(id_: str, repo_path: Path) -> int:
     """Prints zettel text prepended with centered ID as a header."""
     print(f" {id_} ".center(const.ZETTEL_WIDTH, "="))
-    with open(Path(repo_path, const.ZETDIR, id_, const.ZETTEL_FILENAME), "r") as file:
+    zettel_path = Path(repo_path, const.ZETDIR, id_, const.ZETTEL_FILENAME)
+    with open(zettel_path, "r", encoding="utf-8") as file:
         print(file.read(), end="")
     return 0
 
