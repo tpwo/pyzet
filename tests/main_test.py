@@ -165,3 +165,14 @@ def test_alternative_repo_wrong_list():
     with pytest.raises(SystemExit) as excinfo:
         main(["--repo", "some/nonexistent/path", "list"])
     assert str(excinfo.value).startswith("ERROR: wrong repo path")
+
+
+def test_grep(capfd):
+    main(["--repo", "testing/zet", "grep", "hello"])
+
+    out, err = capfd.readouterr()
+    line1, line2, _ = out.split("\n")  # 3rd item is an empty str
+
+    assert line1.endswith("zettels/20211016205158/README.md:Hello there!")
+    assert line2.endswith("zettels/20211016223643/README.md:Hello everyone")
+    assert err == ""

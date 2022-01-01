@@ -20,7 +20,7 @@ from pyzet.zettel import get_zettel, get_zettels, print_zettel
 @dataclass
 class Config:
     repo_path: Path = const.DEFAULT_REPO_PATH
-    editor: Path = const.VIM_WINDOWS_PATH
+    editor: Path = const.VIM_WIN_PATH
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -124,6 +124,13 @@ def _get_parser() -> ArgumentParser:
     remove_parser = subparsers.add_parser("rm", help="remove a zettel")
     remove_parser.add_argument("id", nargs=1, help="zettel id (timestamp)")
 
+    grep_parser = subparsers.add_parser("grep", help="run `grep -ri` in zet repo")
+    grep_parser.add_argument(
+        "pattern",
+        nargs=1,
+        help="grep pattern, letter case is ignored",
+    )
+
     subparsers.add_parser("pull", help="run `git pull --rebase` in zet repo")
 
     push_parser = subparsers.add_parser(
@@ -211,6 +218,9 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
             return count_tags(config.repo_path)
         return list_tags(config.repo_path, is_reversed=args.reverse)
 
+    if args.command == "grep":
+        return call_grep(config.repo_path, args.pattern[0])
+
     if args.command in ("status", "push"):
         return call_git(config.repo_path, args.command, args.options)
 
@@ -240,6 +250,16 @@ def _validate_id(id_: str, command: str, config: Config) -> None:
 
 def call_git(path: Path, command: str, options: list[str]) -> int:
     subprocess.run([_get_git_cmd(), "-C", path, command, *options])
+    return 0
+
+
+def call_grep(path: Path, pattern: str) -> int:
+    """Calls grep with recursive search and with ignoring letter case."""
+    # `--color=auto` colors the output, e.g. shows found matched with red font.
+    # It's a default setting in Ubuntu's .bashrc
+    subprocess.run(
+        [_get_grep_cmd(), "--color=auto", "-ri", pattern, Path(path, const.ZETDIR)]
+    )
     return 0
 
 
@@ -405,6 +425,21 @@ def _commit_zettel(repo_path: Path, zettel_path: Path, message: str) -> None:
 
 def _get_git_cmd() -> Path:
     git_path = shutil.which("git")
-    if git_path is None:
+    if not git_path:
         raise SystemExit("ERROR: `git` cannot be found by `which` command")
     return Path(git_path)
+
+
+def _get_grep_cmd() -> Path:
+    if sys.platform == "win32":
+        grep_path = shutil.which(const.GREP_WIN_PATH)
+        if not grep_path:
+            raise SystemExit(
+                "ERROR: `grep` cannot be found. Do you have Git for Windows"
+                " installed in the default location?"
+            )
+    else:
+        grep_path = shutil.which("grep")
+        if not grep_path:
+            raise SystemExit("ERROR: `grep` cannot be found by `which` command")
+    return Path(grep_path)

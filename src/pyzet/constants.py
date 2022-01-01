@@ -20,5 +20,6 @@ ZETTEL_WIDTH = 72
 MARKDOWN_TITLE = r"^#\s([\S]+.*[\S])$"
 
 # Path to vim which is installed with Git for Windows
-VIM_WINDOWS_PATH = Path("C:/Program Files/Git/usr/bin/vim.exe")
+VIM_WIN_PATH = Path("C:/Program Files/Git/usr/bin/vim.exe")
+GREP_WIN_PATH = Path("C:/Program Files/Git/usr/bin/grep.exe")
 DEFAULT_REPO_PATH = Path(Path.home(), "zet")
