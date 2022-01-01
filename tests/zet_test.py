@@ -3,13 +3,7 @@ from pathlib import Path
 import pytest
 
 from pyzet.constants import ZETDIR
-from pyzet.zettel import (
-    Zettel,
-    get_markdown_title,
-    get_zettel,
-    get_zettels,
-    print_zettel,
-)
+from pyzet.zettel import Zettel, get_markdown_title, get_zettel, get_zettels
 
 
 def test_get_zettels():
@@ -99,20 +93,6 @@ def test_open_zettel():
     )
 
     assert get_zettel(Path(f"testing/zet/{ZETDIR}/20211016205158")) == expected
-
-
-def test_print_zettel(capsys):
-    test_zettel = Zettel(
-        title="Zet test entry",
-        id_="20211016205158",
-        text=["# Zet test entry\n", "\n", "Hello there!\n"],
-    )
-
-    print_zettel(test_zettel)
-
-    out, err = capsys.readouterr()
-    assert out.endswith("# Zet test entry\n\nHello there!\n")
-    assert err == ""
 
 
 def test_get_markdown_title():

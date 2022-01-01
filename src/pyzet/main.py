@@ -14,7 +14,7 @@ from datetime import datetime
 from pathlib import Path
 
 import pyzet.constants as const
-from pyzet.zettel import get_zettel, get_zettels, print_zettel
+from pyzet.zettel import get_zettel, get_zettels
 
 
 @dataclass
@@ -289,8 +289,10 @@ def count_tags(path: Path) -> int:
 
 
 def show_zettel(id_: str, repo_path: Path) -> int:
-    zettel = get_zettel(Path(repo_path, const.ZETDIR, id_))
-    print_zettel(zettel)
+    """Prints zettel text prepended with centered ID as a header."""
+    print(f" {id_} ".center(const.ZETTEL_WIDTH, "="))
+    with open(Path(repo_path, const.ZETDIR, id_, const.ZETTEL_FILENAME), "r") as file:
+        print(file.read(), end="")
     return 0
 
 
