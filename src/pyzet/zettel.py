@@ -13,7 +13,6 @@ from pyzet.constants import MARKDOWN_TITLE, ZETTEL_FILENAME, ZULU_DATETIME_FORMA
 class Zettel:
     title: str
     id_: str
-    text: list[str]
     timestamp: datetime | None = None
     tags: list[str] = field(default_factory=list)
 
@@ -45,9 +44,7 @@ def get_zettel(path: Path) -> Zettel:
         raise ValueError("Empty zettel found, are you in progress of `pyzet add`?")
     title = get_markdown_title(title_raw, path.name)
     tags = get_tags(contents[-1].strip()) if contents[-1].startswith(4 * " ") else []
-    return Zettel(
-        title=title, id_=path.name, text=contents, timestamp=timestamp, tags=tags
-    )
+    return Zettel(title=title, id_=path.name, timestamp=timestamp, tags=tags)
 
 
 def _get_timestamp(id_: str) -> datetime:

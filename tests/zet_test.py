@@ -13,29 +13,11 @@ def test_get_zettels():
         Zettel(
             title="Zet test entry",
             id_="20211016205158",
-            text=[
-                "# Zet test entry\n",
-                "\n",
-                "Hello there!\n",
-                "\n",
-                "Tags:\n",
-                "\n",
-                "    #test-tag #another-tag  #tag-after-two-spaces\n",
-            ],
             tags=["test-tag", "another-tag", "tag-after-two-spaces"],
         ),
         Zettel(
             title="Another zet test entry",
             id_="20211016223643",
-            text=[
-                "# Another zet test entry\n",
-                "\n",
-                "Hello everyone\n",
-                "\n",
-                "Tags:\n",
-                "\n",
-                "    #test-tag\n",
-            ],
             tags=["test-tag"],
         ),
     ]
@@ -48,29 +30,11 @@ def test_get_zettels_reverse():
         Zettel(
             title="Another zet test entry",
             id_="20211016223643",
-            text=[
-                "# Another zet test entry\n",
-                "\n",
-                "Hello everyone\n",
-                "\n",
-                "Tags:\n",
-                "\n",
-                "    #test-tag\n",
-            ],
             tags=["test-tag"],
         ),
         Zettel(
             title="Zet test entry",
             id_="20211016205158",
-            text=[
-                "# Zet test entry\n",
-                "\n",
-                "Hello there!\n",
-                "\n",
-                "Tags:\n",
-                "\n",
-                "    #test-tag #another-tag  #tag-after-two-spaces\n",
-            ],
             tags=["test-tag", "another-tag", "tag-after-two-spaces"],
         ),
     ]
@@ -80,15 +44,6 @@ def test_open_zettel():
     expected = Zettel(
         title="Zet test entry",
         id_="20211016205158",
-        text=[
-            "# Zet test entry\n",
-            "\n",
-            "Hello there!\n",
-            "\n",
-            "Tags:\n",
-            "\n",
-            "    #test-tag #another-tag  #tag-after-two-spaces\n",
-        ],
         tags=["test-tag", "another-tag", "tag-after-two-spaces"],
     )
 
