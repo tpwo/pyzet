@@ -66,14 +66,7 @@ def _get_parser() -> ArgumentParser:
         "status",
         help="run `git status` in zet repo,\nuse `--` before including git options",
     )
-    status_parser.add_argument(
-        "options",
-        action="store",
-        type=str,
-        nargs="*",
-        default=[],
-        help="`git status` options, use `--` before including them",
-    )
+    _add_git_cmd_options(status_parser, "status")
 
     list_parser = subparsers.add_parser("list", help="list zettels in given repo")
     list_parser.add_argument(
@@ -131,20 +124,26 @@ def _get_parser() -> ArgumentParser:
     remove_parser = subparsers.add_parser("rm", help="remove a zettel")
     remove_parser.add_argument("id", nargs=1, help="zettel id (timestamp)")
 
+    subparsers.add_parser("pull", help="run `git pull --rebase` in zet repo")
+
     push_parser = subparsers.add_parser(
         "push",
         help="run `git push` in zet repo,\nuse `--` before including git options",
     )
-    push_parser.add_argument(
+    _add_git_cmd_options(push_parser, "push")
+
+    return parser
+
+
+def _add_git_cmd_options(parser: ArgumentParser, cmd_name: str) -> None:
+    parser.add_argument(
         "options",
         action="store",
         type=str,
         nargs="*",
         default=[],
-        help="`git status` options, use `--` before including them",
+        help=f"`git {cmd_name}` options, use `--` before including them",
     )
-
-    return parser
 
 
 def _parse_args(args: Namespace) -> int:
@@ -212,11 +211,13 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
             return count_tags(config.repo_path)
         return list_tags(config.repo_path, is_reversed=args.reverse)
 
-    if args.command == "status":
-        return get_repo_status(config.repo_path, args.options)
+    if args.command in ("status", "push"):
+        return call_git(config.repo_path, args.command, args.options)
 
-    if args.command == "push":
-        return push_to_remote(config.repo_path, args.options)
+    if args.command == "pull":
+        # `--rebase` is used to maintain a linear history without merges, as this
+        # seems to be a reasonable approach in zet repo that is usually personal
+        return call_git(config.repo_path, "pull", ["--rebase"])
 
     if args.command == "clean":
         return clean_zet_repo(config.repo_path, is_dry_run=args.dry_run)
@@ -237,13 +238,8 @@ def _validate_id(id_: str, command: str, config: Config) -> None:
         raise SystemExit(f"ERROR: {const.ZETTEL_FILENAME} in {id_} doesn't exist")
 
 
-def get_repo_status(path: Path, options: list[str]) -> int:
-    subprocess.run([_get_git_cmd(), "-C", path, "status", *options])
-    return 0
-
-
-def push_to_remote(path: Path, options: list[str]) -> int:
-    subprocess.run([_get_git_cmd(), "-C", path, "push", *options])
+def call_git(path: Path, command: str, options: list[str]) -> int:
+    subprocess.run([_get_git_cmd(), "-C", path, command, *options])
     return 0
 
 
