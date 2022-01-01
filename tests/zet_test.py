@@ -20,6 +20,11 @@ def test_get_zettels():
             id_="20211016223643",
             tags=["test-tag"],
         ),
+        Zettel(
+            title="Zettel with UTF-8",
+            id_="20220101220852",
+            tags=[],
+        ),
     ]
 
 
@@ -27,6 +32,11 @@ def test_get_zettels_reverse():
     output = get_zettels(path=Path("testing/zet", ZETDIR), is_reversed=True)
 
     assert output == [
+        Zettel(
+            title="Zettel with UTF-8",
+            id_="20220101220852",
+            tags=[],
+        ),
         Zettel(
             title="Another zet test entry",
             id_="20211016223643",

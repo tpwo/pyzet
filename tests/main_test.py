@@ -28,9 +28,10 @@ def test_list_zettels(capsys):
     main(["--repo", "testing/zet", "list"])
 
     out, err = capsys.readouterr()
-    assert (
-        out
-        == "20211016205158 - Zet test entry\n20211016223643 - Another zet test entry\n"
+    assert out == (
+        "20211016205158 - Zet test entry\n"
+        "20211016223643 - Another zet test entry\n"
+        "20220101220852 - Zettel with UTF-8\n"
     )
     assert err == ""
 
@@ -39,9 +40,10 @@ def test_list_zettels_reverse(capsys):
     main(["--repo", "testing/zet", "list", "--reverse"])
 
     out, err = capsys.readouterr()
-    assert (
-        out
-        == "20211016223643 - Another zet test entry\n20211016205158 - Zet test entry\n"
+    assert out == (
+        "20220101220852 - Zettel with UTF-8\n"
+        "20211016223643 - Another zet test entry\n"
+        "20211016205158 - Zet test entry\n"
     )
     assert err == ""
 
@@ -77,6 +79,7 @@ def test_list_zettels_pretty(capsys):
     assert out == (
         "2021-10-16 20:51:58 - Zet test entry\n"
         "2021-10-16 22:36:43 - Another zet test entry\n"
+        "2022-01-01 22:08:52 - Zettel with UTF-8\n"
     )
     assert err == ""
 
@@ -86,6 +89,7 @@ def test_list_zettels_pretty_reverse(capsys):
 
     out, err = capsys.readouterr()
     assert out == (
+        "2022-01-01 22:08:52 - Zettel with UTF-8\n"
         "2021-10-16 22:36:43 - Another zet test entry\n"
         "2021-10-16 20:51:58 - Zet test entry\n"
     )
@@ -104,12 +108,19 @@ def test_show_zettel(capsys):
 
 
 def test_show_zettel_default(capsys):
+    # by default, the command shows a zettel with the highest ID (the newest)
     main(["--repo", "testing/zet", "show"])
 
     out, err = capsys.readouterr()
-    assert out.endswith(
-        "# Another zet test entry\n\nHello everyone\n\nTags:\n\n    #test-tag\n"
-    )
+    assert out.endswith("# Zettel with UTF-8\n\nZażółć gęślą jaźń.\n")
+    assert err == ""
+
+
+def test_show_zettel_utf8(capsys):
+    main(["--repo", "testing/zet", "show", "20220101220852"])
+
+    out, err = capsys.readouterr()
+    assert out.endswith("# Zettel with UTF-8\n\nZażółć gęślą jaźń.\n")
     assert err == ""
 
 
