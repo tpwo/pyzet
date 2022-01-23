@@ -50,6 +50,8 @@ def _get_parser() -> ArgumentParser:
         prog="pyzet", formatter_class=argparse.RawTextHelpFormatter
     )
 
+    parser.add_argument("-r", "--repo", help="path to point to any zet repo")
+
     # https://stackoverflow.com/a/8521644/812183
     parser.add_argument(
         "-V",
@@ -58,15 +60,26 @@ def _get_parser() -> ArgumentParser:
         version=f"%(prog)s {const.VERSION}",
     )
 
-    parser.add_argument("-r", "--repo", help="path to point to any zet repo")
-
     subparsers = parser.add_subparsers(dest="command")
 
-    status_parser = subparsers.add_parser(
-        "status",
-        help="run `git status` in zet repo,\nuse `--` before including git options",
+    subparsers.add_parser("add", help="add a new zettel")
+
+    edit_parser = subparsers.add_parser("edit", help="edit a zettel")
+    edit_parser.add_argument(
+        "id",
+        nargs="?",
+        help="zettel id, by default edits zettel with the newest timestamp",
     )
-    _add_git_cmd_options(status_parser, "status")
+
+    remove_parser = subparsers.add_parser("rm", help="remove a zettel")
+    remove_parser.add_argument("id", nargs=1, help="zettel id (timestamp)")
+
+    show_parser = subparsers.add_parser("show", help="print zettel contents")
+    show_parser.add_argument(
+        "id",
+        nargs="?",
+        help="zettel id, by default shows zettel with the newest timestamp",
+    )
 
     list_parser = subparsers.add_parser("list", help="list zettels in given repo")
     list_parser.add_argument(
@@ -95,13 +108,6 @@ def _get_parser() -> ArgumentParser:
         help="count the total number of all tags in zet repo (non-unique)",
     )
 
-    show_parser = subparsers.add_parser("show", help="print zettel contents")
-    show_parser.add_argument(
-        "id",
-        nargs="?",
-        help="zettel id, by default shows zettel with the newest timestamp",
-    )
-
     clean_parser = subparsers.add_parser(
         "clean", help="delete empty folders in zet repo"
     )
@@ -112,18 +118,6 @@ def _get_parser() -> ArgumentParser:
         help="list what will be deleted, but don't delete it",
     )
 
-    subparsers.add_parser("add", help="add a new zettel")
-
-    edit_parser = subparsers.add_parser("edit", help="edit a zettel")
-    edit_parser.add_argument(
-        "id",
-        nargs="?",
-        help="zettel id, by default edits zettel with the newest timestamp",
-    )
-
-    remove_parser = subparsers.add_parser("rm", help="remove a zettel")
-    remove_parser.add_argument("id", nargs=1, help="zettel id (timestamp)")
-
     grep_parser = subparsers.add_parser("grep", help="run `grep -rni` in zet repo")
     grep_parser.add_argument(
         "pattern",
@@ -131,12 +125,12 @@ def _get_parser() -> ArgumentParser:
         help="grep pattern, letter case is ignored",
     )
 
+    status_parser = subparsers.add_parser("status", help="run `git status` in zet repo")
+    _add_git_cmd_options(status_parser, "status")
+
     subparsers.add_parser("pull", help="run `git pull --rebase` in zet repo")
 
-    push_parser = subparsers.add_parser(
-        "push",
-        help="run `git push` in zet repo,\nuse `--` before including git options",
-    )
+    push_parser = subparsers.add_parser("push", help="run `git push` in zet repo")
     _add_git_cmd_options(push_parser, "push")
 
     return parser
