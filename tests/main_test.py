@@ -1,3 +1,4 @@
+import sys
 import tempfile
 from pathlib import Path
 
@@ -167,7 +168,10 @@ def test_alternative_repo_wrong_list():
     assert str(excinfo.value).startswith("ERROR: wrong repo path")
 
 
-def test_grep(capfd):
+@pytest.mark.skipif(
+    sys.platform != "win32", reason="fails on Linux due to different grep behavior"
+)
+def test_grep_win(capfd):
     main(["--repo", "testing/zet", "grep", "hello"])
 
     out, err = capfd.readouterr()
@@ -175,4 +179,18 @@ def test_grep(capfd):
 
     assert line1.endswith("zettels/20211016205158/README.md:Hello there!")
     assert line2.endswith("zettels/20211016223643/README.md:Hello everyone")
+    assert err == ""
+
+
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="fails on Windows due to different grep behavior"
+)
+def test_grep_unix(capfd):
+    main(["--repo", "testing/zet", "grep", "hello"])
+
+    out, err = capfd.readouterr()
+    line1, line2, _ = out.split("\n")  # 3rd item is an empty str
+
+    assert line1.endswith("zettels/20211016223643/README.md:Hello everyone")
+    assert line2.endswith("zettels/20211016205158/README.md:Hello there!")
     assert err == ""
