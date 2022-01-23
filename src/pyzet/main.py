@@ -403,14 +403,15 @@ def _check_for_file_in_git(filepath: Path, repo_path: Path) -> bool:
 
 def _check_for_file_changes(filepath: Path, repo_path: Path) -> bool:
     """Returns True if a file was modified in a working dir."""
+    git_cmd = _get_git_cmd().as_posix()
+
+    # Run `git add` to avoid false negatives, as `git diff --staged` is used for
+    # detection. This is important when there are external factors that impact the
+    # committing process (like pre-commit).
+    subprocess.run([git_cmd, "-C", repo_path.as_posix(), "add", filepath.as_posix()])
+
     git_diff_output = subprocess.run(
-        [
-            _get_git_cmd().as_posix(),
-            "-C",
-            repo_path.as_posix(),
-            "diff",
-            filepath.as_posix(),
-        ],
+        [git_cmd, "-C", repo_path.as_posix(), "diff", "--staged", filepath.as_posix()],
         capture_output=True,
         check=True,
     ).stdout
