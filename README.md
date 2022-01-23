@@ -25,28 +25,26 @@ Summary of commands:
 
 ```none
 $ pyzet -h
-usage: pyzet [-h] [-V] [-r REPO] {status,list,tags,show,clean,add,edit,rm,grep,pull,push} ...
+usage: pyzet [-h] [-r REPO] [-V] {add,edit,rm,show,list,tags,clean,grep,status,pull,push} ...
 
 positional arguments:
-  {status,list,tags,show,clean,add,edit,rm,grep,pull,push}
-    status              run `git status` in zet repo,
-                        use `--` before including git options
-    list                list zettels in given repo
-    tags                list tags in given repo
-    show                print zettel contents
-    clean               delete empty folders in zet repo
+  {add,edit,rm,show,list,tags,clean,grep,status,pull,push}
     add                 add a new zettel
     edit                edit a zettel
     rm                  remove a zettel
+    show                print zettel contents
+    list                list zettels in given repo
+    tags                list tags in given repo
+    clean               delete empty folders in zet repo
     grep                run `grep -rni` in zet repo
+    status              run `git status` in zet repo
     pull                run `git pull --rebase` in zet repo
-    push                run `git push` in zet repo,
-                        use `--` before including git options
+    push                run `git push` in zet repo
 
 options:
   -h, --help            show this help message and exit
-  -V, --version         show program's version number and exit
   -r REPO, --repo REPO  path to point to any zet repo
+  -V, --version         show program's version number and exit
 ```
 
 ## How to run?
@@ -259,7 +257,7 @@ See also:
 
 ## License
 
-Unless explicitly stated otherwise all files in this repository are
+Unless explicitly stated otherwise, all files in this repository are
 licensed under the Apache Software License 2.0:
 
 > Copyright 2021 Tomasz Wojdat
