@@ -49,9 +49,6 @@ options:
   -r REPO, --repo REPO  path to point to any zet repo
 ```
 
-By default, an alias `pz` is added that can be used instead of `pyzet`.
-For the sake of readability, only the latter will be used in the docs.
-
 ## How to run?
 
 Python 3.7 or later is needed.
