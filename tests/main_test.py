@@ -177,8 +177,8 @@ def test_grep_win(capfd):
     out, err = capfd.readouterr()
     line1, line2, _ = out.split("\n")  # 3rd item is an empty str
 
-    assert line1.endswith("zettels/20211016205158/README.md:Hello there!")
-    assert line2.endswith("zettels/20211016223643/README.md:Hello everyone")
+    assert line1.endswith("zettels/20211016205158/README.md:3:Hello there!")
+    assert line2.endswith("zettels/20211016223643/README.md:3:Hello everyone")
     assert err == ""
 
 
@@ -191,6 +191,6 @@ def test_grep_unix(capfd):
     out, err = capfd.readouterr()
     line1, line2, _ = out.split("\n")  # 3rd item is an empty str
 
-    assert line1.endswith("zettels/20211016223643/README.md:Hello everyone")
-    assert line2.endswith("zettels/20211016205158/README.md:Hello there!")
+    assert line1.endswith("zettels/20211016223643/README.md:3:Hello everyone")
+    assert line2.endswith("zettels/20211016205158/README.md:3:Hello there!")
     assert err == ""

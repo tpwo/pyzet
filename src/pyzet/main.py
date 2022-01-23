@@ -124,7 +124,7 @@ def _get_parser() -> ArgumentParser:
     remove_parser = subparsers.add_parser("rm", help="remove a zettel")
     remove_parser.add_argument("id", nargs=1, help="zettel id (timestamp)")
 
-    grep_parser = subparsers.add_parser("grep", help="run `grep -ri` in zet repo")
+    grep_parser = subparsers.add_parser("grep", help="run `grep -rni` in zet repo")
     grep_parser.add_argument(
         "pattern",
         nargs=1,
@@ -258,7 +258,7 @@ def call_grep(path: Path, pattern: str) -> int:
     # `--color=auto` colors the output, e.g. shows found matched with red font.
     # It's a default setting in Ubuntu's .bashrc
     subprocess.run(
-        [_get_grep_cmd(), "--color=auto", "-ri", pattern, Path(path, const.ZETDIR)]
+        [_get_grep_cmd(), "--color=auto", "-rni", pattern, Path(path, const.ZETDIR)]
     )
     return 0
 
