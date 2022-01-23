@@ -40,7 +40,7 @@ def main(argv: list[str] | None = None) -> int:
 def _configure_console_print_utf8() -> None:
     # https://stackoverflow.com/a/60634040/14458327
     if isinstance(sys.stdout, io.TextIOWrapper):
-        # if statement is needed to satisfy mypy
+        # If statement is needed to satisfy mypy:
         # https://github.com/python/typeshed/issues/3049
         sys.stdout.reconfigure(encoding="utf-8")
 
@@ -157,7 +157,8 @@ def _parse_args(args: Namespace) -> int:
     config = _get_config(args.repo)
     id_: str | None
     try:
-        # show & edit use nargs="?" which makes it str, rather than single elem list
+        # `show` & `edit` commands use nargs="?" which makes
+        # args.command str rather than single element list.
         if args.command in ("show", "edit"):
             id_ = args.id
         else:
@@ -226,7 +227,7 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
 
     if args.command == "pull":
         # `--rebase` is used to maintain a linear history without merges, as this
-        # seems to be a reasonable approach in zet repo that is usually personal
+        # seems to be a reasonable approach in zet repo that is usually personal.
         return call_git(config.repo_path, "pull", ["--rebase"])
 
     if args.command == "clean":
@@ -257,8 +258,8 @@ def call_git(path: Path, command: str, options: list[str]) -> int:
 
 def call_grep(path: Path, pattern: str) -> int:
     """Calls grep with recursive search and with ignoring letter case."""
-    # `--color=auto` colors the output, e.g. shows found matched with red font.
-    # It's a default setting in Ubuntu's .bashrc
+    # `--color=auto` colors the output, e.g. found matches are printed with red font.
+    # It's a default setting in Ubuntu's .bashrc.
     subprocess.run(
         [
             _get_grep_cmd().as_posix(),
@@ -282,8 +283,8 @@ def list_tags(path: Path, is_reversed: bool) -> int:
     zettels = get_zettels(Path(path, const.ZETDIR))
     all_tags = itertools.chain(*[t for t in [z.tags for z in zettels]])
 
-    # chain is reverse sorted for correct alphabetical displaying for the same
-    # tag counts as Counter's most_common() method remembers the insertion order
+    # Chain is reverse sorted for the correct alphabetical displaying of tag counts.
+    # This is because Counter's most_common() method remembers the insertion order.
     tags = Counter(sorted(all_tags, reverse=True))
 
     target = tags.most_common() if is_reversed else reversed(tags.most_common())
@@ -397,7 +398,7 @@ def _check_for_file_in_git(filepath: Path, repo_path: Path) -> bool:
         capture_output=True,
         check=True,
     ).stdout
-    # If `git log` output is empty, the file wasn't committed
+    # If `git log` output is empty, the file wasn't committed.
     return git_log_output != b""
 
 
@@ -415,7 +416,7 @@ def _check_for_file_changes(filepath: Path, repo_path: Path) -> bool:
         capture_output=True,
         check=True,
     ).stdout
-    # If `git diff` output is empty, the file wasn't modified
+    # If `git diff` output is empty, the file wasn't modified.
     return git_diff_output != b""
 
 
@@ -443,7 +444,7 @@ def remove_zettel(id_: str, repo_path: Path) -> int:
     logging.info(f"{id_} was removed")
     _commit_zettel(repo_path, zettel_path, f"RM: {zettel.title}")
 
-    # If dir is removed before committing, git raises a warning that dir doesn't exist
+    # If dir is removed before committing, git raises a warning that dir doesn't exist.
     zettel_path.parent.rmdir()
 
     return 0
