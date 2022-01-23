@@ -38,7 +38,7 @@ positional arguments:
     add                 add a new zettel
     edit                edit a zettel
     rm                  remove a zettel
-    grep                run `grep -ri` in zet repo
+    grep                run `grep -rni` in zet repo
     pull                run `git pull --rebase` in zet repo
     push                run `git push` in zet repo,
                         use `--` before including git options
