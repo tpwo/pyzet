@@ -249,7 +249,9 @@ def _validate_id(id_: str, command: str, config: Config) -> None:
 
 
 def call_git(path: Path, command: str, options: list[str]) -> int:
-    subprocess.run([_get_git_cmd(), "-C", path, command, *options])
+    subprocess.run(
+        [_get_git_cmd().as_posix(), "-C", path.as_posix(), command, *options]
+    )
     return 0
 
 
@@ -258,7 +260,13 @@ def call_grep(path: Path, pattern: str) -> int:
     # `--color=auto` colors the output, e.g. shows found matched with red font.
     # It's a default setting in Ubuntu's .bashrc
     subprocess.run(
-        [_get_grep_cmd(), "--color=auto", "-rni", pattern, Path(path, const.ZETDIR)]
+        [
+            _get_grep_cmd().as_posix(),
+            "--color=auto",
+            "-rni",
+            pattern,
+            Path(path, const.ZETDIR).as_posix(),
+        ]
     )
     return 0
 
@@ -348,7 +356,15 @@ def edit_zettel(id_: str, repo_path: Path, editor: Path) -> int:
         zettel = get_zettel(zettel_path.parent)
     except ValueError:
         logging.info("Editing zettel aborted, restoring the version from git...")
-        subprocess.run([_get_git_cmd(), "-C", repo_path, "restore", zettel_path])
+        subprocess.run(
+            [
+                _get_git_cmd().as_posix(),
+                "-C",
+                repo_path.as_posix(),
+                "restore",
+                zettel_path.as_posix(),
+            ]
+        )
     else:
         if _check_for_file_changes(zettel_path, repo_path):
             _commit_zettel(
@@ -371,7 +387,13 @@ def _get_edit_commit_msg(zettel_path: Path, title: str, repo_path: Path) -> str:
 def _check_for_file_in_git(filepath: Path, repo_path: Path) -> bool:
     """Returns True if a file was committed to git."""
     git_log_output = subprocess.run(
-        [_get_git_cmd(), "-C", repo_path, "log", filepath],
+        [
+            _get_git_cmd().as_posix(),
+            "-C",
+            repo_path.as_posix(),
+            "log",
+            filepath.as_posix(),
+        ],
         capture_output=True,
         check=True,
     ).stdout
@@ -382,7 +404,13 @@ def _check_for_file_in_git(filepath: Path, repo_path: Path) -> bool:
 def _check_for_file_changes(filepath: Path, repo_path: Path) -> bool:
     """Returns True if a file was modified in a working dir."""
     git_diff_output = subprocess.run(
-        [_get_git_cmd(), "-C", repo_path, "diff", filepath],
+        [
+            _get_git_cmd().as_posix(),
+            "-C",
+            repo_path.as_posix(),
+            "diff",
+            filepath.as_posix(),
+        ],
         capture_output=True,
         check=True,
     ).stdout
@@ -392,7 +420,7 @@ def _check_for_file_changes(filepath: Path, repo_path: Path) -> bool:
 
 def _open_file(filename: Path, editor: Path) -> None:
     if sys.platform == "win32":
-        subprocess.run([editor, filename])
+        subprocess.run([editor.as_posix(), filename.as_posix()])
     else:
         vim_path = shutil.which("vi")
 
@@ -422,8 +450,12 @@ def remove_zettel(id_: str, repo_path: Path) -> int:
 
 def _commit_zettel(repo_path: Path, zettel_path: Path, message: str) -> None:
     git_cmd = _get_git_cmd()
-    subprocess.run([git_cmd, "-C", repo_path, "add", zettel_path])
-    subprocess.run([git_cmd, "-C", repo_path, "commit", "-m", message])
+    subprocess.run(
+        [git_cmd.as_posix(), "-C", repo_path.as_posix(), "add", zettel_path.as_posix()]
+    )
+    subprocess.run(
+        [git_cmd.as_posix(), "-C", repo_path.as_posix(), "commit", "-m", message]
+    )
 
 
 def _get_git_cmd() -> Path:
