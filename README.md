@@ -6,20 +6,19 @@ A Python app that makes it easier to use Zettelkasten with git repos.
 
 ## How to use?
 
-The current version is very limited in its capabilities. The basic
-commands include listing, adding, editing, and removing zettels.
+The current version is limited in its capabilities, so it might be
+frustrating to use. Don't hesitate to add an issue or PR, if you have
+any idea how to improve or expand this tool. The current biggest problem
+is the lack of configuration file.
 
-The default location of zet repo is `~/zet`. For now it's hard-coded
+The default location of zet repo is `~/zet`. For now, it's hard-coded
 path that can be changed with `--repo` flag when executing any command.
-In the future, a config file with option to alter the default path will
-be added.
 
 At this point, the editor for working with zettels is also hard-coded.
 On Windows it's the default path to `vim.exe` that is installed with Git
-for Windows. On Linux (and probably also on Mac), it is the default text
-editor.
-
-The option to change editor also will be included in the config file.
+for Windows. On Unix (although it wasn't tested on Mac), it's the
+default text editor. The option to change editor also will be included
+in the config file.
 
 Summary of commands:
 
@@ -51,50 +50,49 @@ options:
 
 ## How to run?
 
-Python 3.7 or later is needed.
+Python 3.7 or later is needed. pyzet doesn't require any external
+dependencies at this point.
 
-The app is still in early development. However, you can use `pip` to
-install it directly from this repo:
+The simplest way to install is to use pip:
 
-```bash
-pip install git+https://github.com/wojdatto/pyzet.git
-pyzet --help
-```
+    pip install pyzet
+    pyzet --help
 
-By default, `main` branch will be used. To use `develop` branch you need
-to specify it:
+You can also obtain the newest version from the `develop` branch
+directly from this repository:
 
-```bash
-pip install git+https://github.com/wojdatto/pyzet.git@develop
-```
+    pip install git+https://github.com/wojdatto/pyzet.git@develop
+
+### OS compatibility
+
+Both Windows and Unix are supported, but the current version is 5-10
+times faster with the latter. One of the reasons of worse performance
+might be Windows Defender with its realtime protection.
+
+On of the workarounds is trying to use pyzet with
+[WSL2](https://docs.microsoft.com/en-us/windows/wsl/install).
 
 ### Manual installation
 
 Manual installation is also possible. Clone the repo and run the install
-command. Using venv/virtualenv is advised.
+command. Using virtual environment is advised.
 
-```none
-git clone https://github.com/wojdatto/pyzet.git
-cd pyzet
-```
+    git clone https://github.com/wojdatto/pyzet.git
+    cd pyzet
 
 Unix/Linux:
 
-```bash
-python3 -m venv venv
-. venv/bin/activate # in bash `source` is an alias for `.`
-pip install .
-pyzet --help
-```
+    python3 -m venv venv
+    . venv/bin/activate # in bash `source` is an alias for `.`
+    pip install .
+    pyzet --help
 
 Windows:
 
-```powershell
-python -m venv venv
-.\venv\Scripts\activate
-pip install .
-pyzet --help
-```
+    python -m venv venv
+    .\venv\Scripts\activate
+    pip install .
+    pyzet --help
 
 ### Development installation
 
@@ -103,16 +101,30 @@ Development dependencies are stored in
 editable mode with the dev dependencies run the following after cloning
 the repo:
 
-```bash
-pip install -e .
-pip install -r requirements-dev.txt
-```
+    pip install -e .
+    pip install -r requirements-dev.txt
+
+### Running automatic tests
+
+pyzet uses pytest and tox to run automatic tests. Use `pytest` command
+to test against the current Python version, or use `tox` to test against
+multiple Python versions. Pre-commit is also configured as one of tox's
+envs.
+
+Automatic test coverage is not ideal at this point, and commands that
+directly involve working with I/O (`add`, `edit`, `rm`) are only tested
+manually.
 
 ## Zettel formatting rules and guidelines
 
 Zettels should use Markdown. It is preferred to use consistent flavor of
-Markdown like [CommonMark](https://commonmark.org/). Pyzet will parse
-zettel's contents trying to extract information like title and tags.
+Markdown like [CommonMark](https://commonmark.org/). pyzet will parse
+zettel's content trying to extract information like title and tags.
+
+In fact, many rules described below are derived from rwxrob's ZettelMark
+specification that can be found
+[here](https://github.com/rwxrob/zet/blob/main/20210812154738/README.md),
+which is also based on CommonMark.
 
 Some of the rules described below are only guidelines, but some of them
 are needed for pyzet to correctly parse zettels.
@@ -127,7 +139,7 @@ description of pretty much anything. Avoid pasting links in the zettel
 core content and prefer using references section (described below) for
 that.
 
-Pyzet supports tagging zettels with hashtags for easier searching in the
+pyzet supports tagging zettels with hashtags for easier searching in the
 future. The number of tags shouldn't be too big, and ideally they should
 only use keywords that are not a part of a zettel itself. The tagging
 rules are described below.
@@ -166,7 +178,7 @@ will be raised in that case.
 
 ### References
 
-Pyzet currently doesn't analyze references, but the suggested way to add
+pyzet currently doesn't analyze references, but the suggested way to add
 them is as follows:
 
 ```markdown
@@ -175,6 +187,11 @@ Refs:
 * <http://described-example.com/> -- This is an example description
 * <http://example.com/>
 ```
+
+`--` is used here as poor man's [En
+dash](https://en.wikipedia.org/wiki/Dash#En_dash) as it's not available
+directly from ASCII. However, this won't matter as long as `Refs` are
+not parsed by pyzet.
 
 If description is longer, break line after 72 characters and put a blank
 line between references:
@@ -211,9 +228,33 @@ Tags:
 
 * [ ] add a config file
 * [ ] add integration with Git
-* [ ] autocompletion for commands
-* [ ] autocompletion for zettels (ID and title?)
-* [ ] easier searching through zettels (maybe some interface to grep?)
+* [ ] add autocompletion for commands
+* [ ] add autocompletion for zettels (ID and title?)
+
+## Inspiration and further reading
+
+The biggest inspiration for this project was
+[`@rwxrob`](https://github.com/rwxrob), and his approach to
+Zettelkasten. Probably the best way to get a grasp of it, is to read
+about it in [his public Zettelkasten
+repo](https://github.com/rwxrob/zet/blob/main/README.md). Rob also
+maintains a Bash CLI tool
+[`cmd-zet`](https://github.com/rwxrob/cmd-zet.git).
+
+See also:
+
+* <https://luhmann.surge.sh/> -- two essays by the creator of
+  Zettelkasten, Niklas Luhmann
+
+* <https://gsilvapt.me/posts/building-a-zettelkasten-the-simple-way/> --
+  even simpler approach to Zettelkasten
+
+* <https://github.com/gsilvapt/pmz.git> -- similar tool written in Go
+
+* <https://github.com/Zettlr/Zettlr.git> -- if you cannot live without a
+  GUI, this might be an alternative tool for you. There is also an
+  [interesting video](https://youtu.be/c5Tst3-zcWI) from the author of
+  this tool that describes his vision of Zettelkasten.
 
 ## License
 
