@@ -25,10 +25,10 @@ Summary of commands:
 
 ```none
 $ pyzet -h
-usage: pyzet [-h] [-r REPO] [-V] {init,add,edit,rm,show,list,tags,clean,grep,status,pull,push} ...
+usage: pyzet [-h] [-r REPO] [-c CONFIG] [-V] {init,add,edit,rm,show,list,tags,clean,grep,status,pull,push,sample-config} ...
 
 positional arguments:
-  {init,add,edit,rm,show,list,tags,clean,grep,status,pull,push}
+  {init,add,edit,rm,show,list,tags,clean,grep,status,pull,push,sample-config}
     init                initialize a git ZK repository
     add                 add a new zettel
     edit                edit a zettel
@@ -41,10 +41,13 @@ positional arguments:
     status              run `git status` in zet repo
     pull                run `git pull --rebase` in zet repo
     push                run `git push` in zet repo
+    sample-config       Produce a sample pyzet.yaml file
 
 options:
   -h, --help            show this help message and exit
   -r REPO, --repo REPO  path to point to any zet repo
+  -c CONFIG, --config CONFIG
+                        path to alternate config file
   -V, --version         show program's version number and exit
 ```
 

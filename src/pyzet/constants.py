@@ -8,6 +8,9 @@ else:  # pragma: no cover (PY38+)
 
 VERSION = importlib_metadata.version("pyzet")
 
+CONFIG_FILE = "pyzet.yaml"
+DEFAULT_CFG_LOCATION = Path(Path.home(), ".config", "pyzet", CONFIG_FILE)
+
 ZETDIR = "zettels"
 ZETTEL_FILENAME = "README.md"
 ZULU_DATETIME_FORMAT = "%Y%m%d%H%M%S"
@@ -20,7 +23,15 @@ ZETTEL_WIDTH = 72
 MARKDOWN_TITLE = r"^#\s([\S]+.*[\S])$"
 
 # Default paths to Unix utilities installed with Git for Windows.
-VIM_WIN_PATH = Path("C:/Program Files/Git/usr/bin/vim.exe")
-GREP_WIN_PATH = Path("C:/Program Files/Git/usr/bin/grep.exe")
+VIM_WIN_PATH = Path("C:/Program Files/Git/usr/bin/vim.exe").as_posix()
+GIT_WIN_PATH = Path("C:/Program Files/Git/cmd/git.exe").as_posix()
+GREP_WIN_PATH = Path("C:/Program Files/Git/usr/bin/grep.exe").as_posix()
 
-DEFAULT_REPO_PATH = Path(Path.home(), "zet")
+# Default paths on Linux (at least on Ubuntu).
+VIM_LINUX_PATH = Path("/usr/bin/vim").as_posix()
+GIT_LINUX_PATH = Path("/usr/bin/git").as_posix()
+GREP_LINUX_PATH = Path("/usr/bin/grep").as_posix()
+
+VIM_PATH = VIM_WIN_PATH if sys.platform == "win32" else VIM_LINUX_PATH
+GIT_PATH = GIT_WIN_PATH if sys.platform == "win32" else GIT_LINUX_PATH
+GREP_PATH = GREP_WIN_PATH if sys.platform == "win32" else GREP_LINUX_PATH

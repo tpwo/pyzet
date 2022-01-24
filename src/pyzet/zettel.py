@@ -36,6 +36,8 @@ def get_zettels(path: Path, is_reversed: bool = False) -> list[Zettel]:
                 # Skips dirs with different naming convention.
                 # Skips zettels without a text in the first line (i.e. during editing).
                 pass
+    if items == []:
+        raise SystemExit("ERROR: there are no zettels at given repo.")
     return items
 
 

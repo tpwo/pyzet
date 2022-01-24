@@ -1,0 +1,4 @@
+repo: testing/zet
+editor: not-vim
+git: /usr/bin/git
+grep: /usr/bin/grep
