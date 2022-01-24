@@ -62,6 +62,13 @@ def _get_parser() -> ArgumentParser:
 
     subparsers = parser.add_subparsers(dest="command")
 
+    init_parser = subparsers.add_parser("init", help="initialize a git ZK repository")
+    init_parser.add_argument(
+        "path",
+        nargs="?",
+        help="repo path, by default ~/zet; if target dir exists, it must be empty",
+    )
+
     subparsers.add_parser("add", help="add a new zettel")
 
     edit_parser = subparsers.add_parser("edit", help="edit a zettel")
@@ -148,7 +155,7 @@ def _add_git_cmd_options(parser: ArgumentParser, cmd_name: str) -> None:
 
 
 def _parse_args(args: Namespace) -> int:
-    config = _get_config(args.repo)
+    config = _get_config(args.repo, args.command)
     id_: str | None
     try:
         # `show` & `edit` commands use nargs="?" which makes
@@ -164,15 +171,18 @@ def _parse_args(args: Namespace) -> int:
     return _parse_args_without_id(args, config)
 
 
-def _get_config(args_repo_path: str) -> Config:
+def _get_config(args_repo_path: str, command: str) -> Config:
     """Gets config values from CLI or from default value and validates them."""
     config = Config()
     if args_repo_path:
         config.repo_path = Path(args_repo_path)
+    if command == "init":  # if we initialize repo, the folder may not exist
+        return config
     if not config.repo_path.is_dir():
         raise SystemExit(
             "ERROR: wrong repo path. "
-            f"Create folder `{config.repo_path}` or use `--repo` flag."
+            "Run `pyzet init` to create a git repo at "
+            f"`{config.repo_path}`, or use `--repo` flag."
         )
     return config
 
@@ -200,6 +210,10 @@ def _get_last_zettel_id(repo_path: Path) -> str:
 
 
 def _parse_args_without_id(args: Namespace, config: Config) -> int:
+    if args.command == "init":
+        path = args.path if args.path else config.repo_path
+        return init_repo(Path(path))
+
     if args.command == "add":
         return add_zettel(config)
 
@@ -309,6 +323,30 @@ def clean_zet_repo(repo_path: Path, is_dry_run: bool) -> int:
                 print(f"deleting {item.name}")
                 item.rmdir()
     return 0
+
+
+def init_repo(git_repo_path: Path) -> int:
+    """Initializes a git repository in a given path."""
+    # We create both main ZK folder, and the folder that keeps all the zettels.
+    # This is split, as each one can raise an Exception,
+    # and we'd like to have a nice error message in such case.
+    _create_empty_folder(git_repo_path)
+    _create_empty_folder(Path(git_repo_path, const.ZETDIR))
+
+    subprocess.run([_get_git_cmd().as_posix(), "-C", git_repo_path.as_posix(), "init"])
+    logging.info("Git repo was initialized. Please add a remote manually.")
+    return 0
+
+
+def _create_empty_folder(path: Path) -> None:
+    """Creates empty folder or does nothing if it exists."""
+    if path.exists():
+        if not path.is_dir():
+            raise SystemExit(f"ERROR: `{path}` exists and is a file")
+        if not _is_empty(path):
+            raise SystemExit(f"ERROR: `{path}` folder exists and it's not empty")
+    else:
+        path.mkdir(parents=True)
 
 
 def _is_empty(folder: Path) -> bool:
