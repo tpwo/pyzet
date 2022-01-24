@@ -25,10 +25,11 @@ Summary of commands:
 
 ```none
 $ pyzet -h
-usage: pyzet [-h] [-r REPO] [-V] {add,edit,rm,show,list,tags,clean,grep,status,pull,push} ...
+usage: pyzet [-h] [-r REPO] [-V] {init,add,edit,rm,show,list,tags,clean,grep,status,pull,push} ...
 
 positional arguments:
-  {add,edit,rm,show,list,tags,clean,grep,status,pull,push}
+  {init,add,edit,rm,show,list,tags,clean,grep,status,pull,push}
+    init                initialize a git ZK repository
     add                 add a new zettel
     edit                edit a zettel
     rm                  remove a zettel

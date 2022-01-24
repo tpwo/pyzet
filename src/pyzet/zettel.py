@@ -23,6 +23,8 @@ class Zettel:
 
 
 def get_zettels(path: Path, is_reversed: bool = False) -> list[Zettel]:
+    if not path.is_dir():
+        raise SystemExit(f"ERROR: folder {path} doesn't exist.")
     items = []
     for item in sorted(path.iterdir(), reverse=is_reversed):
         if item.is_dir():
