@@ -9,19 +9,70 @@ repos.
 
 The current version is limited in its capabilities, so it might be
 frustrating to use. Don't hesitate to add an issue or PR, if you have
-any idea how to improve or expand this tool. The current biggest problem
-is the lack of configuration file.
+any idea how to improve or expand this tool, or you experienced any
+problems. Any feedback is welcome!
 
-The default location of zet repo is `~/zet`. For now, it's hard-coded
-path that can be changed with `--repo` flag when executing any command.
+The basic configuration of pyzet is set via YAML file which should be
+placed at `~/.config/pyzet/pyzet.yaml`. However, there is a `--config`
+flag that can be used to point to a custom config file using relative or
+global path.
 
-At this point, the editor for working with zettels is also hard-coded.
-On Windows it's the default path to `vim.exe` that is installed with Git
-for Windows. On Unix (although it wasn't tested on Mac), it's the
-default text editor. The option to change editor also will be included
-in the config file.
+Config file contains four possible fields of which only `repo` is
+required to be set. The remaining three will use default values if they
+are not set in the config file.
 
-Summary of commands:
+### Default config values
+
+On Linux (or actually "not Windows", so it will trigger also on Mac)
+they will be compatible with Ubuntu and possibly some other distros:
+
+    editor: /usr/bin/vim
+    git: /usr/bin/git
+    grep: /usr/bin/grep
+
+On Windows the executables installed with Git for Windows are used as
+default options:
+
+    editor: C:/Program Files/Git/usr/bin/vim.exe
+    git: C:/Program Files/Git/cmd/git.exe
+    grep: C:/Program Files/Git/usr/bin/grep.exe
+
+Forward slashes `/` can be used even on Windows. Backslashes `\` or
+double backslashes `\\` should also work, but it wasn't thoroughly
+tested.
+
+Also, remember that paths cannot include env variables, but you can use
+`~` to point to your `$HOME` directory.
+
+For the sake of this readme, we assume that your repo setting will be
+under `~/zet`.
+
+You can have multiple repos, and only a single config file, because
+there is `--repo` flag that you can always set to point to a custom repo
+(and possibly, create an alias that includes it). If this flag is used,
+the setting from YAML is ignored.
+
+An example correct config file:
+
+    repo: ~/zet
+    editor: /usr/bin/vim
+    git: /usr/bin/git
+    grep: /usr/bin/grep
+
+If you're on Linux, you can use the commands:
+
+    mkdir -p ~/.config/pyzet
+    pyzet sample-config > ~/.config/pyzet/pyzet.yaml
+
+to create required folders and a copy of the above correct config file
+into the default location.
+
+## Quick start
+
+Please see the tutorial
+[here](https://github.com/wojdatto/pyzet/tree/main/docs).
+
+## Summary of commands
 
 ```none
 $ pyzet -h
@@ -51,10 +102,54 @@ options:
   -V, --version         show program's version number and exit
 ```
 
+## Supported editors
+
+pyzet is a CLI application which cooperates with a text editor of
+choice. The best integration can be probably achieved when also using a
+CLI text editor.
+
+But this is not necessary. Currently, pyzet can cooperate with different
+text editors, even these that have a GUI but the integration is not
+ideal.
+
+Below are listed editors that pyzet was tested with. To use a given
+editor, add an `editor` field to your config file.
+
+### Linux
+
+The actual testing was done on Ubuntu WSL2 with these CLI editors, and
+they work fine:
+
+    editor: vim
+    editor: nano
+
+### Windows
+
+On Windows, the following editors seem to work fine:
+
+    editor: vim  # only if running pyzet from Git Bash
+    editor: nano # only if running pyzet from Git Bash
+    editor: C:/Program Files/Git/usr/bin/vim.exe
+    editor: C:/Program Files/Git/usr/bin/nano.exe
+    editor: C:/Program Files/Windows NT/Accessories/wordpad.exe
+    editor: notepad.exe
+
+Some issues were found with:
+
+Notepad++ -- closing a tab is not enough, you have to close the whole
+program to save a zettel.
+
+    editor: C:/Program Files/Notepad++/notepad++.exe
+
+VS Code -- issues with adding a zettel. If zettel file already exists,
+then it seems to work similarly to Notepad++ (you have to close the
+whole program to save a zettel):
+
+    editor: C:/Program Files/Microsoft VS Code/Code.exe
+
 ## How to run?
 
-Python 3.7 or later is needed. pyzet doesn't require any external
-dependencies at this point.
+Python 3.7 or later is needed.
 
 The simplest way to install is to use pip:
 
@@ -111,12 +206,12 @@ the repo:
 
 pyzet uses pytest and tox to run automatic tests. Use `pytest` command
 to test against the current Python version, or use `tox` to test against
-multiple Python versions. Pre-commit is also configured as one of tox's
-envs.
+all supported Python versions (you, of course, have to install them
+first). [Pre-commit](https://pre-commit.com/) is also configured as one
+of tox's envs.
 
-Automatic test coverage is not ideal at this point, and commands that
-directly involve working with I/O (`add`, `edit`, `rm`) are only tested
-manually.
+Automatic test coverage is not ideal at this point, and some commands
+are only tested manually.
 
 ## Zettel formatting rules and guidelines
 
@@ -226,13 +321,6 @@ Tags:
 
     #tag1 #tag2 #another-tag
 ```
-
-## TODO
-
-* [ ] add a config file
-* [ ] add integration with Git
-* [ ] add autocompletion for commands
-* [ ] add autocompletion for zettels (ID and title?)
 
 ## Inspiration and further reading
 
