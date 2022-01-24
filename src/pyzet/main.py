@@ -467,17 +467,26 @@ def _open_file(filename: Path, editor: Path) -> None:
 
 def remove_zettel(id_: str, repo_path: Path) -> int:
     """Removes zettel and commits the changes with `RM:` in the commit message."""
-    if input(f"{id_} will be deleted. Are you sure? (y/N): ") != "y":
+    prompt = (
+        f"{id_} will be deleted including all files "
+        "that might be inside. Are you sure? (y/N): "
+    )
+    if input(prompt) != "y":
         raise SystemExit("aborting")
     zettel_path = Path(repo_path, const.ZETDIR, id_, const.ZETTEL_FILENAME)
     zettel = get_zettel(zettel_path.parent)
 
-    zettel_path.unlink()
-    logging.info(f"{id_} was removed")
+    # All files in given zettel folder are removed one by one.
+    # This might be slower than shutil.rmtree() but gives nice log entry for each file.
+    for file in zettel_path.parent.iterdir():
+        file.unlink()
+        logging.info(f"{file} was removed")
+
     _commit_zettel(repo_path, zettel_path, f"RM: {zettel.title}")
 
     # If dir is removed before committing, git raises a warning that dir doesn't exist.
     zettel_path.parent.rmdir()
+    logging.info(f"{zettel_path.parent} was removed")
 
     return 0
 
