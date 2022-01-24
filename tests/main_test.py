@@ -141,6 +141,19 @@ def test_clean_zettels(capsys):
         main(["--repo", tmpdir, "clean"])
 
         out, err = capsys.readouterr()
+        assert out == f"will delete {id_}\nUse `--force` to proceed with deletion\n"
+        assert err == ""
+        assert not Path(tmpdir, id_).exists()
+
+
+def test_clean_zettels_force(capsys):
+    id_ = "20211016205158"
+    with tempfile.TemporaryDirectory() as tmpdir:
+        Path(tmpdir, ZETDIR, id_).mkdir(parents=True)
+
+        main(["--repo", tmpdir, "clean", "--force"])
+
+        out, err = capsys.readouterr()
         assert out == f"deleting {id_}\n"
         assert err == ""
         assert not Path(tmpdir, id_).exists()
@@ -152,6 +165,19 @@ def test_clean_zettels_dry_run(capsys):
         Path(tmpdir, ZETDIR, id_).mkdir(parents=True)
 
         main(["--repo", tmpdir, "clean", "--dry-run"])
+
+        out, err = capsys.readouterr()
+        assert out == f"will delete {id_}\nUse `--force` to proceed with deletion\n"
+        assert err == ""
+        assert Path(tmpdir, ZETDIR, id_).exists()
+
+
+def test_clean_zettels_dry_run_and_force(capsys):
+    id_ = "20211016205158"
+    with tempfile.TemporaryDirectory() as tmpdir:
+        Path(tmpdir, ZETDIR, id_).mkdir(parents=True)
+
+        main(["--repo", tmpdir, "clean", "--dry-run", "--force"])
 
         out, err = capsys.readouterr()
         assert out == f"will delete {id_}\n"
