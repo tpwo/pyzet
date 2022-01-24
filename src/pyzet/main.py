@@ -124,6 +124,12 @@ def _get_parser() -> ArgumentParser:
         action="store_true",
         help="list what will be deleted, but don't delete it",
     )
+    clean_parser.add_argument(
+        "-f",
+        "--force",
+        action="store_true",
+        help="force, use it to actually delete anything",
+    )
 
     grep_parser = subparsers.add_parser("grep", help="run `grep -rni` in zet repo")
     grep_parser.add_argument(
@@ -239,7 +245,9 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
         return call_git(config.repo_path, "pull", ["--rebase"])
 
     if args.command == "clean":
-        return clean_zet_repo(config.repo_path, is_dry_run=args.dry_run)
+        return clean_zet_repo(
+            config.repo_path, is_dry_run=args.dry_run, is_force=args.force
+        )
 
     raise NotImplementedError
 
@@ -314,14 +322,18 @@ def show_zettel(id_: str, repo_path: Path) -> int:
     return 0
 
 
-def clean_zet_repo(repo_path: Path, is_dry_run: bool) -> int:
-    for item in sorted(Path(repo_path, const.ZETDIR).iterdir(), reverse=True):
-        if item.is_dir() and _is_empty(item):
-            if is_dry_run:
-                print(f"will delete {item.name}")
+def clean_zet_repo(repo_path: Path, is_dry_run: bool, is_force: bool) -> int:
+    is_any_empty = False
+    for folder in sorted(Path(repo_path, const.ZETDIR).iterdir(), reverse=True):
+        if folder.is_dir() and _is_empty(folder):
+            is_any_empty = True
+            if is_force and not is_dry_run:
+                print(f"deleting {folder.name}")
+                folder.rmdir()
             else:
-                print(f"deleting {item.name}")
-                item.rmdir()
+                print(f"will delete {folder.name}")
+    if is_any_empty and not is_force:
+        print("Use `--force` to proceed with deletion")
     return 0
 
 
