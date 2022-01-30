@@ -444,20 +444,10 @@ def _get_edit_commit_msg(zettel_path: Path, title: str, config: Config) -> str:
 
 
 def _check_for_file_in_git(filepath: Path, config: Config) -> bool:
-    """Returns True if a file was committed to git."""
-    git_log_output = subprocess.run(
-        [
-            _get_git_cmd(config.git),
-            "-C",
-            config.repo.as_posix(),
-            "log",
-            filepath.as_posix(),
-        ],
-        capture_output=True,
-        check=True,
-    ).stdout
-    # If `git log` output is empty, the file wasn't committed.
-    return git_log_output != b""
+    """Returns True if a file was committed to git.
+    If `git log` output is empty, the file wasn't committed.
+    """
+    return _get_git_output(config, "log", [filepath.as_posix()]) != b""
 
 
 def _check_for_file_changes(filepath: Path, config: Config) -> bool:
@@ -467,20 +457,9 @@ def _check_for_file_changes(filepath: Path, config: Config) -> bool:
     # committing process (like pre-commit).
     _call_git(config, "add", [filepath.as_posix()])
 
-    git_diff_output = subprocess.run(
-        [
-            _get_git_cmd(config.git),
-            "-C",
-            config.repo.as_posix(),
-            "diff",
-            "--staged",
-            filepath.as_posix(),
-        ],
-        capture_output=True,
-        check=True,
-    ).stdout
+    git_diff_out = _get_git_output(config, "diff", ["--staged", filepath.as_posix()])
     # If `git diff` output is empty, the file wasn't modified.
-    return git_diff_output != b""
+    return git_diff_out != b""
 
 
 def _open_file(filename: Path, editor: str) -> None:
@@ -534,6 +513,14 @@ def _call_git(config: Config, command: str, options: list[str] | None = None) ->
         [_get_git_cmd(config.git), "-C", config.repo.as_posix(), command, *options]
     )
     return 0
+
+
+def _get_git_output(config: Config, command: str, options: list[str]) -> bytes:
+    return subprocess.run(
+        [_get_git_cmd(config.git), "-C", config.repo.as_posix(), command, *options],
+        capture_output=True,
+        check=True,
+    ).stdout
 
 
 def _get_git_cmd(git_path: str) -> str:
