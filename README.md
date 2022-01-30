@@ -28,14 +28,12 @@ they will be compatible with Ubuntu and possibly some other distros:
 
     editor: /usr/bin/vim
     git: /usr/bin/git
-    grep: /usr/bin/grep
 
 On Windows the executables installed with Git for Windows are used as
 default options:
 
     editor: C:/Program Files/Git/usr/bin/vim.exe
     git: C:/Program Files/Git/cmd/git.exe
-    grep: C:/Program Files/Git/usr/bin/grep.exe
 
 Forward slashes `/` can be used even on Windows. Backslashes `\` or
 double backslashes `\\` should also work, but it wasn't thoroughly
@@ -57,7 +55,6 @@ An example correct config file:
     repo: ~/zet
     editor: /usr/bin/vim
     git: /usr/bin/git
-    grep: /usr/bin/grep
 
 If you're on Linux, you can use the commands:
 
@@ -76,7 +73,8 @@ Please see the tutorial
 
 ```none
 $ pyzet -h
-usage: pyzet [-h] [-r REPO] [-c CONFIG] [-V] {init,add,edit,rm,show,list,tags,clean,grep,status,pull,push,sample-config} ...
+usage: pyzet [-h] [-r REPO] [-c CONFIG] [-V]
+             {init,add,edit,rm,show,list,tags,clean,grep,status,pull,push,sample-config} ...
 
 positional arguments:
   {init,add,edit,rm,show,list,tags,clean,grep,status,pull,push,sample-config}
@@ -88,7 +86,7 @@ positional arguments:
     list                list zettels in given repo
     tags                list tags in given repo
     clean               delete empty folders in zet repo
-    grep                run `grep -rniI` in zet repo
+    grep                run `git grep -niI` in zet repo
     status              run `git status` in zet repo
     pull                run `git pull --rebase` in zet repo
     push                run `git push` in zet repo

@@ -210,15 +210,14 @@ def test_alternative_repo_wrong_list():
     assert str(excinfo.value).startswith("ERROR: wrong repo path")
 
 
-@pytest.mark.skip("behavior of grep is different on Linux and Windows (Git Bash)")
 def test_grep_win(capfd):
     main(["-c", TEST_CFG, "--repo", "testing/zet", "grep", "hello"])
 
     out, err = capfd.readouterr()
     line1, line2, _ = out.split("\n")  # 3rd item is an empty str
 
-    assert line1.endswith("zettels/20211016205158/README.md:3:Hello there!")
-    assert line2.endswith("zettels/20211016223643/README.md:3:Hello everyone")
+    assert line1.strip() == "zettels/20211016205158/README.md:3:Hello there!"
+    assert line2.strip() == "zettels/20211016223643/README.md:3:Hello everyone"
     assert err == ""
 
 

@@ -22,6 +22,5 @@ def test_sample_config(capsys):
 repo: ~/zet
 editor: /usr/bin/vim
 git: /usr/bin/git
-grep: /usr/bin/grep
 """
     )

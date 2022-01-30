@@ -11,6 +11,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 * Do not display binary files in `pyzet grep` output ([#18]).
+* Use `git grep` over `grep` ([#18]).
 
 ## [0.2.0] - 2022-01-27
 
