@@ -6,6 +6,12 @@ The format is based on [Keep a
 Changelog](https://keepachangelog.com/en/1.0.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+* Do not display binary files in `pyzet grep` output ([#18]).
+
 ## [0.2.0] - 2022-01-27
 
 Introduce YAML config file, some new features, and bug fixes.
@@ -41,3 +47,4 @@ Initial release.
 [#11]: https://github.com/wojdatto/pyzet/issues/11
 [#12]: https://github.com/wojdatto/pyzet/issues/12
 [#13]: https://github.com/wojdatto/pyzet/issues/13
+[#18]: https://github.com/wojdatto/pyzet/issues/18

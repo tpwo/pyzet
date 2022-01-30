@@ -277,7 +277,7 @@ just `cd ~/zet`, and run Git commands directly.
 
 Grep is your friend when you try to look for something in your ZK repo,
 especially when it has grown a bit. `pyzet grep` command works by
-running grep with these three flags:
+running grep with these flags:
 
 * `-r` -- it makes a search recursive, meaning that grep will visit
   every zettel, and print a line from it if it matches search criteria.
@@ -286,6 +286,8 @@ running grep with these three flags:
   the match occurred.
 
 * `-i` -- it tells grep to ignore letter case.
+
+* `-I` -- it tells grep to ignore binary files.
 
 Grep is run directly in `zettels` folder in your ZK repo. If you happen
 to have different files in there, it will also check them, so remember
