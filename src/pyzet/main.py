@@ -141,7 +141,7 @@ def _get_parser() -> ArgumentParser:
         help="force, use it to actually delete anything",
     )
 
-    grep_parser = subparsers.add_parser("grep", help="run `grep -rni` in zet repo")
+    grep_parser = subparsers.add_parser("grep", help="run `grep -rniI` in zet repo")
     grep_parser.add_argument(
         "pattern",
         nargs=1,
@@ -327,7 +327,7 @@ def call_grep(config: Config, pattern: str) -> int:
         [
             _get_grep_cmd(config.grep),
             "--color=auto",
-            "-rni",
+            "-rniI",
             pattern,
             Path(config.repo, const.ZETDIR).as_posix(),
         ]
