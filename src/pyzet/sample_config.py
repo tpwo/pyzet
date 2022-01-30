@@ -9,7 +9,6 @@ SAMPLE_CONFIG = f"""\
 repo: ~/zet
 editor: /usr/bin/vim
 git: /usr/bin/git
-grep: /usr/bin/grep
 """
 
 

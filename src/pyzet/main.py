@@ -25,7 +25,6 @@ class Config:
     repo: Path
     editor: str
     git: str
-    grep: str
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -141,7 +140,7 @@ def _get_parser() -> ArgumentParser:
         help="force, use it to actually delete anything",
     )
 
-    grep_parser = subparsers.add_parser("grep", help="run `grep -rniI` in zet repo")
+    grep_parser = subparsers.add_parser("grep", help="run `git grep -niI` in zet repo")
     grep_parser.add_argument(
         "pattern",
         nargs=1,
@@ -231,13 +230,11 @@ def process_yaml(
         )
     editor = yaml_cfg["editor"] if yaml_cfg.get("editor") else const.VIM_PATH
     git = yaml_cfg["git"] if yaml_cfg.get("git") else const.GIT_PATH
-    grep = yaml_cfg["grep"] if yaml_cfg.get("grep") else const.GREP_PATH
 
     return Config(
         repo=repo,
         editor=editor,
         git=git,
-        grep=grep,
     )
 
 
@@ -283,7 +280,7 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
         return list_tags(config.repo, is_reversed=args.reverse)
 
     if args.command == "grep":
-        return call_grep(config, args.pattern[0])
+        return call_git(config, "grep", ["-niI", args.pattern[0]])
 
     if args.command in ("status", "push"):
         return call_git(config, args.command, args.options)
@@ -315,22 +312,6 @@ def _validate_id(id_: str, command: str, config: Config) -> None:
 def call_git(config: Config, command: str, options: list[str]) -> int:
     subprocess.run(
         [_get_git_cmd(config.git), "-C", config.repo.as_posix(), command, *options]
-    )
-    return 0
-
-
-def call_grep(config: Config, pattern: str) -> int:
-    """Calls grep with recursive search and with ignoring letter case."""
-    # `--color=auto` colors the output, e.g. found matches are printed with red font.
-    # It's a default setting in Ubuntu's .bashrc.
-    subprocess.run(
-        [
-            _get_grep_cmd(config.grep),
-            "--color=auto",
-            "-rniI",
-            pattern,
-            Path(config.repo, const.ZETDIR).as_posix(),
-        ]
     )
     return 0
 
@@ -572,10 +553,3 @@ def _get_git_cmd(git_path: str) -> str:
     if shutil.which(git) is None:
         raise SystemExit(f"ERROR: `{git}` cannot be found.")
     return git
-
-
-def _get_grep_cmd(grep_path: str) -> str:
-    grep = Path(grep_path).expanduser().as_posix()
-    if shutil.which(grep) is None:
-        raise SystemExit(f"ERROR: `{grep}` cannot be found.")
-    return grep

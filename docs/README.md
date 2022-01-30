@@ -277,29 +277,22 @@ just `cd ~/zet`, and run Git commands directly.
 
 Grep is your friend when you try to look for something in your ZK repo,
 especially when it has grown a bit. `pyzet grep` command works by
-running grep with these flags:
+running `git grep` with these flags:
 
-* `-r` -- it makes a search recursive, meaning that grep will visit
-  every zettel, and print a line from it if it matches search criteria.
+* `-n` -- matching line number is added to the output
+* `-i` -- ignore letter case
+* `-I` -- ignore binary files
 
-* `-n` -- it adds a line number to the grep output, so you know where
-  the match occurred.
-
-* `-i` -- it tells grep to ignore letter case.
-
-* `-I` -- it tells grep to ignore binary files.
-
-Grep is run directly in `zettels` folder in your ZK repo. If you happen
-to have different files in there, it will also check them, so remember
-about it.
+Remember that `git grep` will look only in files that are tracked by
+Git.
 
 Now, run a grep search on our repo, as we have one zettel in there.
 Let's use `zettel` as a search pattern:
 
     $ pz grep zettel
-    /home/<your-username>/zet/zettels/20220126232605/README.md:1:# This is my first zettel created with pyzet
-    /home/<your-username>/zet/zettels/20220126232605/README.md:3:The above line is the title of this zettel, and this is part of
-    /home/<your-username>/zet/zettels/20220126232605/README.md:4:its contents. It's a good practice to wrap lines like that, so zettels
+    zettels/20220126232605/README.md:1:# This is my first zettel created with pyzet
+    zettels/20220126232605/README.md:3:The above line is the title of this zettel, and this is part of
+    zettels/20220126232605/README.md:4:its contents. It's a good practice to wrap lines like that, so zettels
 
 As you can see, we've got three matches. In your output, you should also
 see some nice coloring (e.g. matched pattern colored with red) if only
