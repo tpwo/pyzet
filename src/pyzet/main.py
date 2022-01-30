@@ -280,15 +280,15 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
         return list_tags(config.repo, is_reversed=args.reverse)
 
     if args.command == "grep":
-        return call_git(config, "grep", ["-niI", args.pattern[0]])
+        return _call_git(config, "grep", ["-niI", args.pattern[0]])
 
     if args.command in ("status", "push"):
-        return call_git(config, args.command, args.options)
+        return _call_git(config, args.command, args.options)
 
     if args.command == "pull":
         # `--rebase` is used to maintain a linear history without merges, as this
         # seems to be a reasonable approach in zet repo that is usually personal.
-        return call_git(config, "pull", ["--rebase"])
+        return _call_git(config, "pull", ["--rebase"])
 
     if args.command == "clean":
         return clean_zet_repo(config.repo, is_dry_run=args.dry_run, is_force=args.force)
@@ -307,13 +307,6 @@ def _validate_id(id_: str, command: str, config: Config) -> None:
                 "Use `pyzet clean` to remove empty folder"
             )
         raise SystemExit(f"ERROR: {const.ZETTEL_FILENAME} in {id_} doesn't exist")
-
-
-def call_git(config: Config, command: str, options: list[str]) -> int:
-    subprocess.run(
-        [_get_git_cmd(config.git), "-C", config.repo.as_posix(), command, *options]
-    )
-    return 0
 
 
 def list_zettels(path: Path, is_pretty: bool, is_reversed: bool) -> int:
@@ -372,8 +365,7 @@ def init_repo(config: Config) -> int:
     # and we'd like to have a nice error message in such case.
     _create_empty_folder(config.repo)
     _create_empty_folder(Path(config.repo, const.ZETDIR))
-
-    subprocess.run([_get_git_cmd(config.git), "-C", config.repo.as_posix(), "init"])
+    _call_git(config, "init")
     logging.info("Git repo was initialized. Please add a remote manually.")
     return 0
 
@@ -431,15 +423,7 @@ def edit_zettel(id_: str, config: Config, editor: str) -> int:
         zettel = get_zettel(zettel_path.parent)
     except ValueError:
         logging.info("Editing zettel aborted, restoring the version from git...")
-        subprocess.run(
-            [
-                _get_git_cmd(config.git),
-                "-C",
-                config.repo.as_posix(),
-                "restore",
-                zettel_path.as_posix(),
-            ]
-        )
+        _call_git(config, "restore", [zettel_path.as_posix()])
     else:
         if _check_for_file_changes(zettel_path, config):
             _commit_zettel(
@@ -478,16 +462,14 @@ def _check_for_file_in_git(filepath: Path, config: Config) -> bool:
 
 def _check_for_file_changes(filepath: Path, config: Config) -> bool:
     """Returns True if a file was modified in a working dir."""
-    git_cmd = _get_git_cmd(config.git)
-
     # Run `git add` to avoid false negatives, as `git diff --staged` is used for
     # detection. This is important when there are external factors that impact the
     # committing process (like pre-commit).
-    subprocess.run([git_cmd, "-C", config.repo.as_posix(), "add", filepath.as_posix()])
+    _call_git(config, "add", [filepath.as_posix()])
 
     git_diff_output = subprocess.run(
         [
-            git_cmd,
+            _get_git_cmd(config.git),
             "-C",
             config.repo.as_posix(),
             "diff",
@@ -541,11 +523,17 @@ def remove_zettel(id_: str, config: Config) -> int:
 
 
 def _commit_zettel(config: Config, zettel_path: Path, message: str) -> None:
-    git_cmd = _get_git_cmd(config.git)
+    _call_git(config, "add", [zettel_path.as_posix()])
+    _call_git(config, "commit", ["-m", message])
+
+
+def _call_git(config: Config, command: str, options: list[str] | None = None) -> int:
+    if options is None:
+        options = []
     subprocess.run(
-        [git_cmd, "-C", config.repo.as_posix(), "add", zettel_path.as_posix()]
+        [_get_git_cmd(config.git), "-C", config.repo.as_posix(), command, *options]
     )
-    subprocess.run([git_cmd, "-C", config.repo.as_posix(), "commit", "-m", message])
+    return 0
 
 
 def _get_git_cmd(git_path: str) -> str:
