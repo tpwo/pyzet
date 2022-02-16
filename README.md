@@ -154,10 +154,9 @@ The simplest way to install is to use pip:
     pip install pyzet
     pyzet --help
 
-You can also obtain the newest version from the `develop` branch
-directly from this repository:
+You can also obtain the newest version directly from this repository:
 
-    pip install git+https://github.com/wojdatto/pyzet.git@develop
+    pip install git+https://github.com/wojdatto/pyzet.git
 
 ### OS compatibility
 

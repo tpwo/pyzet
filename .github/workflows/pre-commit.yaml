@@ -5,7 +5,9 @@ on:
   push:
     branches:
       - main
-      - develop
+      - test-me-*
+    tags:
+      - '*'
 
 jobs:
   pre-commit:
