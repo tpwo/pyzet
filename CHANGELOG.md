@@ -8,6 +8,11 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.3.0] - 2022-02-18
+
+Start using `git grep` rather than relying on availability of `grep`
+executable which means even simpler config file.
+
 ### Changed
 
 * Do not display binary files in `pyzet grep` output ([#18]).
@@ -38,7 +43,8 @@ Initial release.
 
 <!-- Links -->
 
-[Unreleased]: https://github.com/wojdatto/pyzet/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/wojdatto/pyzet/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/wojdatto/pyzet/releases/tag/v0.3.0
 [0.2.0]: https://github.com/wojdatto/pyzet/releases/tag/v0.2.0
 [0.1.0]: https://github.com/wojdatto/pyzet/releases/tag/v0.1.0
 
