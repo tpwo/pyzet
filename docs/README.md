@@ -298,6 +298,18 @@ As you can see, we've got three matches. In your output, you should also
 see some nice coloring (e.g. matched pattern colored with red) if only
 your terminal configuration supports it.
 
+You might come into a situation in which `pyzet grep` shows you results
+from files that you are not interested in, e.g. SVG graphics which are
+not binary and contain a lot of correct English words. It is possible to
+filter these results out by telling Git to treat these files like
+binary. This can be done by creating a `.gitattributes` file in your ZK
+repo. E.g. to filter out SVG, use the following syntax.
+
+    *.svg binary
+
+You can find more information about it in [Git
+Docs](https://git-scm.com/docs/gitattributes#_using_macro_attributes).
+
 ## Clean command
 
 The last command to go through is `pyzet clean`. It works a bit
