@@ -56,7 +56,7 @@ An example correct config file:
     editor: /usr/bin/vim
     git: /usr/bin/git
 
-If you're on Linux, you can use the commands:
+If you're on Linux (or Git Bash on Windows), you can use the commands:
 
     mkdir -p ~/.config/pyzet
     pyzet sample-config > ~/.config/pyzet/pyzet.yaml
@@ -235,9 +235,10 @@ core content and prefer using references section (described below) for
 that.
 
 pyzet supports tagging zettels with hashtags for easier searching in the
-future. The number of tags shouldn't be too big, and ideally they should
-only use keywords that are not a part of a zettel itself. The tagging
-rules are described below.
+future. For correct parsing, tags should all fit on a single line, so
+their number is naturally limited. Ideally they should only use keywords
+that are not a part of a zettel itself, so they can help obtaining
+non-obvious connections. The tagging rules are described below.
 
 Try to use consistent Markdown formatting. We recommend:
 
@@ -283,20 +284,26 @@ Refs:
 * <http://example.com/>
 ```
 
+ZettelMark doesn't specify a keyword for a reference block, but we like
+`Refs` as it plays nice with `Tags` that will be described next.
+However, at this point, it's all up to the user preference.
+
 `--` is used here as poor man's [En
 dash](https://en.wikipedia.org/wiki/Dash#En_dash) as it's not available
-directly from ASCII. However, this won't matter as long as `Refs` are
-not parsed by pyzet.
+directly from ASCII. It's used to separate a link from the description,
+and currently isn't parsed.
 
-If description is longer, break line after 72 characters and put a blank
-line between references:
+#### One reference per line
+
+Even if a reference line is longer, ZettelMark tells not to wrap lines
+in this section, probably for easier parsing. This doesn't matter as
+long as `Refs` are not parsed by pyzet, but it seems like a reasonable
+rule to follow, so we recommend it:
 
 ```markdown
 Refs:
 
-* <http://described-example.com/> -- This is an example of a longer
-  description
-
+* <http://described-example.com/> -- This is an example of a slightly longer description
 * <http://example.com/>
 ```
 
@@ -318,6 +325,17 @@ Tags:
 
     #tag1 #tag2 #another-tag
 ```
+
+Remember that tags line should end with a newline character, so the
+caret is moved to the next line which should be empty. This is by
+default assumed by some text editors like Vim, but is probably less
+popular in Windows world.
+
+There are different ways to guarantee that file ending is correct, and
+one of them is using pre-commit with `end-of-file-fixer` hook that
+[comes by default](https://github.com/pre-commit/pre-commit-hooks.git)
+with this tool. It's very easy to setup pre-commit with ZK Git
+repository, so we recommend it.
 
 ## Inspiration and further reading
 
