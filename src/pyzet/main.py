@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import functools
 import io
 import itertools
 import logging
@@ -523,6 +524,7 @@ def _get_git_output(config: Config, command: str, options: list[str]) -> bytes:
     ).stdout
 
 
+@functools.lru_cache(maxsize=1)
 def _get_git_cmd(git_path: str) -> str:
     git = Path(git_path).expanduser().as_posix()
     if shutil.which(git) is None:
