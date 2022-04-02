@@ -8,6 +8,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+* Add `--link` flag to `pyzet list` and `pyzet show` ([#21]).
+
 ## [0.3.0] - 2022-02-18
 
 Start using `git grep` rather than relying on availability of `grep`
@@ -35,7 +39,8 @@ Introduce YAML config file, some new features, and bug fixes.
 
 ### Fixed
 
-* Fix `pyzet rm` so it also removes other files in the zettel folder ([#9]).
+* Fix `pyzet rm` so it also removes other files in the zettel folder
+  ([#9]).
 
 ## [0.1.0] - 2022-01-23
 
@@ -55,3 +60,4 @@ Initial release.
 [#12]: https://github.com/wojdatto/pyzet/issues/12
 [#13]: https://github.com/wojdatto/pyzet/issues/13
 [#18]: https://github.com/wojdatto/pyzet/issues/18
+[#21]: https://github.com/wojdatto/pyzet/issues/21
