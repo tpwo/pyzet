@@ -90,7 +90,7 @@ positional arguments:
     status              run `git status` in zet repo
     pull                run `git pull --rebase` in zet repo
     push                run `git push` in zet repo
-    sample-config       Produce a sample pyzet.yaml file
+    sample-config       produce a sample pyzet.yaml file
 
 options:
   -h, --help            show this help message and exit
