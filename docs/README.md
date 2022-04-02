@@ -242,7 +242,7 @@ rebase commits that happened later.)
 
 ## Git remote interaction
 
-pyzet ships with a few commands that make it easier to interact with a
+Pyzet ships with a few commands that make it easier to interact with a
 Git remote. However, the work is always done by Git executable itself --
 pyzet just calls it with the correct parameters.
 
