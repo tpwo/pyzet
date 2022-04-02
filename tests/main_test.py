@@ -141,6 +141,30 @@ def test_list_pretty_reverse(capsys):
     assert err == ""
 
 
+def test_list_link(capsys):
+    main(["-c", TEST_CFG, "--repo", "testing/zet", "list", "--link"])
+
+    out, err = capsys.readouterr()
+    assert out == (
+        "* [20211016205158](../20211016205158) -- Zet test entry\n"
+        "* [20211016223643](../20211016223643) -- Another zet test entry\n"
+        "* [20220101220852](../20220101220852) -- Zettel with UTF-8\n"
+    )
+    assert err == ""
+
+
+def test_list_link_reverse(capsys):
+    main(["-c", TEST_CFG, "--repo", "testing/zet", "list", "--link", "--reverse"])
+
+    out, err = capsys.readouterr()
+    assert out == (
+        "* [20220101220852](../20220101220852) -- Zettel with UTF-8\n"
+        "* [20211016223643](../20211016223643) -- Another zet test entry\n"
+        "* [20211016205158](../20211016205158) -- Zet test entry\n"
+    )
+    assert err == ""
+
+
 def test_list_warning_empty_folder(caplog):
     id_ = "20211016205158"
     id2_ = "20211016205159"
