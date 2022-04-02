@@ -93,6 +93,14 @@ def test_show_utf8(capsys):
     assert err == ""
 
 
+def test_show_link(capsys):
+    main(["-c", TEST_CFG, "--repo", "testing/zet", "show", "20211016205158", "--link"])
+
+    out, err = capsys.readouterr()
+    assert out == "* [20211016205158](../20211016205158) -- Zet test entry\n"
+    assert err == ""
+
+
 def test_list(capsys):
     main(["-c", TEST_CFG, "--repo", "testing/zet", "list"])
 

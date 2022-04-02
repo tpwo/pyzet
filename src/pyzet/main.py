@@ -97,6 +97,12 @@ def _get_parser() -> ArgumentParser:
         nargs="?",
         help="zettel id, by default shows zettel with the newest timestamp",
     )
+    show_parser.add_argument(
+        "-l",
+        "--link",
+        action="store_true",
+        help="show zettel as a relative Markdown link",
+    )
 
     list_parser = subparsers.add_parser("list", help="list zettels in given repo")
     list_parser.add_argument(
@@ -195,7 +201,7 @@ def _parse_args(args: Namespace) -> int:
     except AttributeError:
         pass  # command that doesn't use `id` was executed
     else:
-        return _parse_args_with_id(id_, args.command, config)
+        return _parse_args_with_id(id_, args, config)
     return _parse_args_without_id(args, config)
 
 
@@ -245,13 +251,16 @@ def process_yaml(
     )
 
 
-def _parse_args_with_id(id_: str | None, command: str, config: Config) -> int:
+def _parse_args_with_id(id_: str | None, args: Namespace, config: Config) -> int:
     if id_ is None:
         id_ = _get_last_zettel_id(config.repo)
 
+    command = args.command
     _validate_id(id_, command, config)
 
     if command == "show":
+        if args.link:
+            return show_zettel_as_md_link(id_, config.repo)
         return show_zettel(id_, config.repo)
 
     if command == "edit":
@@ -329,9 +338,7 @@ def _get_zettel_repr(zettel: Zettel, is_pretty: bool, is_link: bool) -> str:
     if is_pretty:
         return f"{zettel.timestamp} - {zettel.title}"
     if is_link:
-        # Asterix at the beginning is Markdown unordered list, as links
-        # to zettels are usually used in references section of a zettel.
-        return f"* [{zettel.id_}](../{zettel.id_}) -- {zettel.title}"
+        return _get_md_relative_link(zettel.id_, zettel.title)
     return f"{zettel.id_} - {zettel.title}"
 
 
@@ -360,6 +367,22 @@ def show_zettel(id_: str, repo_path: Path) -> int:
     with open(zettel_path, encoding="utf-8") as file:
         print(file.read(), end="")
     return 0
+
+
+def show_zettel_as_md_link(id_: str, repo_path: Path) -> int:
+    zettel_path = Path(repo_path, const.ZETDIR, id_)
+    zettel = get_zettel(zettel_path)
+    print(_get_md_relative_link(zettel.id_, zettel.title))
+    return 0
+
+
+def _get_md_relative_link(id_: str, title: str) -> str:
+    """Returns a representation of a zettel that is a relative Markdown link.
+
+    Asterix at the beginning is a Markdown syntax for an unordered list, as links to
+    zettels are usually just used in references section of a zettel.
+    """
+    return f"* [{id_}](../{id_}) -- {title}"
 
 
 def clean_zet_repo(repo_path: Path, is_dry_run: bool, is_force: bool) -> int:
