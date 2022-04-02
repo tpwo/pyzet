@@ -9,21 +9,21 @@ repos.
 
 The current version is limited in its capabilities, so it might be
 frustrating to use. Don't hesitate to add an issue or PR, if you have
-any idea how to improve or expand this tool, or you experienced any
-problems. Any feedback is welcome!
+any idea how to improve or expand this tool, or if you've experienced
+any problems. Any feedback is welcome!
 
 The basic configuration of pyzet is set via YAML file which should be
 placed at `~/.config/pyzet/pyzet.yaml`. However, there is a `--config`
 flag that can be used to point to a custom config file using relative or
 global path.
 
-Config file contains four possible fields of which only `repo` is
-required to be set. The remaining three will use default values if they
+Config file contains a set of possible fields of which only `repo` is
+required to be set. The remaining ones will use default values if they
 are not set in the config file.
 
 ### Default config values
 
-On Linux (or actually "not Windows", so it will trigger also on Mac)
+On Linux (or actually: "not Windows", so it will trigger also on Mac)
 they will be compatible with Ubuntu and possibly some other distros:
 
     editor: /usr/bin/vim
@@ -102,7 +102,7 @@ options:
 
 ## Supported editors
 
-pyzet is a CLI application which cooperates with a text editor of
+Pyzet is a CLI application which cooperates with a text editor of
 choice. The best integration can be probably achieved when also using a
 CLI text editor.
 
@@ -175,10 +175,10 @@ command. Using virtual environment is advised.
     git clone https://github.com/wojdatto/pyzet.git
     cd pyzet
 
-Unix/Linux:
+Linux:
 
     python3 -m venv venv
-    . venv/bin/activate # in bash `source` is an alias for `.`
+    . venv/bin/activate
     pip install .
     pyzet --help
 
@@ -201,23 +201,25 @@ the repo:
 
 ### Running automatic tests
 
-pyzet uses pytest and tox to run automatic tests. Use `pytest` command
+Pyzet uses pytest and tox to run automatic tests. Use `pytest` command
 to test against the current Python version, or use `tox` to test against
 all supported Python versions (you, of course, have to install them
 first). [Pre-commit](https://pre-commit.com/) is also configured as one
-of tox's envs.
+of tox's envs, but it can be run independently depending on your
+preference.
 
 Automatic test coverage is not ideal at this point, and some commands
-are only tested manually.
+are only tested manually, and this is especially true in case of
+commands that require a user input.
 
 ## Zettel formatting rules and guidelines
 
 Zettels should use Markdown. It is preferred to use consistent flavor of
-Markdown like [CommonMark](https://commonmark.org/). pyzet will parse
+Markdown like [CommonMark](https://commonmark.org/). Pyzet will parse
 zettel's content trying to extract information like title and tags.
 
-In fact, many rules described below are derived from rwxrob's ZettelMark
-specification that can be found
+In fact, many rules described below are derived from Rob Muhlestein's
+ZettelMark specification that can be found
 [here](https://github.com/rwxrob/zet/blob/main/20210812154738/README.md),
 which is also based on CommonMark.
 
@@ -226,15 +228,16 @@ are needed for pyzet to correctly parse zettels.
 
 ### General formatting
 
-For a convenient reading zettels in the source form, it's recommended to
-wrap lines. The common standard is to break line after 72 characters.
+For a convenient reading of zettels in the source form, it's recommended
+to wrap lines. The [common standard](https://youtu.be/_U5heW26fvg) is to
+break line after 72 characters.
 
 Ideal zettels shouldn't be too long, and they should be a brief text
 description of pretty much anything. Avoid pasting links in the zettel
 core content and prefer using references section (described below) for
 that.
 
-pyzet supports tagging zettels with hashtags for easier searching in the
+Pyzet supports tagging zettels with hashtags for easier searching in the
 future. For correct parsing, tags should all fit on a single line, so
 their number is naturally limited. Ideally they should only use keywords
 that are not a part of a zettel itself, so they can help obtaining
@@ -274,7 +277,7 @@ will be raised in that case.
 
 ### References
 
-pyzet currently doesn't analyze references, but the suggested way to add
+Pyzet currently doesn't analyze references, but the suggested way to add
 them is as follows:
 
 ```markdown
@@ -339,8 +342,8 @@ repository, so we recommend it.
 
 ## Inspiration and further reading
 
-The biggest inspiration for this project was
-[`@rwxrob`](https://github.com/rwxrob), and his approach to
+The biggest inspiration for this project was Rob Muhlestein
+([`@rwxrob`](https://github.com/rwxrob)), and his approach to
 Zettelkasten. Probably the best way to get a grasp of it, is to read
 about it in [his public Zettelkasten
 repo](https://github.com/rwxrob/zet/blob/main/README.md). Rob also
