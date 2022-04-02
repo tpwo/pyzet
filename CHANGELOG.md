@@ -10,7 +10,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-* Add `--link` flag to `pyzet list` and `pyzet show` ([#21]).
+* Add `--link` flag to `pyzet list` and `pyzet show` (#21).
 
 ### Changed
 
@@ -26,8 +26,8 @@ executable which means even simpler config file.
 
 ### Changed
 
-* Do not display binary files in `pyzet grep` output ([#18]).
-* Use `git grep` over `grep` ([#18]).
+* Do not display binary files in `pyzet grep` output (#18).
+* Use `git grep` over `grep` (#18).
 
 ## [0.2.0] - 2022-01-27
 
@@ -35,19 +35,19 @@ Introduce YAML config file, some new features, and bug fixes.
 
 ### Added
 
-* Add support for YAML config file ([#13]).
-* Add `pyzet init` command that creates a git repo ([#8]).
-* Add quick start tutorial ([#12]).
+* Add support for YAML config file (#13).
+* Add `pyzet init` command that creates a git repo (#8).
+* Add quick start tutorial (#12).
 
 ### Changed
 
-* Order CLI commands in a more intuitive way ([#11]).
-* Add `--force` flag to `pyzet clean` ([#10]).
+* Order CLI commands in a more intuitive way (#11).
+* Add `--force` flag to `pyzet clean` (#10).
 
 ### Fixed
 
 * Fix `pyzet rm` so it also removes other files in the zettel folder
-  ([#9]).
+  (#9).
 
 ## [0.1.0] - 2022-01-23
 
@@ -59,12 +59,3 @@ Initial release.
 [0.3.0]: https://github.com/wojdatto/pyzet/releases/tag/v0.3.0
 [0.2.0]: https://github.com/wojdatto/pyzet/releases/tag/v0.2.0
 [0.1.0]: https://github.com/wojdatto/pyzet/releases/tag/v0.1.0
-
-[#8]: https://github.com/wojdatto/pyzet/issues/8
-[#9]: https://github.com/wojdatto/pyzet/issues/9
-[#10]: https://github.com/wojdatto/pyzet/issues/10
-[#11]: https://github.com/wojdatto/pyzet/issues/11
-[#12]: https://github.com/wojdatto/pyzet/issues/12
-[#13]: https://github.com/wojdatto/pyzet/issues/13
-[#18]: https://github.com/wojdatto/pyzet/issues/18
-[#21]: https://github.com/wojdatto/pyzet/issues/21
