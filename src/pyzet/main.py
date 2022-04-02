@@ -336,10 +336,10 @@ def list_zettels(path: Path, is_pretty: bool, is_link: bool, is_reverse: bool) -
 
 def _get_zettel_repr(zettel: Zettel, is_pretty: bool, is_link: bool) -> str:
     if is_pretty:
-        return f"{zettel.timestamp} - {zettel.title}"
+        return f"{zettel.timestamp} -- {zettel.title}"
     if is_link:
         return _get_md_relative_link(zettel.id_, zettel.title)
-    return f"{zettel.id_} - {zettel.title}"
+    return f"{zettel.id_} -- {zettel.title}"
 
 
 def list_tags(path: Path, is_reversed: bool) -> int:

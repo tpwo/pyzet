@@ -12,6 +12,13 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 * Add `--link` flag to `pyzet list` and `pyzet show` ([#21]).
 
+### Changed
+
+* Use `--` in `pyzet list` and `pyzet list --pretty` output. Before, a
+  single dash was used. The new syntax is in line with recommendations
+  about including references in zettels that can be found in the readme.
+  It's also used in `pyzet list --link` and `pyzet show --link` output.
+
 ## [0.3.0] - 2022-02-18
 
 Start using `git grep` rather than relying on availability of `grep`
