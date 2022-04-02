@@ -18,7 +18,7 @@ import yaml
 
 import pyzet.constants as const
 from pyzet.sample_config import sample_config
-from pyzet.zettel import get_zettel, get_zettels
+from pyzet.zettel import Zettel, get_zettel, get_zettels
 
 
 @dataclass
@@ -104,6 +104,12 @@ def _get_parser() -> ArgumentParser:
         "--pretty",
         action="store_true",
         help="use prettier format for printing date and time",
+    )
+    list_parser.add_argument(
+        "-l",
+        "--link",
+        action="store_true",
+        help="print zettels as relative Markdown links",
     )
     list_parser.add_argument(
         "-r",
@@ -272,7 +278,10 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
 
     if args.command == "list":
         return list_zettels(
-            config.repo, is_pretty=args.pretty, is_reversed=args.reverse
+            config.repo,
+            is_pretty=args.pretty,
+            is_link=args.link,
+            is_reverse=args.reverse,
         )
 
     if args.command == "tags":
@@ -310,11 +319,20 @@ def _validate_id(id_: str, command: str, config: Config) -> None:
         raise SystemExit(f"ERROR: {const.ZETTEL_FILENAME} in {id_} doesn't exist")
 
 
-def list_zettels(path: Path, is_pretty: bool, is_reversed: bool) -> int:
-    for zettel in get_zettels(Path(path, const.ZETDIR), is_reversed):
-        representation = zettel.timestamp if is_pretty else zettel.id_
-        print(f"{representation} - {zettel.title}")
+def list_zettels(path: Path, is_pretty: bool, is_link: bool, is_reverse: bool) -> int:
+    for zettel in get_zettels(Path(path, const.ZETDIR), is_reverse):
+        print(_get_zettel_repr(zettel, is_pretty, is_link))
     return 0
+
+
+def _get_zettel_repr(zettel: Zettel, is_pretty: bool, is_link: bool) -> str:
+    if is_pretty:
+        return f"{zettel.timestamp} - {zettel.title}"
+    if is_link:
+        # Asterix at the beginning is Markdown unordered list, as links
+        # to zettels are usually used in references section of a zettel.
+        return f"* [{zettel.id_}](../{zettel.id_}) -- {zettel.title}"
+    return f"{zettel.id_} - {zettel.title}"
 
 
 def list_tags(path: Path, is_reversed: bool) -> int:
