@@ -157,7 +157,7 @@ def _get_parser() -> ArgumentParser:
     _add_git_cmd_options(push_parser, "push")
 
     subparsers.add_parser(
-        "sample-config", help=f"Produce a sample {const.CONFIG_FILE} file"
+        "sample-config", help=f"produce a sample {const.CONFIG_FILE} file"
     )
 
     return parser

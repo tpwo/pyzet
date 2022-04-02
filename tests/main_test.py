@@ -9,14 +9,15 @@ from pyzet.main import main
 TEST_CFG = f"testing/{CONFIG_FILE}"
 
 
-def test_print_usage(capsys):
+def test_no_argv(capsys):
+    # It should just print the usage help
     main([])
     out, err = capsys.readouterr()
     assert out.startswith("usage: pyzet")
     assert err == ""
 
 
-def test_overall_help(capsys):
+def test_help(capsys):
     with pytest.raises(SystemExit):
         main(["-c", TEST_CFG, "--help"])
 
@@ -25,7 +26,74 @@ def test_overall_help(capsys):
     assert err == ""
 
 
-def test_list_zettels(capsys):
+def test_init_error_folder_exists():
+    with pytest.raises(SystemExit) as excinfo:
+        main(["-c", TEST_CFG, "init"])
+    assert (
+        str(excinfo.value) == "ERROR: `testing/zet` folder exists and it's not empty."
+    )
+
+
+def test_init_error_file_exists_at_path():
+    with pytest.raises(SystemExit) as excinfo:
+        main(["-c", TEST_CFG, "-r", "README.md", "init"])
+    assert str(excinfo.value) == "ERROR: `README.md` exists and is a file."
+
+
+def test_init_error_config_file_missing():
+    with pytest.raises(SystemExit) as excinfo:
+        main(["-c", "some/nonexistent/path", "init"])
+    assert (
+        str(excinfo.value)
+        == "ERROR: config file at `some/nonexistent/path` not found.\n"
+        "Add it or use `--config` flag."
+    )
+
+
+def test_edit_error_editor_not_found():
+    with pytest.raises(SystemExit) as excinfo:
+        main(["-c", "testing/pyzet-wrong.yaml", "edit"])
+    assert str(excinfo.value) == "ERROR: editor `not-vim` cannot be found."
+
+
+def test_edit_error_missing_repo_in_yaml():
+    with pytest.raises(SystemExit) as excinfo:
+        main(["-c", "testing/pyzet-missing-repo.yaml", "edit"])
+    assert (
+        str(excinfo.value)
+        == "ERROR: field `repo` missing from `testing/pyzet-missing-repo.yaml`."
+    )
+
+
+def test_show(capsys):
+    main(["-c", TEST_CFG, "--repo", "testing/zet", "show", "20211016205158"])
+
+    out, err = capsys.readouterr()
+    assert out.endswith(
+        "# Zet test entry\n\nHello there!\n\nTags:\n\n"
+        "    #test-tag #another-tag  #tag-after-two-spaces\n"
+    )
+    assert err == ""
+
+
+def test_show_default(capsys):
+    # by default, the command shows a zettel with the highest ID (the newest)
+    main(["-c", TEST_CFG, "--repo", "testing/zet", "show"])
+
+    out, err = capsys.readouterr()
+    assert out.endswith("# Zettel with UTF-8\n\nZażółć gęślą jaźń.\n")
+    assert err == ""
+
+
+def test_show_utf8(capsys):
+    main(["-c", TEST_CFG, "--repo", "testing/zet", "show", "20220101220852"])
+
+    out, err = capsys.readouterr()
+    assert out.endswith("# Zettel with UTF-8\n\nZażółć gęślą jaźń.\n")
+    assert err == ""
+
+
+def test_list(capsys):
     main(["-c", TEST_CFG, "--repo", "testing/zet", "list"])
 
     out, err = capsys.readouterr()
@@ -37,7 +105,7 @@ def test_list_zettels(capsys):
     assert err == ""
 
 
-def test_list_zettels_reverse(capsys):
+def test_list_reverse(capsys):
     main(["-c", TEST_CFG, "--repo", "testing/zet", "list", "--reverse"])
 
     out, err = capsys.readouterr()
@@ -49,31 +117,7 @@ def test_list_zettels_reverse(capsys):
     assert err == ""
 
 
-def test_list_tags(capsys):
-    main(["-c", TEST_CFG, "--repo", "testing/zet", "tags"])
-
-    out, err = capsys.readouterr()
-    assert out == "1\t#another-tag\n1\t#tag-after-two-spaces\n2\t#test-tag\n"
-    assert err == ""
-
-
-def test_list_tags_reverse(capsys):
-    main(["-c", TEST_CFG, "--repo", "testing/zet", "tags", "--reverse"])
-
-    out, err = capsys.readouterr()
-    assert out == "2\t#test-tag\n1\t#tag-after-two-spaces\n1\t#another-tag\n"
-    assert err == ""
-
-
-def test_list_tags_count(capsys):
-    main(["-c", TEST_CFG, "--repo", "testing/zet", "tags", "--count"])
-
-    out, err = capsys.readouterr()
-    assert out == "4\n"
-    assert err == ""
-
-
-def test_list_zettels_pretty(capsys):
+def test_list_pretty(capsys):
     main(["-c", TEST_CFG, "--repo", "testing/zet", "list", "--pretty"])
 
     out, err = capsys.readouterr()
@@ -85,7 +129,7 @@ def test_list_zettels_pretty(capsys):
     assert err == ""
 
 
-def test_list_zettels_pretty_reverse(capsys):
+def test_list_pretty_reverse(capsys):
     main(["-c", TEST_CFG, "--repo", "testing/zet", "list", "--pretty", "--reverse"])
 
     out, err = capsys.readouterr()
@@ -97,35 +141,7 @@ def test_list_zettels_pretty_reverse(capsys):
     assert err == ""
 
 
-def test_show_zettel(capsys):
-    main(["-c", TEST_CFG, "--repo", "testing/zet", "show", "20211016205158"])
-
-    out, err = capsys.readouterr()
-    assert out.endswith(
-        "# Zet test entry\n\nHello there!\n\nTags:\n\n"
-        "    #test-tag #another-tag  #tag-after-two-spaces\n"
-    )
-    assert err == ""
-
-
-def test_show_zettel_default(capsys):
-    # by default, the command shows a zettel with the highest ID (the newest)
-    main(["-c", TEST_CFG, "--repo", "testing/zet", "show"])
-
-    out, err = capsys.readouterr()
-    assert out.endswith("# Zettel with UTF-8\n\nZażółć gęślą jaźń.\n")
-    assert err == ""
-
-
-def test_show_zettel_utf8(capsys):
-    main(["-c", TEST_CFG, "--repo", "testing/zet", "show", "20220101220852"])
-
-    out, err = capsys.readouterr()
-    assert out.endswith("# Zettel with UTF-8\n\nZażółć gęślą jaźń.\n")
-    assert err == ""
-
-
-def test_list_zettels_warning(caplog):
+def test_list_warning_empty_folder(caplog):
     id_ = "20211016205158"
     id2_ = "20211016205159"
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -138,7 +154,7 @@ def test_list_zettels_warning(caplog):
         assert f"empty zet folder {id_} detected" in caplog.text
 
 
-def test_no_zettels_error():
+def test_list_error_no_zettels():
     with tempfile.TemporaryDirectory() as tmpdir:
         Path(tmpdir, ZETDIR).mkdir(parents=True)
         with pytest.raises(SystemExit) as excinfo:
@@ -146,7 +162,37 @@ def test_no_zettels_error():
         assert str(excinfo.value) == "ERROR: there are no zettels at given repo."
 
 
-def test_clean_zettels(capsys):
+def test_list_wrong_alternative_repo():
+    with pytest.raises(SystemExit) as excinfo:
+        main(["-c", TEST_CFG, "--repo", "some/nonexistent/path", "list"])
+    assert str(excinfo.value).startswith("ERROR: wrong repo path")
+
+
+def test_tags(capsys):
+    main(["-c", TEST_CFG, "--repo", "testing/zet", "tags"])
+
+    out, err = capsys.readouterr()
+    assert out == "1\t#another-tag\n1\t#tag-after-two-spaces\n2\t#test-tag\n"
+    assert err == ""
+
+
+def test_tags_reverse(capsys):
+    main(["-c", TEST_CFG, "--repo", "testing/zet", "tags", "--reverse"])
+
+    out, err = capsys.readouterr()
+    assert out == "2\t#test-tag\n1\t#tag-after-two-spaces\n1\t#another-tag\n"
+    assert err == ""
+
+
+def test_tags_count(capsys):
+    main(["-c", TEST_CFG, "--repo", "testing/zet", "tags", "--count"])
+
+    out, err = capsys.readouterr()
+    assert out == "4\n"
+    assert err == ""
+
+
+def test_clean(capsys):
     id_ = "20211016205158"
     with tempfile.TemporaryDirectory() as tmpdir:
         Path(tmpdir, ZETDIR, id_).mkdir(parents=True)
@@ -159,7 +205,7 @@ def test_clean_zettels(capsys):
         assert not Path(tmpdir, id_).exists()
 
 
-def test_clean_zettels_force(capsys):
+def test_clean_force(capsys):
     id_ = "20211016205158"
     with tempfile.TemporaryDirectory() as tmpdir:
         Path(tmpdir, ZETDIR, id_).mkdir(parents=True)
@@ -172,7 +218,7 @@ def test_clean_zettels_force(capsys):
         assert not Path(tmpdir, id_).exists()
 
 
-def test_clean_zettels_dry_run(capsys):
+def test_clean_dry_run(capsys):
     id_ = "20211016205158"
     with tempfile.TemporaryDirectory() as tmpdir:
         Path(tmpdir, ZETDIR, id_).mkdir(parents=True)
@@ -185,7 +231,7 @@ def test_clean_zettels_dry_run(capsys):
         assert Path(tmpdir, ZETDIR, id_).exists()
 
 
-def test_clean_zettels_dry_run_and_force(capsys):
+def test_clean_dry_run_and_force(capsys):
     id_ = "20211016205158"
     with tempfile.TemporaryDirectory() as tmpdir:
         Path(tmpdir, ZETDIR, id_).mkdir(parents=True)
@@ -198,19 +244,7 @@ def test_clean_zettels_dry_run_and_force(capsys):
         assert Path(tmpdir, ZETDIR, id_).exists()
 
 
-def test_alternative_repo_wrong():
-    with pytest.raises(SystemExit) as excinfo:
-        main(["-c", TEST_CFG, "--repo", "some/nonexistent/path", "list"])
-    assert str(excinfo.value).startswith("ERROR: wrong repo path")
-
-
-def test_alternative_repo_wrong_list():
-    with pytest.raises(SystemExit) as excinfo:
-        main(["-c", TEST_CFG, "--repo", "some/nonexistent/path", "list"])
-    assert str(excinfo.value).startswith("ERROR: wrong repo path")
-
-
-def test_grep_win(capfd):
+def test_grep(capfd):
     main(["-c", TEST_CFG, "--repo", "testing/zet", "grep", "hello"])
 
     out, err = capfd.readouterr()
@@ -219,42 +253,3 @@ def test_grep_win(capfd):
     assert line1.strip() == "zettels/20211016205158/README.md:3:Hello there!"
     assert line2.strip() == "zettels/20211016223643/README.md:3:Hello everyone"
     assert err == ""
-
-
-def test_init_folder_exists():
-    with pytest.raises(SystemExit) as excinfo:
-        main(["-c", TEST_CFG, "init"])
-    assert (
-        str(excinfo.value) == "ERROR: `testing/zet` folder exists and it's not empty."
-    )
-
-
-def test_init_file_exists_at_path():
-    with pytest.raises(SystemExit) as excinfo:
-        main(["-c", TEST_CFG, "-r", "README.md", "init"])
-    assert str(excinfo.value) == "ERROR: `README.md` exists and is a file."
-
-
-def test_config_file_missing():
-    with pytest.raises(SystemExit) as excinfo:
-        main(["-c", "some/nonexistent/path", "init"])
-    assert (
-        str(excinfo.value)
-        == "ERROR: config file at `some/nonexistent/path` not found.\n"
-        "Add it or use `--config` flag."
-    )
-
-
-def test_editor_not_found():
-    with pytest.raises(SystemExit) as excinfo:
-        main(["-c", "testing/pyzet-wrong.yaml", "edit"])
-    assert str(excinfo.value) == "ERROR: editor `not-vim` cannot be found."
-
-
-def test_missing_repo_in_yaml():
-    with pytest.raises(SystemExit) as excinfo:
-        main(["-c", "testing/pyzet-missing-repo.yaml", "edit"])
-    assert (
-        str(excinfo.value)
-        == "ERROR: field `repo` missing from `testing/pyzet-missing-repo.yaml`."
-    )
