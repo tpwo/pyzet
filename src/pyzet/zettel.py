@@ -30,7 +30,7 @@ def get_zettels(path: Path, is_reversed: bool = False) -> list[Zettel]:
         if item.is_dir():
             try:
                 items.append(get_zettel(item))
-                logging.debug(f"get_zettels: found zettel '{item.absolute()}'")
+                logging.debug(f"get_zettels: zettel appended '{item.absolute()}'")
             except FileNotFoundError:
                 logging.warning(f"empty zet folder {item.name} detected")
             except ValueError:
