@@ -30,14 +30,14 @@ def test_init_error_folder_exists():
     with pytest.raises(SystemExit) as excinfo:
         main([*TEST_CFG, "init"])
     assert (
-        str(excinfo.value) == "ERROR: `testing/zet` folder exists and it's not empty."
+        str(excinfo.value) == "ERROR: 'testing/zet' folder exists and it's not empty."
     )
 
 
 def test_init_error_file_exists_at_path():
     with pytest.raises(SystemExit) as excinfo:
         main([*TEST_CFG, "-r", "README.md", "init"])
-    assert str(excinfo.value) == "ERROR: `README.md` exists and is a file."
+    assert str(excinfo.value) == "ERROR: 'README.md' exists and is a file."
 
 
 def test_init_error_config_file_missing():
@@ -45,15 +45,15 @@ def test_init_error_config_file_missing():
         main(["-c", "some/nonexistent/path", "init"])
     assert (
         str(excinfo.value)
-        == "ERROR: config file at `some/nonexistent/path` not found.\n"
-        "Add it or use `--config` flag."
+        == "ERROR: config file at 'some/nonexistent/path' not found.\n"
+        "Add it or use '--config' flag."
     )
 
 
 def test_edit_error_editor_not_found():
     with pytest.raises(SystemExit) as excinfo:
         main(["-c", "testing/pyzet-wrong.yaml", "edit"])
-    assert str(excinfo.value) == "ERROR: editor `not-vim` cannot be found."
+    assert str(excinfo.value) == "ERROR: editor 'not-vim' cannot be found."
 
 
 def test_edit_error_missing_repo_in_yaml():
@@ -61,7 +61,7 @@ def test_edit_error_missing_repo_in_yaml():
         main(["-c", "testing/pyzet-missing-repo.yaml", "edit"])
     assert (
         str(excinfo.value)
-        == "ERROR: field `repo` missing from `testing/pyzet-missing-repo.yaml`."
+        == "ERROR: field 'repo' missing from 'testing/pyzet-missing-repo.yaml'."
     )
 
 
@@ -232,7 +232,7 @@ def test_clean(capsys):
         main([*TEST_CFG, "--repo", tmpdir, "clean"])
 
         out, err = capsys.readouterr()
-        assert out == f"will delete {id_}\nUse `--force` to proceed with deletion\n"
+        assert out == f"will delete {id_}\nUse '--force' to proceed with deletion\n"
         assert err == ""
         assert not Path(tmpdir, id_).exists()
 
@@ -258,7 +258,7 @@ def test_clean_dry_run(capsys):
         main([*TEST_CFG, "--repo", tmpdir, "clean", "--dry-run"])
 
         out, err = capsys.readouterr()
-        assert out == f"will delete {id_}\nUse `--force` to proceed with deletion\n"
+        assert out == f"will delete {id_}\nUse '--force' to proceed with deletion\n"
         assert err == ""
         assert Path(tmpdir, C.ZETDIR, id_).exists()
 

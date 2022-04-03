@@ -49,8 +49,8 @@ For more detailed information, you can always use `--help` flag: `pyzet
 Let's start by initializing our zettelkasten repository:
 
     $ pyzet init
-    ERROR: config file at `/home/<your-username>/.config/pyzet/pyzet.yaml` not found.
-    Add it or use `--config` flag.
+    ERROR: config file at '/home/<your-username>/.config/pyzet/pyzet.yaml' not found.
+    Add it or use '--config' flag.
 
 Whoops! If you saw a similar error, it means that you also don't have a
 config file at this moment.
