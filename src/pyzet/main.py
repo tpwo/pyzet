@@ -30,7 +30,7 @@ class Config:
 
 def main(argv: list[str] | None = None) -> int:
     _configure_console_print_utf8()
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.WARNING, format="%(levelname)s: %(message)s")
 
     parser = _get_parser()
     args = parser.parse_args(argv)
@@ -467,7 +467,8 @@ def init_repo(config: Config) -> int:
     _create_empty_folder(config.repo)
     _create_empty_folder(Path(config.repo, C.ZETDIR))
     _call_git(config, "init")
-    logging.info("Git repo was initialized. Please add a remote manually.")
+    logging.info(f"init: create git repo '{config.repo.absolute()}'")
+    print("Git repo was initialized. Please add a remote manually.")
     return 0
 
 
@@ -502,16 +503,18 @@ def add_zettel(config: Config) -> int:
         file.write("")
 
     _open_file(zettel_path, config.editor)
-    logging.info(f"{id_} was created")
 
     try:
         zettel = get_zettel(zettel_path.parent)
     except ValueError:
-        logging.info("Adding zettel aborted, cleaning up...")
+        logging.info(f"add: zettel creation aborted '{zettel_path.absolute()}'")
+        print("Adding zettel aborted, cleaning up...")
         zettel_path.unlink()
         zettel_dir.rmdir()
     else:
         _commit_zettel(config, zettel_path, zettel.title)
+        logging.info(f"add: zettel created '{zettel_path.absolute()}'")
+        print(f"{id_} was created")
     return 0
 
 
@@ -523,7 +526,8 @@ def edit_zettel(id_: str, config: Config, editor: str) -> int:
     try:
         zettel = get_zettel(zettel_path.parent)
     except ValueError:
-        logging.info("Editing zettel aborted, restoring the version from git...")
+        logging.info(f"edit: zettel modification aborted '{zettel_path.absolute()}'")
+        print("Editing zettel aborted, restoring the version from git...")
         _call_git(config, "restore", [zettel_path.as_posix()])
     else:
         if _check_for_file_changes(zettel_path, config):
@@ -532,9 +536,11 @@ def edit_zettel(id_: str, config: Config, editor: str) -> int:
                 zettel_path,
                 _get_edit_commit_msg(zettel_path, zettel.title, config),
             )
-            logging.info(f"{id_} was edited")
+            logging.info(f"edit: zettel modified '{zettel_path.absolute()}'")
+            print(f"{id_} was edited")
         else:
-            logging.info(f"{id_} wasn't modified")
+            logging.info(f"edit: zettel not modified '{zettel_path.absolute()}'")
+            print(f"{id_} wasn't modified")
     return 0
 
 
@@ -591,13 +597,15 @@ def remove_zettel(id_: str, config: Config) -> int:
     # This might be slower than shutil.rmtree() but gives nice log entry for each file.
     for file in zettel_path.parent.iterdir():
         file.unlink()
-        logging.info(f"{file} was removed")
+        logging.info(f"remove: delete '{file}'")
+        print(f"{file} was removed")
 
     _commit_zettel(config, zettel_path, f"RM: {zettel.title}")
 
     # If dir is removed before committing, git raises a warning that dir doesn't exist.
     zettel_path.parent.rmdir()
-    logging.info(f"{zettel_path.parent} was removed")
+    logging.info(f"remove: delete folder '{zettel_path.parent}'")
+    print(f"{zettel_path.parent} was removed")
 
     return 0
 
@@ -605,6 +613,9 @@ def remove_zettel(id_: str, config: Config) -> int:
 def _commit_zettel(config: Config, zettel_path: Path, message: str) -> None:
     _call_git(config, "add", [zettel_path.as_posix()])
     _call_git(config, "commit", ["-m", message])
+    logging.info(
+        f"_commit_zettel: committed '{zettel_path.absolute()}' with message '{message}'"
+    )
 
 
 def _call_git(
@@ -617,16 +628,16 @@ def _call_git(
         options = []
     if path is None:
         path = config.repo
-    subprocess.run([_get_git_cmd(config.git), "-C", path.as_posix(), command, *options])
+    cmd = [_get_git_cmd(config.git), "-C", path.as_posix(), command, *options]
+    logging.debug(f"_call_git: subprocess.run({cmd})")
+    subprocess.run(cmd)
     return 0
 
 
 def _get_git_output(config: Config, command: str, options: list[str]) -> bytes:
-    return subprocess.run(
-        [_get_git_cmd(config.git), "-C", config.repo.as_posix(), command, *options],
-        capture_output=True,
-        check=True,
-    ).stdout
+    cmd = [_get_git_cmd(config.git), "-C", config.repo.as_posix(), command, *options]
+    logging.debug(f"_get_git_output: subprocess.run({cmd})")
+    return subprocess.run(cmd, capture_output=True, check=True).stdout
 
 
 @functools.lru_cache(maxsize=1)
@@ -634,4 +645,5 @@ def _get_git_cmd(git_path: str) -> str:
     git = Path(git_path).expanduser().as_posix()
     if shutil.which(git) is None:
         raise SystemExit(f"ERROR: `{git}` cannot be found.")
+    logging.debug(f"_get_git_cmd: found at '{git}'")
     return git
