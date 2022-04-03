@@ -290,9 +290,9 @@ Now, run a grep search on our repo, as we have one zettel in there.
 Let's use `zettel` as a search pattern:
 
     $ pz grep zettel
-    zettels/20220126232605/README.md:1:# This is my first zettel created with pyzet
-    zettels/20220126232605/README.md:3:The above line is the title of this zettel, and this is part of
-    zettels/20220126232605/README.md:4:its contents. It's a good practice to wrap lines like that, so zettels
+    20220126232605/README.md:1:# This is my first zettel created with pyzet
+    20220126232605/README.md:3:The above line is the title of this zettel, and this is part of
+    20220126232605/README.md:4:its contents. It's a good practice to wrap lines like that, so zettels
 
 As you can see, we've got three matches. In your output, you should also
 see some nice coloring (e.g. matched pattern colored with red) if only

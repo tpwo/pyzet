@@ -299,7 +299,12 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
         return list_tags(config.repo, is_reversed=args.reverse)
 
     if args.command == "grep":
-        return _call_git(config, "grep", ["-niI", args.pattern[0]])
+        return _call_git(
+            config,
+            "grep",
+            ["-niI", args.pattern[0]],
+            path=Path(config.repo, const.ZETDIR),
+        )
 
     if args.command in ("status", "push"):
         return _call_git(config, args.command, args.options)
@@ -548,12 +553,17 @@ def _commit_zettel(config: Config, zettel_path: Path, message: str) -> None:
     _call_git(config, "commit", ["-m", message])
 
 
-def _call_git(config: Config, command: str, options: list[str] | None = None) -> int:
+def _call_git(
+    config: Config,
+    command: str,
+    options: list[str] | None = None,
+    path: Path | None = None,
+) -> int:
     if options is None:
         options = []
-    subprocess.run(
-        [_get_git_cmd(config.git), "-C", config.repo.as_posix(), command, *options]
-    )
+    if path is None:
+        path = config.repo
+    subprocess.run([_get_git_cmd(config.git), "-C", path.as_posix(), command, *options])
     return 0
 
 

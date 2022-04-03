@@ -282,6 +282,6 @@ def test_grep(capfd):
     out, err = capfd.readouterr()
     line1, line2, _ = out.split("\n")  # 3rd item is an empty str
 
-    assert line1.strip() == "zettels/20211016205158/README.md:3:Hello there!"
-    assert line2.strip() == "zettels/20211016223643/README.md:3:Hello everyone"
+    assert line1.strip() == "20211016205158/README.md:3:Hello there!"
+    assert line2.strip() == "20211016223643/README.md:3:Hello everyone"
     assert err == ""
