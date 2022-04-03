@@ -15,6 +15,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   automatically (#23).
 * Add `--title` flag to `pyzet grep` which shows the title of matched
   zettel (#24).
+* Allow for passing custom options in `pyzet grep` (#27).
 
 ### Changed
 
