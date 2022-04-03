@@ -157,6 +157,12 @@ def _get_parser() -> ArgumentParser:
         "grep", help="run `git grep` with some handy flags in zet repo"
     )
     grep_parser.add_argument(
+        "-n",
+        "--line-number",
+        action="store_true",
+        help="prefix the line number to matching lines",
+    )
+    grep_parser.add_argument(
         "pattern",
         nargs=1,
         help="grep pattern, letter case is ignored",
@@ -301,10 +307,11 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
         return list_tags(config.repo, is_reversed=args.reverse)
 
     if args.command == "grep":
+        grep_opts = "-niI" if args.line_number else "-iI"
         return _call_git(
             config,
             "grep",
-            ["-niI", "--heading", "--break", args.pattern[0]],
+            [grep_opts, "--heading", "--break", args.pattern[0]],
             path=Path(config.repo, C.ZETDIR),
         )
 

@@ -11,6 +11,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 * Add `--link` flag to `pyzet list` and `pyzet show` (#21).
+* Add `--line-number` flag to `pyzet grep` which was previously applied
+  automatically (#23).
 
 ### Changed
 
@@ -18,6 +20,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   single dash was used. The new syntax is in line with recommendations
   about including references in zettels that can be found in the readme.
   It's also used in `pyzet list --link` and `pyzet show --link` output.
+* Make output of `pyzet grep` more readable by using `--heading` and
+  `--break` flags in `git grep` that is called by this command (#23).
 
 ## [0.3.0] - 2022-02-18
 
