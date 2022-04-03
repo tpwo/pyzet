@@ -256,14 +256,21 @@ def process_yaml(
         raise SystemExit(
             f"ERROR: field `repo` missing from `{Path(config_file).as_posix()}`."
         )
-    editor = yaml_cfg["editor"] if yaml_cfg.get("editor") else C.VIM_PATH
-    git = yaml_cfg["git"] if yaml_cfg.get("git") else C.GIT_PATH
-
     return Config(
         repo=repo,
-        editor=editor,
-        git=git,
+        editor=_get_config_option(yaml_cfg, "editor", C.VIM_PATH),
+        git=_get_config_option(yaml_cfg, "git", C.GIT_PATH),
     )
+
+
+def _get_config_option(yaml_cfg: dict[str, str], option: str, default: str) -> str:
+    if yaml_cfg.get(option):
+        value = yaml_cfg[option]
+        logging.debug(f"_get_config_option: {option} '{value}' found in YAML")
+        return value
+    else:
+        logging.debug(f"_get_config_option: using default {option} '{default}'")
+        return default
 
 
 def _parse_args_with_id(id_: str | None, args: Namespace, config: Config) -> int:
