@@ -281,8 +281,11 @@ def test_grep(capfd):
 
     out, err = capfd.readouterr()
     expected = """\
-20211016205158/README.md:3:Hello there!
-20211016223643/README.md:3:Hello everyone
+20211016205158/README.md
+3:Hello there!
+
+20211016223643/README.md
+3:Hello everyone
 """
     assert out == expected
     assert err == ""
@@ -293,10 +296,13 @@ def test_grep_multiple_matches_in_file(capfd):
 
     out, err = capfd.readouterr()
     expected = """\
-20211016205158/README.md:1:# Zet test entry
-20211016205158/README.md:7:    #test-tag #another-tag  #tag-after-two-spaces
-20211016223643/README.md:1:# Another zet test entry
-20211016223643/README.md:7:    #test-tag
+20211016205158/README.md
+1:# Zet test entry
+7:    #test-tag #another-tag  #tag-after-two-spaces
+
+20211016223643/README.md
+1:# Another zet test entry
+7:    #test-tag
 """
     assert out == expected
     assert err == ""
