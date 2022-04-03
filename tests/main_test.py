@@ -280,8 +280,23 @@ def test_grep(capfd):
     main(["-c", TEST_CFG, "--repo", "testing/zet", "grep", "hello"])
 
     out, err = capfd.readouterr()
-    line1, line2, _ = out.split("\n")  # 3rd item is an empty str
+    expected = """\
+20211016205158/README.md:3:Hello there!
+20211016223643/README.md:3:Hello everyone
+"""
+    assert out == expected
+    assert err == ""
 
-    assert line1.strip() == "20211016205158/README.md:3:Hello there!"
-    assert line2.strip() == "20211016223643/README.md:3:Hello everyone"
+
+def test_grep_multiple_matches_in_file(capfd):
+    main(["-c", TEST_CFG, "--repo", "testing/zet", "grep", "test"])
+
+    out, err = capfd.readouterr()
+    expected = """\
+20211016205158/README.md:1:# Zet test entry
+20211016205158/README.md:7:    #test-tag #another-tag  #tag-after-two-spaces
+20211016223643/README.md:1:# Another zet test entry
+20211016223643/README.md:7:    #test-tag
+"""
+    assert out == expected
     assert err == ""
