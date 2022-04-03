@@ -8,6 +8,12 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+* Use `print()` for all standard program output, and `logging` for
+  displaying additional information. Logging level was changed to
+  `WARNING`, so existing warnings will be showed by default.
+
 ## [0.4.0] - 2022-04-03
 
 ### Added
