@@ -157,6 +157,12 @@ def _get_parser() -> ArgumentParser:
         "grep", help="run `git grep` with some handy flags in zet repo"
     )
     grep_parser.add_argument(
+        "-t",
+        "--title",
+        action="store_true",
+        help="add zettel title to matching lines",
+    )
+    grep_parser.add_argument(
         "-n",
         "--line-number",
         action="store_true",
@@ -307,11 +313,10 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
         return list_tags(config.repo, is_reversed=args.reverse)
 
     if args.command == "grep":
-        grep_opts = "-niI" if args.line_number else "-iI"
         return _call_git(
             config,
             "grep",
-            [grep_opts, "--heading", "--break", args.pattern[0]],
+            _build_grep_options(args.pattern[0], args.line_number, args.title),
             path=Path(config.repo, C.ZETDIR),
         )
 
@@ -327,6 +332,23 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
         return clean_zet_repo(config.repo, is_dry_run=args.dry_run, is_force=args.force)
 
     raise NotImplementedError
+
+
+def _build_grep_options(pattern: str, line_number: bool, title: bool) -> list[str]:
+    opts = [
+        "-I",
+        "--ignore-case",
+        "--heading",
+        "--break",
+        "--all-match",
+    ]
+    if line_number:
+        opts.append("--line-number")
+    opts.extend(["-e", pattern])
+    if title:
+        zettel_title_pattern = r"^#\s.*"
+        opts.extend(["--or", "-e", zettel_title_pattern])
+    return opts
 
 
 def _validate_id(id_: str, command: str, config: Config) -> None:
