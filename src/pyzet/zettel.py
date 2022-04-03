@@ -30,12 +30,13 @@ def get_zettels(path: Path, is_reversed: bool = False) -> list[Zettel]:
         if item.is_dir():
             try:
                 items.append(get_zettel(item))
+                logging.debug(f"get_zettels: found zettel '{item.absolute()}'")
             except FileNotFoundError:
                 logging.warning(f"empty zet folder {item.name} detected")
             except ValueError:
                 # Skips dirs with different naming convention.
                 # Skips zettels without a text in the first line (i.e. during editing).
-                pass
+                logging.debug(f"get_zettels: ValueError at '{item.absolute()}'")
     if items == []:
         raise SystemExit("ERROR: there are no zettels at given repo.")
     return items
@@ -46,6 +47,7 @@ def get_zettel(path: Path) -> Zettel:
     title_line, tags_line = _get_first_and_last_line(Path(path, C.ZETTEL_FILENAME))
     title = get_markdown_title(title_line.strip(), path.name)
     tags = get_tags(tags_line.strip()) if tags_line.startswith(4 * " ") else []
+    logging.debug(f"get_zettel: '{path.name}' with title '{title}'")
     return Zettel(title=title, id_=path.name, timestamp=timestamp, tags=tags)
 
 
@@ -88,8 +90,12 @@ def get_markdown_title(title_line: str, id_: str) -> str:
     if not result:
         logging.warning(f'wrong title formatting: {id_} "{title_line}"')
         return title_line
-    return result.groups()[0]
+    res = result.groups()[0]
+    logging.debug(f"get_markdown_title: '{title_line}' -> '{res}'")
+    return res
 
 
 def get_tags(line: str) -> list[str]:
-    return [tag.lstrip("#") for tag in line.split()]
+    tags = [tag.lstrip("#") for tag in line.split()]
+    logging.debug(f"get_tags: extracted {tags}")
+    return tags
