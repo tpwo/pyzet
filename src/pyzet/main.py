@@ -169,11 +169,11 @@ def _get_parser() -> ArgumentParser:
         help="prefix the line number to matching lines",
     )
     grep_parser.add_argument(
-        "pattern",
-        nargs=1,
-        help="grep pattern, letter case is ignored",
+        "patterns",
+        nargs="+",
+        help="grep patterns, letter case is ignored, "
+        "pass additional options after `--`",
     )
-    _add_git_cmd_options(grep_parser, "grep")
 
     status_parser = subparsers.add_parser("status", help="run `git status` in zet repo")
     _add_git_cmd_options(status_parser, "status")
@@ -314,8 +314,9 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
         return list_tags(config.repo, is_reversed=args.reverse)
 
     if args.command == "grep":
-        grep_opts = _build_grep_options(args.pattern[0], args.line_number, args.title)
-        grep_opts.extend(args.options)
+        grep_opts = _build_grep_options(args.line_number, args.title)
+        patterns = _parse_grep_patterns(args.patterns)
+        grep_opts.extend(patterns)
         return _call_git(
             config,
             "grep",
@@ -337,7 +338,7 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
     raise NotImplementedError
 
 
-def _build_grep_options(pattern: str, line_number: bool, title: bool) -> list[str]:
+def _build_grep_options(line_number: bool, title: bool) -> list[str]:
     opts = [
         "-I",
         "--ignore-case",
@@ -347,11 +348,30 @@ def _build_grep_options(pattern: str, line_number: bool, title: bool) -> list[st
     ]
     if line_number:
         opts.append("--line-number")
-    opts.extend(["-e", pattern])
     if title:
         zettel_title_pattern = r"^#\s.*"
-        opts.extend(["--or", "-e", zettel_title_pattern])
+        opts.extend(_add_git_grep_pattern(zettel_title_pattern))
     return opts
+
+
+def _parse_grep_patterns(patterns: list[str]) -> list[str]:
+    opts = []
+    for idx, pat in enumerate(patterns):
+        if pat.startswith("-"):
+            # Flags started appearing, so there is no more patterns
+            opts.extend(patterns[idx:])
+            break
+        opts.extend(_add_git_grep_pattern(pat))
+    return opts
+
+
+def _add_git_grep_pattern(pattern: str) -> tuple[str, str, str]:
+    """Uses `git grep` syntax for including multiple patterns.
+
+    This approach works only with --all-match, i.e. only a file that
+    includes all of patterns will be matched.
+    """
+    return "--or", "-e", pattern
 
 
 def _validate_id(id_: str, command: str, config: Config) -> None:

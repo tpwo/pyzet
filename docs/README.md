@@ -275,35 +275,80 @@ just `cd ~/zet`, and run Git commands directly.
 
 ## Search for anything using grep
 
-Grep is your friend when you try to look for something in your ZK repo,
-especially when it has grown a bit. `pyzet grep` command works by
-running `git grep` with these flags:
+Grep is your friend when you try to look for something in your ZK repo.
+`pyzet grep` command works by running `git grep` with some handy default
+flags.
 
-* `-i` -- ignore letter case
-* `-I` -- ignore binary files
-* `--heading` -- print filename and then matched lines below it
-* `--break` -- print a blank line between matched files
+The command offers some additional options, and you can check them out
+with `pyzet grep --help`. This also includes passing custom options
+directly to `git grep` with `--` similarly to `pyzet push` which was
+described earlier.
 
-Note that `pyzet grep` offers some additional options, and you can check
-them out with `pyzet grep --help`.
+Also, remember that `pyzet grep` will by default look only in files that
+are already tracked by Git.
 
-Also, remember that `git grep` will look only in files that are tracked
-by Git.
+Now, let's try running a grep search in our repo. Let's use `zettel` as
+a search pattern:
 
-Now, run a grep search on our repo, as we have one zettel in there.
-Let's use `zettel` as a search pattern:
+    $ pyzet grep zettel
+    20220123233028/README.md
+    # This is my second zettel
 
-    $ pz grep zettel
     20220126232605/README.md
     # This is my first zettel created with pyzet
-
-    20220126232605/README.md
     The above line is the title of this zettel, and this is part of
     its contents. It's a good practice to wrap lines like that, so zettels
 
 As you can see, we've got three matches in our two files. In your
 output, you should also see some nice coloring (e.g. matched pattern
 colored with red) if only your terminal configuration supports it.
+
+One of nice features of `pyzet grep` is the ability to provide multiple
+patterns, one after another. In such case, the output will include only
+zettels which contain all of provided patterns in their content.
+
+E.g. by looking for both `zettel` and `part` only one of our zettels
+will be listed:
+
+    $ pyzet grep zettel part
+    20220126232605/README.md
+    # This is my first zettel created with pyzet
+    The above line is the title of this zettel, and this is part of
+    its contents. It's a good practice to wrap lines like that, so zettels
+
+This will be especially helpful in bigger Zettelkasten repos, where
+there are a lot of zettels, and you would like to limit the number of
+matches.
+
+However, you have to remember that your patterns need to go one after
+another, e.g this will work:
+
+    $ pyzet grep --line-number zettel part
+    20220126232605/README.md
+    1:# This is my first zettel created with pyzet
+    3:The above line is the title of this zettel, and this is part of
+    4:its contents. It's a good practice to wrap lines like that, so zettels
+
+And this will also work, but only if you don't pass custom parameters
+with `--`:
+
+    $ pyzet grep zettel part --line-number
+    20220126232605/README.md
+    1:# This is my first zettel created with pyzet
+    3:The above line is the title of this zettel, and this is part of
+    4:its contents. It's a good practice to wrap lines like that, so zettels
+
+With `--`, argument parser raises an exception:
+
+    $ pyzet grep zettel part --line-number -- --no-color
+    pyzet: error: unrecognized arguments: -- --no-color
+
+And this won't work either because grep patterns were split:
+
+    $ pyzet grep zettel --line-number part
+    pyzet: error: unrecognized arguments: part
+
+### Grep and `.gitattributes`
 
 You might come into a situation in which `pyzet grep` shows you results
 from files that you are not interested in, e.g. SVG graphics which are
