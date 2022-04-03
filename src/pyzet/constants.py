@@ -23,12 +23,12 @@ ZETTEL_WIDTH = 72
 MARKDOWN_TITLE = r"^#\s([\S]+.*[\S])$"
 
 # Default paths to Unix utilities installed with Git for Windows.
-VIM_WIN_PATH = Path("C:/Program Files/Git/usr/bin/vim.exe").as_posix()
-GIT_WIN_PATH = Path("C:/Program Files/Git/cmd/git.exe").as_posix()
+_vim_win_path = Path("C:/Program Files/Git/usr/bin/vim.exe").as_posix()
+_git_win_path = Path("C:/Program Files/Git/cmd/git.exe").as_posix()
 
 # Default paths on Linux (at least on Ubuntu).
-VIM_LINUX_PATH = Path("/usr/bin/vim").as_posix()
-GIT_LINUX_PATH = Path("/usr/bin/git").as_posix()
+_vim_linux_path = Path("/usr/bin/vim").as_posix()
+_git_linux_path = Path("/usr/bin/git").as_posix()
 
-VIM_PATH = VIM_WIN_PATH if sys.platform == "win32" else VIM_LINUX_PATH
-GIT_PATH = GIT_WIN_PATH if sys.platform == "win32" else GIT_LINUX_PATH
+VIM_PATH = _vim_win_path if sys.platform == "win32" else _vim_linux_path
+GIT_PATH = _git_win_path if sys.platform == "win32" else _git_linux_path
