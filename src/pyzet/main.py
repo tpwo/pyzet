@@ -173,6 +173,7 @@ def _get_parser() -> ArgumentParser:
         nargs=1,
         help="grep pattern, letter case is ignored",
     )
+    _add_git_cmd_options(grep_parser, "grep")
 
     status_parser = subparsers.add_parser("status", help="run `git status` in zet repo")
     _add_git_cmd_options(status_parser, "status")
@@ -313,10 +314,12 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
         return list_tags(config.repo, is_reversed=args.reverse)
 
     if args.command == "grep":
+        grep_opts = _build_grep_options(args.pattern[0], args.line_number, args.title)
+        grep_opts.extend(args.options)
         return _call_git(
             config,
             "grep",
-            _build_grep_options(args.pattern[0], args.line_number, args.title),
+            grep_opts,
             path=Path(config.repo, C.ZETDIR),
         )
 
