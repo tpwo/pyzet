@@ -13,6 +13,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 * Add `--link` flag to `pyzet list` and `pyzet show` (#21).
 * Add `--line-number` flag to `pyzet grep` which was previously applied
   automatically (#23).
+* Add `--title` flag to `pyzet grep` which shows the title of matched
+  zettel (#24).
 
 ### Changed
 
