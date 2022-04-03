@@ -153,7 +153,9 @@ def _get_parser() -> ArgumentParser:
         help="force, use it to actually delete anything",
     )
 
-    grep_parser = subparsers.add_parser("grep", help="run `git grep -niI` in zet repo")
+    grep_parser = subparsers.add_parser(
+        "grep", help="run `git grep` with some handy flags in zet repo"
+    )
     grep_parser.add_argument(
         "pattern",
         nargs=1,
@@ -302,7 +304,7 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
         return _call_git(
             config,
             "grep",
-            ["-niI", args.pattern[0]],
+            ["-niI", "--heading", "--break", args.pattern[0]],
             path=Path(config.repo, C.ZETDIR),
         )
 

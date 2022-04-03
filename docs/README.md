@@ -282,6 +282,8 @@ running `git grep` with these flags:
 * `-n` -- matching line number is added to the output
 * `-i` -- ignore letter case
 * `-I` -- ignore binary files
+* `--heading` -- print filename and then matched lines below it
+* `--break` -- print a blank line between matched files
 
 Remember that `git grep` will look only in files that are tracked by
 Git.
@@ -290,13 +292,16 @@ Now, run a grep search on our repo, as we have one zettel in there.
 Let's use `zettel` as a search pattern:
 
     $ pz grep zettel
-    20220126232605/README.md:1:# This is my first zettel created with pyzet
-    20220126232605/README.md:3:The above line is the title of this zettel, and this is part of
-    20220126232605/README.md:4:its contents. It's a good practice to wrap lines like that, so zettels
+    20220126232605/README.md
+    1:# This is my first zettel created with pyzet
 
-As you can see, we've got three matches. In your output, you should also
-see some nice coloring (e.g. matched pattern colored with red) if only
-your terminal configuration supports it.
+    20220126232605/README.md
+    3:The above line is the title of this zettel, and this is part of
+    4:its contents. It's a good practice to wrap lines like that, so zettels
+
+As you can see, we've got three matches in our two files. In your
+output, you should also see some nice coloring (e.g. matched pattern
+colored with red) if only your terminal configuration supports it.
 
 You might come into a situation in which `pyzet grep` shows you results
 from files that you are not interested in, e.g. SVG graphics which are

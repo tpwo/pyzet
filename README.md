@@ -86,7 +86,7 @@ positional arguments:
     list                list zettels in given repo
     tags                list tags in given repo
     clean               delete empty folders in zet repo
-    grep                run `git grep -niI` in zet repo
+    grep                run `git grep` with some handy flags in zet repo
     status              run `git status` in zet repo
     pull                run `git pull --rebase` in zet repo
     push                run `git push` in zet repo
