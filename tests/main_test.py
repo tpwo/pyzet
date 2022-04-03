@@ -282,6 +282,21 @@ def test_grep(capfd):
     out, err = capfd.readouterr()
     expected = """\
 20211016205158/README.md
+Hello there!
+
+20211016223643/README.md
+Hello everyone
+"""
+    assert out == expected
+    assert err == ""
+
+
+def test_grep_line_number(capfd):
+    main(["-c", TEST_CFG, "--repo", "testing/zet", "grep", "--line-number", "hello"])
+
+    out, err = capfd.readouterr()
+    expected = """\
+20211016205158/README.md
 3:Hello there!
 
 20211016223643/README.md
@@ -293,6 +308,23 @@ def test_grep(capfd):
 
 def test_grep_multiple_matches_in_file(capfd):
     main(["-c", TEST_CFG, "--repo", "testing/zet", "grep", "test"])
+
+    out, err = capfd.readouterr()
+    expected = """\
+20211016205158/README.md
+# Zet test entry
+    #test-tag #another-tag  #tag-after-two-spaces
+
+20211016223643/README.md
+# Another zet test entry
+    #test-tag
+"""
+    assert out == expected
+    assert err == ""
+
+
+def test_grep_multiple_matches_in_file_line_number(capfd):
+    main(["-c", TEST_CFG, "--repo", "testing/zet", "grep", "--line-number", "test"])
 
     out, err = capfd.readouterr()
     expected = """\

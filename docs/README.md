@@ -279,25 +279,27 @@ Grep is your friend when you try to look for something in your ZK repo,
 especially when it has grown a bit. `pyzet grep` command works by
 running `git grep` with these flags:
 
-* `-n` -- matching line number is added to the output
 * `-i` -- ignore letter case
 * `-I` -- ignore binary files
 * `--heading` -- print filename and then matched lines below it
 * `--break` -- print a blank line between matched files
 
-Remember that `git grep` will look only in files that are tracked by
-Git.
+Note that `pyzet grep` offers some additional options, and you can check
+them out with `pyzet grep --help`.
+
+Also, remember that `git grep` will look only in files that are tracked
+by Git.
 
 Now, run a grep search on our repo, as we have one zettel in there.
 Let's use `zettel` as a search pattern:
 
     $ pz grep zettel
     20220126232605/README.md
-    1:# This is my first zettel created with pyzet
+    # This is my first zettel created with pyzet
 
     20220126232605/README.md
-    3:The above line is the title of this zettel, and this is part of
-    4:its contents. It's a good practice to wrap lines like that, so zettels
+    The above line is the title of this zettel, and this is part of
+    its contents. It's a good practice to wrap lines like that, so zettels
 
 As you can see, we've got three matches in our two files. In your
 output, you should also see some nice coloring (e.g. matched pattern
