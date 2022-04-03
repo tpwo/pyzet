@@ -69,7 +69,7 @@ Now, it should work:
 
     $ pyzet init
     Initialized empty Git repository in /home/<your-username>/zet/.git/
-    INFO:root:Git repo was initialized. Please add a remote manually.
+    Git repo was initialized. Please add a remote manually.
 
 ## Zettelkasten with Git
 
@@ -112,7 +112,7 @@ Save the file and exit from your editor. You should see a similar
 output:
 
     $ pyzet add
-    INFO:root:20220126232605 was created
+    20220126232605 was created
     [main (root-commit) 7d40260] This is my first zettel created with pyzet
     1 file changed, 14 insertions(+)
     create mode 100644 zettels/20220126232605/README.md
@@ -225,11 +225,11 @@ following:
 
     $ pyzet rm 20220126232716
     20220126232716 will be deleted including all files that might be inside. Are you sure? (y/N): y
-    INFO:root:/home/<your-username>/zet/zettels/20220126232716/README.md was removed
+    /home/<your-username>/zet/zettels/20220126232716/README.md was removed
     [main 009b935] RM: This is my second zettel
     1 file changed, 7 deletions(-)
     delete mode 100644 zettels/20220126232716/README.md
-    INFO:root:/home/<your-username>/zet/zettels/20220126232716 was removed
+    /home/<your-username>/zet/zettels/20220126232716 was removed
 
 As you can see, I had to confirm the deletion with `y` (capitalization
 matters). Pressing `Enter` or any other key will abort the process.
@@ -391,7 +391,7 @@ Let's remove `REAMDE.md` from our only zettel:
 And now, list the zettels:
 
     $ pyzet list
-    WARNING:root:empty zet folder 20220126232605 detected
+    WARNING: empty zet folder 20220126232605 detected
     ERROR: there are no zettels at given repo.
 
 Now you can just run `pyzet clean --force` to get rid of this warning.
