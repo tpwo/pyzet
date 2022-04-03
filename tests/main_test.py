@@ -6,7 +6,7 @@ import pytest
 import pyzet.constants as C
 from pyzet.main import main
 
-TEST_CFG = f"testing/{C.CONFIG_FILE}"
+TEST_CFG = ("--config", f"testing/{C.CONFIG_FILE}")
 
 
 def test_no_argv(capsys):
@@ -19,7 +19,7 @@ def test_no_argv(capsys):
 
 def test_help(capsys):
     with pytest.raises(SystemExit):
-        main(["-c", TEST_CFG, "--help"])
+        main([*TEST_CFG, "--help"])
 
     out, err = capsys.readouterr()
     assert out.startswith("usage: pyzet")
@@ -28,7 +28,7 @@ def test_help(capsys):
 
 def test_init_error_folder_exists():
     with pytest.raises(SystemExit) as excinfo:
-        main(["-c", TEST_CFG, "init"])
+        main([*TEST_CFG, "init"])
     assert (
         str(excinfo.value) == "ERROR: `testing/zet` folder exists and it's not empty."
     )
@@ -36,7 +36,7 @@ def test_init_error_folder_exists():
 
 def test_init_error_file_exists_at_path():
     with pytest.raises(SystemExit) as excinfo:
-        main(["-c", TEST_CFG, "-r", "README.md", "init"])
+        main([*TEST_CFG, "-r", "README.md", "init"])
     assert str(excinfo.value) == "ERROR: `README.md` exists and is a file."
 
 
@@ -66,7 +66,7 @@ def test_edit_error_missing_repo_in_yaml():
 
 
 def test_show(capsys):
-    main(["-c", TEST_CFG, "--repo", "testing/zet", "show", "20211016205158"])
+    main([*TEST_CFG, "show", "20211016205158"])
 
     out, err = capsys.readouterr()
     assert out.endswith(
@@ -78,7 +78,7 @@ def test_show(capsys):
 
 def test_show_default(capsys):
     # by default, the command shows a zettel with the highest ID (the newest)
-    main(["-c", TEST_CFG, "--repo", "testing/zet", "show"])
+    main([*TEST_CFG, "show"])
 
     out, err = capsys.readouterr()
     assert out.endswith("# Zettel with UTF-8\n\nZażółć gęślą jaźń.\n")
@@ -86,7 +86,7 @@ def test_show_default(capsys):
 
 
 def test_show_utf8(capsys):
-    main(["-c", TEST_CFG, "--repo", "testing/zet", "show", "20220101220852"])
+    main([*TEST_CFG, "show", "20220101220852"])
 
     out, err = capsys.readouterr()
     assert out.endswith("# Zettel with UTF-8\n\nZażółć gęślą jaźń.\n")
@@ -94,7 +94,7 @@ def test_show_utf8(capsys):
 
 
 def test_show_link(capsys):
-    main(["-c", TEST_CFG, "--repo", "testing/zet", "show", "20211016205158", "--link"])
+    main([*TEST_CFG, "show", "20211016205158", "--link"])
 
     out, err = capsys.readouterr()
     assert out == "* [20211016205158](../20211016205158) -- Zet test entry\n"
@@ -102,7 +102,7 @@ def test_show_link(capsys):
 
 
 def test_list(capsys):
-    main(["-c", TEST_CFG, "--repo", "testing/zet", "list"])
+    main([*TEST_CFG, "list"])
 
     out, err = capsys.readouterr()
     assert out == (
@@ -114,7 +114,7 @@ def test_list(capsys):
 
 
 def test_list_reverse(capsys):
-    main(["-c", TEST_CFG, "--repo", "testing/zet", "list", "--reverse"])
+    main([*TEST_CFG, "list", "--reverse"])
 
     out, err = capsys.readouterr()
     assert out == (
@@ -126,7 +126,7 @@ def test_list_reverse(capsys):
 
 
 def test_list_pretty(capsys):
-    main(["-c", TEST_CFG, "--repo", "testing/zet", "list", "--pretty"])
+    main([*TEST_CFG, "list", "--pretty"])
 
     out, err = capsys.readouterr()
     assert out == (
@@ -138,7 +138,7 @@ def test_list_pretty(capsys):
 
 
 def test_list_pretty_reverse(capsys):
-    main(["-c", TEST_CFG, "--repo", "testing/zet", "list", "--pretty", "--reverse"])
+    main([*TEST_CFG, "list", "--pretty", "--reverse"])
 
     out, err = capsys.readouterr()
     assert out == (
@@ -150,7 +150,7 @@ def test_list_pretty_reverse(capsys):
 
 
 def test_list_link(capsys):
-    main(["-c", TEST_CFG, "--repo", "testing/zet", "list", "--link"])
+    main([*TEST_CFG, "list", "--link"])
 
     out, err = capsys.readouterr()
     assert out == (
@@ -162,7 +162,7 @@ def test_list_link(capsys):
 
 
 def test_list_link_reverse(capsys):
-    main(["-c", TEST_CFG, "--repo", "testing/zet", "list", "--link", "--reverse"])
+    main([*TEST_CFG, "list", "--link", "--reverse"])
 
     out, err = capsys.readouterr()
     assert out == (
@@ -182,7 +182,7 @@ def test_list_warning_empty_folder(caplog):
         with open(Path(tmpdir, C.ZETDIR, id2_, C.ZETTEL_FILENAME), "a") as file:
             file.write("# Test")
 
-        main(["-c", TEST_CFG, "--repo", tmpdir, "list"])
+        main([*TEST_CFG, "--repo", tmpdir, "list"])
         assert f"empty zet folder {id_} detected" in caplog.text
 
 
@@ -190,18 +190,18 @@ def test_list_error_no_zettels():
     with tempfile.TemporaryDirectory() as tmpdir:
         Path(tmpdir, C.ZETDIR).mkdir(parents=True)
         with pytest.raises(SystemExit) as excinfo:
-            main(["-c", TEST_CFG, "--repo", tmpdir, "list"])
+            main([*TEST_CFG, "--repo", tmpdir, "list"])
         assert str(excinfo.value) == "ERROR: there are no zettels at given repo."
 
 
 def test_list_wrong_alternative_repo():
     with pytest.raises(SystemExit) as excinfo:
-        main(["-c", TEST_CFG, "--repo", "some/nonexistent/path", "list"])
+        main([*TEST_CFG, "--repo", "some/nonexistent/path", "list"])
     assert str(excinfo.value).startswith("ERROR: wrong repo path")
 
 
 def test_tags(capsys):
-    main(["-c", TEST_CFG, "--repo", "testing/zet", "tags"])
+    main([*TEST_CFG, "tags"])
 
     out, err = capsys.readouterr()
     assert out == "1\t#another-tag\n1\t#tag-after-two-spaces\n2\t#test-tag\n"
@@ -209,7 +209,7 @@ def test_tags(capsys):
 
 
 def test_tags_reverse(capsys):
-    main(["-c", TEST_CFG, "--repo", "testing/zet", "tags", "--reverse"])
+    main([*TEST_CFG, "tags", "--reverse"])
 
     out, err = capsys.readouterr()
     assert out == "2\t#test-tag\n1\t#tag-after-two-spaces\n1\t#another-tag\n"
@@ -217,7 +217,7 @@ def test_tags_reverse(capsys):
 
 
 def test_tags_count(capsys):
-    main(["-c", TEST_CFG, "--repo", "testing/zet", "tags", "--count"])
+    main([*TEST_CFG, "tags", "--count"])
 
     out, err = capsys.readouterr()
     assert out == "4\n"
@@ -229,7 +229,7 @@ def test_clean(capsys):
     with tempfile.TemporaryDirectory() as tmpdir:
         Path(tmpdir, C.ZETDIR, id_).mkdir(parents=True)
 
-        main(["-c", TEST_CFG, "--repo", tmpdir, "clean"])
+        main([*TEST_CFG, "--repo", tmpdir, "clean"])
 
         out, err = capsys.readouterr()
         assert out == f"will delete {id_}\nUse `--force` to proceed with deletion\n"
@@ -242,7 +242,7 @@ def test_clean_force(capsys):
     with tempfile.TemporaryDirectory() as tmpdir:
         Path(tmpdir, C.ZETDIR, id_).mkdir(parents=True)
 
-        main(["-c", TEST_CFG, "--repo", tmpdir, "clean", "--force"])
+        main([*TEST_CFG, "--repo", tmpdir, "clean", "--force"])
 
         out, err = capsys.readouterr()
         assert out == f"deleting {id_}\n"
@@ -255,7 +255,7 @@ def test_clean_dry_run(capsys):
     with tempfile.TemporaryDirectory() as tmpdir:
         Path(tmpdir, C.ZETDIR, id_).mkdir(parents=True)
 
-        main(["-c", TEST_CFG, "--repo", tmpdir, "clean", "--dry-run"])
+        main([*TEST_CFG, "--repo", tmpdir, "clean", "--dry-run"])
 
         out, err = capsys.readouterr()
         assert out == f"will delete {id_}\nUse `--force` to proceed with deletion\n"
@@ -268,7 +268,7 @@ def test_clean_dry_run_and_force(capsys):
     with tempfile.TemporaryDirectory() as tmpdir:
         Path(tmpdir, C.ZETDIR, id_).mkdir(parents=True)
 
-        main(["-c", TEST_CFG, "--repo", tmpdir, "clean", "--dry-run", "--force"])
+        main([*TEST_CFG, "--repo", tmpdir, "clean", "--dry-run", "--force"])
 
         out, err = capsys.readouterr()
         assert out == f"will delete {id_}\n"
