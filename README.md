@@ -199,18 +199,23 @@ the repo:
     pip install -e .
     pip install -r requirements-dev.txt
 
+For running tests more easily, you might also want to install `tox`:
+
+    pip install tox
+
 ### Running automatic tests
 
 Pyzet uses pytest and tox to run automatic tests. Use `pytest` command
 to test against the current Python version, or use `tox` to test against
 all supported Python versions (you, of course, have to install them
-first). [Pre-commit](https://pre-commit.com/) is also configured as one
-of tox's envs, but it can be run independently depending on your
-preference.
+first). Tox will also allow you to easily measure test coverage along
+with generating a coverage report. [Pre-commit](https://pre-commit.com/)
+is also configured as one of tox's envs, but it can be run independently
+depending on your preference.
 
-Automatic test coverage is not ideal at this point, and some commands
-are only tested manually, and this is especially true in case of
-commands that require a user input.
+Automatic test coverage is good, but still not ideal at this point, and
+some commands are only tested manually. This is especially true in case
+of commands that require a user input.
 
 ## Zettel formatting rules and guidelines
 
