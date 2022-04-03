@@ -80,7 +80,7 @@ def get_markdown_title(title_line: str, id_: str) -> str:
     """Extracts Markdown title if it is formatted correctly.
 
     Otherwise, returns the whole line and logs a warning.
-    `title_line` arg should have newline characters stripped.
+    'title_line' arg should have newline characters stripped.
 
     Raises ValueError if empty or whitespace only title is given as input.
     """

@@ -13,6 +13,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 * Use `print()` for all standard program output, and `logging` for
   displaying additional information. Logging level was changed to
   `WARNING`, so existing warnings will be showed by default.
+* Switch to use single quotes over back quotes in the program output.
 
 ## [0.4.0] - 2022-04-03
 

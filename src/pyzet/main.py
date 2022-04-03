@@ -154,7 +154,7 @@ def _get_parser() -> ArgumentParser:
     )
 
     grep_parser = subparsers.add_parser(
-        "grep", help="run `git grep` with some handy flags in zet repo"
+        "grep", help="run 'git grep' with some handy flags in zet repo"
     )
     grep_parser.add_argument(
         "-t",
@@ -172,15 +172,15 @@ def _get_parser() -> ArgumentParser:
         "patterns",
         nargs="+",
         help="grep patterns, letter case is ignored, "
-        "pass additional options after `--`",
+        "pass 'git grep' options after '--'",
     )
 
-    status_parser = subparsers.add_parser("status", help="run `git status` in zet repo")
+    status_parser = subparsers.add_parser("status", help="run 'git status' in zet repo")
     _add_git_cmd_options(status_parser, "status")
 
-    subparsers.add_parser("pull", help="run `git pull --rebase` in zet repo")
+    subparsers.add_parser("pull", help="run 'git pull --rebase' in zet repo")
 
-    push_parser = subparsers.add_parser("push", help="run `git push` in zet repo")
+    push_parser = subparsers.add_parser("push", help="run 'git push' in zet repo")
     _add_git_cmd_options(push_parser, "push")
 
     subparsers.add_parser(
@@ -197,7 +197,7 @@ def _add_git_cmd_options(parser: ArgumentParser, cmd_name: str) -> None:
         type=str,
         nargs="*",
         default=[],
-        help=f"`git {cmd_name}` options, use `--` before including them",
+        help=f"pass 'git {cmd_name}' options, use '--' before including them",
     )
 
 
@@ -207,14 +207,14 @@ def _parse_args(args: Namespace) -> int:
     config = _get_config(args.config, args.repo, args.command)
     id_: str | None
     try:
-        # `show` & `edit` commands use nargs="?" which makes
+        # show & edit commands use nargs="?" which makes
         # args.command str rather than single element list.
         if args.command in ("show", "edit"):
             id_ = args.id
         else:
             id_ = args.id[0]
     except AttributeError:
-        pass  # command that doesn't use `id` was executed
+        pass  # command that doesn't use 'id' was executed
     else:
         return _parse_args_with_id(id_, args, config)
     return _parse_args_without_id(args, config)
@@ -227,8 +227,8 @@ def _get_config(config_file: str, args_repo_path: str, command: str) -> Config:
             yaml_cfg = yaml.safe_load(file)
     except FileNotFoundError:
         raise SystemExit(
-            f"ERROR: config file at `{Path(config_file).as_posix()}` "
-            "not found.\nAdd it or use `--config` flag."
+            f"ERROR: config file at '{Path(config_file).as_posix()}' "
+            "not found.\nAdd it or use '--config' flag."
         )
     config = process_yaml(yaml_cfg, config_file, args_repo_path)
     if command == "init":  # if we initialize repo, the folder may not exist
@@ -236,8 +236,8 @@ def _get_config(config_file: str, args_repo_path: str, command: str) -> Config:
     if not config.repo.is_dir():
         raise SystemExit(
             "ERROR: wrong repo path. "
-            "Run `pyzet init` to create a git repo at "
-            f"`{config.repo}`, or use `--repo` flag."
+            "Run 'pyzet init' to create a git repo at "
+            f"'{config.repo}', or use '--repo' flag."
         )
     return config
 
@@ -247,14 +247,14 @@ def process_yaml(
 ) -> Config:
     """Processes YAML config file.
 
-    Only `repo` field is required. If other fields are missing,
+    Only 'repo' field is required. If other fields are missing,
     a default value will be used.
     """
     try:
         repo = Path(repo_path) if repo_path else Path(yaml_cfg["repo"]).expanduser()
     except KeyError:
         raise SystemExit(
-            f"ERROR: field `repo` missing from `{Path(config_file).as_posix()}`."
+            f"ERROR: field 'repo' missing from '{Path(config_file).as_posix()}'."
         )
     return Config(
         repo=repo,
@@ -335,7 +335,7 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
         return _call_git(config, args.command, args.options)
 
     if args.command == "pull":
-        # `--rebase` is used to maintain a linear history without merges, as this
+        # --rebase is used to maintain a linear history without merges, as this
         # seems to be a reasonable approach in zet repo that is usually personal.
         return _call_git(config, "pull", ["--rebase"])
 
@@ -373,7 +373,7 @@ def _parse_grep_patterns(patterns: list[str]) -> list[str]:
 
 
 def _add_git_grep_pattern(pattern: str) -> tuple[str, str, str]:
-    """Uses `git grep` syntax for including multiple patterns.
+    """Uses 'git grep' syntax for including multiple patterns.
 
     This approach works only with --all-match, i.e. only a file that
     includes all of patterns will be matched.
@@ -389,7 +389,7 @@ def _validate_id(id_: str, command: str, config: Config) -> None:
         if command == "rm":
             raise SystemExit(
                 f"ERROR: {C.ZETTEL_FILENAME} in {id_} doesn't exist. "
-                "Use `pyzet clean` to remove empty folder"
+                "Use 'pyzet clean' to remove empty folder"
             )
         raise SystemExit(f"ERROR: {C.ZETTEL_FILENAME} in {id_} doesn't exist")
 
@@ -462,7 +462,7 @@ def clean_zet_repo(repo_path: Path, is_dry_run: bool, is_force: bool) -> int:
             else:
                 print(f"will delete {folder.name}")
     if is_any_empty and not is_force:
-        print("Use `--force` to proceed with deletion")
+        print("Use '--force' to proceed with deletion")
     return 0
 
 
@@ -483,10 +483,10 @@ def _create_empty_folder(path: Path) -> None:
     """Creates empty folder or does nothing if it exists."""
     if path.exists():
         if not path.is_dir():
-            raise SystemExit(f"ERROR: `{path.as_posix()}` exists and is a file.")
+            raise SystemExit(f"ERROR: '{path.as_posix()}' exists and is a file.")
         if not _is_empty(path):
             raise SystemExit(
-                f"ERROR: `{path.as_posix()}` folder exists and it's not empty."
+                f"ERROR: '{path.as_posix()}' folder exists and it's not empty."
             )
     else:
         path.mkdir(parents=True)
@@ -526,7 +526,7 @@ def add_zettel(config: Config) -> int:
 
 
 def edit_zettel(id_: str, config: Config, editor: str) -> int:
-    """Edits zettel and commits the changes with `ED:` in the commit message."""
+    """Edits zettel and commits the changes with 'ED:' in the commit message."""
     zettel_path = Path(config.repo, C.ZETDIR, id_, C.ZETTEL_FILENAME)
     _open_file(zettel_path, editor)
 
@@ -559,20 +559,20 @@ def _get_edit_commit_msg(zettel_path: Path, title: str, config: Config) -> str:
 
 def _check_for_file_in_git(filepath: Path, config: Config) -> bool:
     """Returns True if a file was committed to git.
-    If `git log` output is empty, the file wasn't committed.
+    If 'git log' output is empty, the file wasn't committed.
     """
     return _get_git_output(config, "log", [filepath.as_posix()]) != b""
 
 
 def _check_for_file_changes(filepath: Path, config: Config) -> bool:
     """Returns True if a file was modified in a working dir."""
-    # Run `git add` to avoid false negatives, as `git diff --staged` is used for
+    # Run 'git add' to avoid false negatives, as 'git diff --staged' is used for
     # detection. This is important when there are external factors that impact the
     # committing process (like pre-commit).
     _call_git(config, "add", [filepath.as_posix()])
 
     git_diff_out = _get_git_output(config, "diff", ["--staged", filepath.as_posix()])
-    # If `git diff` output is empty, the file wasn't modified.
+    # If 'git diff' output is empty, the file wasn't modified.
     return git_diff_out != b""
 
 
@@ -580,7 +580,7 @@ def _open_file(filename: Path, editor: str) -> None:
     # expanduser() converts ~ into home directory
     editor_path = Path(editor).expanduser().as_posix()
     if shutil.which(editor_path) is None:
-        raise SystemExit(f"ERROR: editor `{editor_path}` cannot be found.")
+        raise SystemExit(f"ERROR: editor '{editor_path}' cannot be found.")
     try:
         subprocess.run([editor_path, filename.as_posix()])
     except FileNotFoundError:
@@ -590,7 +590,7 @@ def _open_file(filename: Path, editor: str) -> None:
 
 
 def remove_zettel(id_: str, config: Config) -> int:
-    """Removes zettel and commits the changes with `RM:` in the commit message."""
+    """Removes zettel and commits the changes with 'RM:' in the commit message."""
     prompt = (
         f"{id_} will be deleted including all files "
         "that might be inside. Are you sure? (y/N): "
@@ -651,6 +651,6 @@ def _get_git_output(config: Config, command: str, options: list[str]) -> bytes:
 def _get_git_cmd(git_path: str) -> str:
     git = Path(git_path).expanduser().as_posix()
     if shutil.which(git) is None:
-        raise SystemExit(f"ERROR: `{git}` cannot be found.")
+        raise SystemExit(f"ERROR: '{git}' cannot be found.")
     logging.debug(f"_get_git_cmd: found at '{git}'")
     return git
