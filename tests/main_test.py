@@ -3,10 +3,10 @@ from pathlib import Path
 
 import pytest
 
-from pyzet.constants import CONFIG_FILE, ZETDIR, ZETTEL_FILENAME
+import pyzet.constants as C
 from pyzet.main import main
 
-TEST_CFG = f"testing/{CONFIG_FILE}"
+TEST_CFG = f"testing/{C.CONFIG_FILE}"
 
 
 def test_no_argv(capsys):
@@ -177,9 +177,9 @@ def test_list_warning_empty_folder(caplog):
     id_ = "20211016205158"
     id2_ = "20211016205159"
     with tempfile.TemporaryDirectory() as tmpdir:
-        Path(tmpdir, ZETDIR, id_).mkdir(parents=True)
-        Path(tmpdir, ZETDIR, id2_).mkdir(parents=True)
-        with open(Path(tmpdir, ZETDIR, id2_, ZETTEL_FILENAME), "a") as file:
+        Path(tmpdir, C.ZETDIR, id_).mkdir(parents=True)
+        Path(tmpdir, C.ZETDIR, id2_).mkdir(parents=True)
+        with open(Path(tmpdir, C.ZETDIR, id2_, C.ZETTEL_FILENAME), "a") as file:
             file.write("# Test")
 
         main(["-c", TEST_CFG, "--repo", tmpdir, "list"])
@@ -188,7 +188,7 @@ def test_list_warning_empty_folder(caplog):
 
 def test_list_error_no_zettels():
     with tempfile.TemporaryDirectory() as tmpdir:
-        Path(tmpdir, ZETDIR).mkdir(parents=True)
+        Path(tmpdir, C.ZETDIR).mkdir(parents=True)
         with pytest.raises(SystemExit) as excinfo:
             main(["-c", TEST_CFG, "--repo", tmpdir, "list"])
         assert str(excinfo.value) == "ERROR: there are no zettels at given repo."
@@ -227,7 +227,7 @@ def test_tags_count(capsys):
 def test_clean(capsys):
     id_ = "20211016205158"
     with tempfile.TemporaryDirectory() as tmpdir:
-        Path(tmpdir, ZETDIR, id_).mkdir(parents=True)
+        Path(tmpdir, C.ZETDIR, id_).mkdir(parents=True)
 
         main(["-c", TEST_CFG, "--repo", tmpdir, "clean"])
 
@@ -240,7 +240,7 @@ def test_clean(capsys):
 def test_clean_force(capsys):
     id_ = "20211016205158"
     with tempfile.TemporaryDirectory() as tmpdir:
-        Path(tmpdir, ZETDIR, id_).mkdir(parents=True)
+        Path(tmpdir, C.ZETDIR, id_).mkdir(parents=True)
 
         main(["-c", TEST_CFG, "--repo", tmpdir, "clean", "--force"])
 
@@ -253,27 +253,27 @@ def test_clean_force(capsys):
 def test_clean_dry_run(capsys):
     id_ = "20211016205158"
     with tempfile.TemporaryDirectory() as tmpdir:
-        Path(tmpdir, ZETDIR, id_).mkdir(parents=True)
+        Path(tmpdir, C.ZETDIR, id_).mkdir(parents=True)
 
         main(["-c", TEST_CFG, "--repo", tmpdir, "clean", "--dry-run"])
 
         out, err = capsys.readouterr()
         assert out == f"will delete {id_}\nUse `--force` to proceed with deletion\n"
         assert err == ""
-        assert Path(tmpdir, ZETDIR, id_).exists()
+        assert Path(tmpdir, C.ZETDIR, id_).exists()
 
 
 def test_clean_dry_run_and_force(capsys):
     id_ = "20211016205158"
     with tempfile.TemporaryDirectory() as tmpdir:
-        Path(tmpdir, ZETDIR, id_).mkdir(parents=True)
+        Path(tmpdir, C.ZETDIR, id_).mkdir(parents=True)
 
         main(["-c", TEST_CFG, "--repo", tmpdir, "clean", "--dry-run", "--force"])
 
         out, err = capsys.readouterr()
         assert out == f"will delete {id_}\n"
         assert err == ""
-        assert Path(tmpdir, ZETDIR, id_).exists()
+        assert Path(tmpdir, C.ZETDIR, id_).exists()
 
 
 def test_grep(capfd):

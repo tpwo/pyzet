@@ -2,12 +2,12 @@ from pathlib import Path
 
 import pytest
 
-from pyzet.constants import ZETDIR
+import pyzet.constants as C
 from pyzet.zettel import Zettel, get_markdown_title, get_zettel, get_zettels
 
 
 def test_get_zettels():
-    output = get_zettels(path=Path("testing/zet", ZETDIR))
+    output = get_zettels(path=Path("testing/zet", C.ZETDIR))
 
     assert output == [
         Zettel(
@@ -29,7 +29,7 @@ def test_get_zettels():
 
 
 def test_get_zettels_reverse():
-    output = get_zettels(path=Path("testing/zet", ZETDIR), is_reversed=True)
+    output = get_zettels(path=Path("testing/zet", C.ZETDIR), is_reversed=True)
 
     assert output == [
         Zettel(
@@ -57,7 +57,7 @@ def test_open_zettel():
         tags=["test-tag", "another-tag", "tag-after-two-spaces"],
     )
 
-    assert get_zettel(Path(f"testing/zet/{ZETDIR}/20211016205158")) == expected
+    assert get_zettel(Path(f"testing/zet/{C.ZETDIR}/20211016205158")) == expected
 
 
 def test_get_markdown_title():

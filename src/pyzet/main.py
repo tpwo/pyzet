@@ -16,7 +16,7 @@ from pathlib import Path
 
 import yaml
 
-import pyzet.constants as const
+import pyzet.constants as C
 from pyzet.sample_config import sample_config
 from pyzet.zettel import Zettel, get_zettel, get_zettels
 
@@ -58,7 +58,7 @@ def _get_parser() -> ArgumentParser:
     parser.add_argument(
         "-c",
         "--config",
-        default=const.DEFAULT_CFG_LOCATION,
+        default=C.DEFAULT_CFG_LOCATION,
         help="path to alternate config file",
     )
 
@@ -67,7 +67,7 @@ def _get_parser() -> ArgumentParser:
         "-V",
         "--version",
         action="version",
-        version=f"%(prog)s {const.VERSION}",
+        version=f"%(prog)s {C.VERSION}",
     )
 
     subparsers = parser.add_subparsers(dest="command")
@@ -169,7 +169,7 @@ def _get_parser() -> ArgumentParser:
     _add_git_cmd_options(push_parser, "push")
 
     subparsers.add_parser(
-        "sample-config", help=f"produce a sample {const.CONFIG_FILE} file"
+        "sample-config", help=f"produce a sample {C.CONFIG_FILE} file"
     )
 
     return parser
@@ -241,8 +241,8 @@ def process_yaml(
         raise SystemExit(
             f"ERROR: field `repo` missing from `{Path(config_file).as_posix()}`."
         )
-    editor = yaml_cfg["editor"] if yaml_cfg.get("editor") else const.VIM_PATH
-    git = yaml_cfg["git"] if yaml_cfg.get("git") else const.GIT_PATH
+    editor = yaml_cfg["editor"] if yaml_cfg.get("editor") else C.VIM_PATH
+    git = yaml_cfg["git"] if yaml_cfg.get("git") else C.GIT_PATH
 
     return Config(
         repo=repo,
@@ -273,7 +273,7 @@ def _parse_args_with_id(id_: str | None, args: Namespace, config: Config) -> int
 
 
 def _get_last_zettel_id(repo_path: Path) -> str:
-    return get_zettels(Path(repo_path, const.ZETDIR), is_reversed=True)[0].id_
+    return get_zettels(Path(repo_path, C.ZETDIR), is_reversed=True)[0].id_
 
 
 def _parse_args_without_id(args: Namespace, config: Config) -> int:
@@ -303,7 +303,7 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
             config,
             "grep",
             ["-niI", args.pattern[0]],
-            path=Path(config.repo, const.ZETDIR),
+            path=Path(config.repo, C.ZETDIR),
         )
 
     if args.command in ("status", "push"):
@@ -321,20 +321,20 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
 
 
 def _validate_id(id_: str, command: str, config: Config) -> None:
-    zettel_dir = Path(config.repo, const.ZETDIR, id_)
+    zettel_dir = Path(config.repo, C.ZETDIR, id_)
     if not zettel_dir.is_dir():
         raise SystemExit(f"ERROR: folder {id_} doesn't exist")
-    if not Path(zettel_dir, const.ZETTEL_FILENAME).is_file():
+    if not Path(zettel_dir, C.ZETTEL_FILENAME).is_file():
         if command == "rm":
             raise SystemExit(
-                f"ERROR: {const.ZETTEL_FILENAME} in {id_} doesn't exist. "
+                f"ERROR: {C.ZETTEL_FILENAME} in {id_} doesn't exist. "
                 "Use `pyzet clean` to remove empty folder"
             )
-        raise SystemExit(f"ERROR: {const.ZETTEL_FILENAME} in {id_} doesn't exist")
+        raise SystemExit(f"ERROR: {C.ZETTEL_FILENAME} in {id_} doesn't exist")
 
 
 def list_zettels(path: Path, is_pretty: bool, is_link: bool, is_reverse: bool) -> int:
-    for zettel in get_zettels(Path(path, const.ZETDIR), is_reverse):
+    for zettel in get_zettels(Path(path, C.ZETDIR), is_reverse):
         print(_get_zettel_repr(zettel, is_pretty, is_link))
     return 0
 
@@ -348,7 +348,7 @@ def _get_zettel_repr(zettel: Zettel, is_pretty: bool, is_link: bool) -> str:
 
 
 def list_tags(path: Path, is_reversed: bool) -> int:
-    zettels = get_zettels(Path(path, const.ZETDIR))
+    zettels = get_zettels(Path(path, C.ZETDIR))
     all_tags = itertools.chain(*[t for t in [z.tags for z in zettels]])
 
     # Chain is reverse sorted for the correct alphabetical displaying of tag counts.
@@ -361,21 +361,21 @@ def list_tags(path: Path, is_reversed: bool) -> int:
 
 
 def count_tags(path: Path) -> int:
-    print(sum(len(zettel.tags) for zettel in get_zettels(Path(path, const.ZETDIR))))
+    print(sum(len(zettel.tags) for zettel in get_zettels(Path(path, C.ZETDIR))))
     return 0
 
 
 def show_zettel(id_: str, repo_path: Path) -> int:
     """Prints zettel text prepended with centered ID as a header."""
-    print(f" {id_} ".center(const.ZETTEL_WIDTH, "="))
-    zettel_path = Path(repo_path, const.ZETDIR, id_, const.ZETTEL_FILENAME)
+    print(f" {id_} ".center(C.ZETTEL_WIDTH, "="))
+    zettel_path = Path(repo_path, C.ZETDIR, id_, C.ZETTEL_FILENAME)
     with open(zettel_path, encoding="utf-8") as file:
         print(file.read(), end="")
     return 0
 
 
 def show_zettel_as_md_link(id_: str, repo_path: Path) -> int:
-    zettel_path = Path(repo_path, const.ZETDIR, id_)
+    zettel_path = Path(repo_path, C.ZETDIR, id_)
     zettel = get_zettel(zettel_path)
     print(_get_md_relative_link(zettel.id_, zettel.title))
     return 0
@@ -392,7 +392,7 @@ def _get_md_relative_link(id_: str, title: str) -> str:
 
 def clean_zet_repo(repo_path: Path, is_dry_run: bool, is_force: bool) -> int:
     is_any_empty = False
-    for folder in sorted(Path(repo_path, const.ZETDIR).iterdir(), reverse=True):
+    for folder in sorted(Path(repo_path, C.ZETDIR).iterdir(), reverse=True):
         if folder.is_dir() and _is_empty(folder):
             is_any_empty = True
             if is_force and not is_dry_run:
@@ -411,7 +411,7 @@ def init_repo(config: Config) -> int:
     # This is split, as each one can raise an Exception,
     # and we'd like to have a nice error message in such case.
     _create_empty_folder(config.repo)
-    _create_empty_folder(Path(config.repo, const.ZETDIR))
+    _create_empty_folder(Path(config.repo, C.ZETDIR))
     _call_git(config, "init")
     logging.info("Git repo was initialized. Please add a remote manually.")
     return 0
@@ -437,12 +437,12 @@ def _is_empty(folder: Path) -> bool:
 
 def add_zettel(config: Config) -> int:
     """Adds zettel and commits the changes with zettel title as the commit message."""
-    id_ = datetime.utcnow().strftime(const.ZULU_DATETIME_FORMAT)
+    id_ = datetime.utcnow().strftime(C.ZULU_DATETIME_FORMAT)
 
-    zettel_dir = Path(config.repo, const.ZETDIR, id_)
+    zettel_dir = Path(config.repo, C.ZETDIR, id_)
     zettel_dir.mkdir(parents=True, exist_ok=True)
 
-    zettel_path = Path(zettel_dir, const.ZETTEL_FILENAME)
+    zettel_path = Path(zettel_dir, C.ZETTEL_FILENAME)
 
     with open(zettel_path, "w+") as file:
         file.write("")
@@ -463,7 +463,7 @@ def add_zettel(config: Config) -> int:
 
 def edit_zettel(id_: str, config: Config, editor: str) -> int:
     """Edits zettel and commits the changes with `ED:` in the commit message."""
-    zettel_path = Path(config.repo, const.ZETDIR, id_, const.ZETTEL_FILENAME)
+    zettel_path = Path(config.repo, C.ZETDIR, id_, C.ZETTEL_FILENAME)
     _open_file(zettel_path, editor)
 
     try:
@@ -530,7 +530,7 @@ def remove_zettel(id_: str, config: Config) -> int:
     )
     if input(prompt) != "y":
         raise SystemExit("aborting")
-    zettel_path = Path(config.repo, const.ZETDIR, id_, const.ZETTEL_FILENAME)
+    zettel_path = Path(config.repo, C.ZETDIR, id_, C.ZETTEL_FILENAME)
     zettel = get_zettel(zettel_path.parent)
 
     # All files in given zettel folder are removed one by one.
