@@ -18,6 +18,9 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   displaying additional information. Logging level was changed to
   `WARNING`, so existing warnings will be showed by default.
 * Switch to use single quotes over back quotes in the program output.
+* Remove implicit `--ignore-case` option from `pyzet grep`; the flag
+  with this name was created and it should be explicitly added to
+  maintain the old behavior (#29).
 
 ## [0.4.0] - 2022-04-03
 

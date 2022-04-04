@@ -7,22 +7,37 @@ GREP_CMD = ("--config", f"testing/{C.CONFIG_FILE}", "grep")
 
 
 def test_grep(capfd):
-    main([*GREP_CMD, "hello"])
+    main([*GREP_CMD, "zet"])
+
+    out, err = capfd.readouterr()
+    expected = """\
+20211016223643/README.md
+# Another zet test entry
+"""
+    assert out == expected
+    assert err == ""
+
+
+def test_grep_ignore_case(capfd):
+    main([*GREP_CMD, "--ignore-case", "zet"])
 
     out, err = capfd.readouterr()
     expected = """\
 20211016205158/README.md
-Hello there!
+# Zet test entry
 
 20211016223643/README.md
-Hello everyone
+# Another zet test entry
+
+20220101220852/README.md
+# Zettel with UTF-8
 """
     assert out == expected
     assert err == ""
 
 
 def test_grep_title(capfd):
-    main([*GREP_CMD, "--title", "hello"])
+    main([*GREP_CMD, "--title", "Hello"])
 
     out, err = capfd.readouterr()
     expected = """\
@@ -39,7 +54,7 @@ Hello everyone
 
 
 def test_grep_line_number(capfd):
-    main([*GREP_CMD, "--line-number", "hello"])
+    main([*GREP_CMD, "--line-number", "Hello"])
 
     out, err = capfd.readouterr()
     expected = """\
@@ -54,7 +69,7 @@ def test_grep_line_number(capfd):
 
 
 def test_grep_title_and_line_number(capfd):
-    main([*GREP_CMD, "--title", "--line-number", "hello"])
+    main([*GREP_CMD, "--title", "--line-number", "Hello"])
 
     out, err = capfd.readouterr()
     expected = """\
@@ -284,28 +299,14 @@ def test_grep_multiple_patterns_line_number_different_order(capfd):
     assert err == ""
 
 
-def test_grep_with_options(capfd):
-    main([*GREP_CMD, "everyone", "--", "--or", "-e", "test-tag"])
-
-    out, err = capfd.readouterr()
-    expected = """\
-20211016223643/README.md
-Hello everyone
-    #test-tag
-"""
-    assert out == expected
-    assert err == ""
-
-
-def test_grep_title_with_options(capfd):
-    main([*GREP_CMD, "--title", "everyone", "--", "--or", "-e", "test-tag"])
+def test_grep_with_option_and_pattern(capfd):
+    # --and means that matching line should always have its pattern
+    main([*GREP_CMD, "--title", "--ignore-case", "zet", "--", "--and", "-e", "another"])
 
     out, err = capfd.readouterr()
     expected = """\
 20211016223643/README.md
 # Another zet test entry
-Hello everyone
-    #test-tag
 """
     assert out == expected
     assert err == ""

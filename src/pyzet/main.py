@@ -155,6 +155,12 @@ def _get_parser() -> ArgumentParser:
         "grep", help="run 'git grep' with some handy flags in zet repo"
     )
     grep_parser.add_argument(
+        "-i",
+        "--ignore-case",
+        action="store_true",
+        help="case insensitive matching",
+    )
+    grep_parser.add_argument(
         "-t",
         "--title",
         action="store_true",
@@ -169,8 +175,7 @@ def _get_parser() -> ArgumentParser:
     grep_parser.add_argument(
         "patterns",
         nargs="+",
-        help="grep patterns, letter case is ignored, "
-        "pass 'git grep' options after '--'",
+        help="grep patterns, pass 'git grep' options after '--'",
     )
 
     status_parser = subparsers.add_parser("status", help="run 'git status' in zet repo")
@@ -319,7 +324,7 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
         return list_tags(config.repo, is_reversed=args.reverse)
 
     if args.command == "grep":
-        grep_opts = _build_grep_options(args.line_number, args.title)
+        grep_opts = _build_grep_options(args.ignore_case, args.line_number, args.title)
         patterns = _parse_grep_patterns(args.patterns)
         grep_opts.extend(patterns)
         return _call_git(
@@ -343,14 +348,15 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
     raise NotImplementedError
 
 
-def _build_grep_options(line_number: bool, title: bool) -> list[str]:
+def _build_grep_options(ignore_case: bool, line_number: bool, title: bool) -> list[str]:
     opts = [
         "-I",
-        "--ignore-case",
         "--heading",
         "--break",
         "--all-match",
     ]
+    if ignore_case:
+        opts.append("--ignore-case")
     if line_number:
         opts.append("--line-number")
     if title:
