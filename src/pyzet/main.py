@@ -2,12 +2,10 @@ from __future__ import annotations
 
 import argparse
 import functools
-import io
 import itertools
 import logging
 import shutil
 import subprocess
-import sys
 from argparse import ArgumentParser, Namespace
 from collections import Counter
 from dataclasses import dataclass
@@ -17,6 +15,7 @@ from pathlib import Path
 import yaml
 
 import pyzet.constants as C
+from pyzet import utils
 from pyzet.sample_config import sample_config
 from pyzet.zettel import Zettel, get_zettel, get_zettels
 
@@ -29,24 +28,16 @@ class Config:
 
 
 def main(argv: list[str] | None = None) -> int:
-    _configure_console_print_utf8()
-    logging.basicConfig(level=logging.WARNING, format="%(levelname)s: %(message)s")
+    utils.configure_console_print_utf8()
 
     parser = _get_parser()
     args = parser.parse_args(argv)
+    utils.setup_logger(utils.compute_log_level(args.verbose))
 
     if args.command is None:
         parser.print_usage()
         return 0
     return _parse_args(args)
-
-
-def _configure_console_print_utf8() -> None:
-    # https://stackoverflow.com/a/60634040/14458327
-    if isinstance(sys.stdout, io.TextIOWrapper):
-        # If statement is needed to satisfy mypy:
-        # https://github.com/python/typeshed/issues/3049
-        sys.stdout.reconfigure(encoding="utf-8")
 
 
 def _get_parser() -> ArgumentParser:
@@ -68,6 +59,13 @@ def _get_parser() -> ArgumentParser:
         "--version",
         action="version",
         version=f"%(prog)s {C.VERSION}",
+    )
+    parser.add_argument(
+        "-v",
+        "--verbose",
+        action="count",
+        default=0,
+        help="increase verbosity of the output",
     )
 
     subparsers = parser.add_subparsers(dest="command")

@@ -8,6 +8,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+* Add `--verbose` flag to control logging level (#28).
+
 ### Changed
 
 * Use `print()` for all standard program output, and `logging` for

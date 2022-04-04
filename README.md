@@ -73,7 +73,7 @@ Please see the tutorial
 
 ```none
 $ pyzet -h
-usage: pyzet [-h] [-r REPO] [-c CONFIG] [-V]
+usage: pyzet [-h] [-r REPO] [-c CONFIG] [-V] [-v]
              {init,add,edit,rm,show,list,tags,clean,grep,status,pull,push,sample-config} ...
 
 positional arguments:
@@ -98,6 +98,7 @@ options:
   -c CONFIG, --config CONFIG
                         path to alternate config file
   -V, --version         show program's version number and exit
+  -v, --verbose         increase verbosity of the output
 ```
 
 ## Supported editors
