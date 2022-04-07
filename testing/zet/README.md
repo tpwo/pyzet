@@ -1,3 +1,3 @@
-# Personal Zettelkasten repo
+# Test Zettelkasten repo
 
-This is a sample zet repository for the sake of unit testing.
+This is a sample ZK repo for the sake of unit testing.
