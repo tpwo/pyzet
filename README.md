@@ -78,25 +78,25 @@ usage: pyzet [-h] [-r REPO] [-c CONFIG] [-V] [-v]
 
 positional arguments:
   {init,add,edit,rm,show,list,tags,clean,grep,status,pull,push,sample-config}
-    init                initialize a git ZK repository
+    init                initialize a git ZK repo at configured or given path
     add                 add a new zettel
-    edit                edit a zettel
+    edit                edit an existing zettel
     rm                  remove a zettel
     show                print zettel contents
-    list                list zettels in given repo
-    tags                list tags in given repo
-    clean               delete empty folders in zet repo
-    grep                run 'git grep' with some handy flags in zet repo
-    status              run 'git status' in zet repo
-    pull                run 'git pull --rebase' in zet repo
-    push                run 'git push' in zet repo
+    list                list all zettels
+    tags                list all tags and count them
+    clean               delete empty folders in 'zettels' folder in ZK repo
+    grep                run 'git grep' with some handy flags in ZK repo
+    status              run 'git status' in ZK repo
+    pull                run 'git pull --rebase' in ZK repo
+    push                run 'git push' in ZK repo
     sample-config       produce a sample pyzet.yaml file
 
 options:
   -h, --help            show this help message and exit
-  -r REPO, --repo REPO  path to point to any zet repo
+  -r REPO, --repo REPO  point to a custom ZK repo
   -c CONFIG, --config CONFIG
-                        path to alternate config file
+                        use an alternative config file
   -V, --version         show program's version number and exit
   -v, --verbose         increase verbosity of the output
 ```

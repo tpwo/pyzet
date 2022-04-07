@@ -45,15 +45,13 @@ def _get_parser() -> ArgumentParser:
         prog="pyzet", formatter_class=argparse.RawTextHelpFormatter
     )
 
-    parser.add_argument("-r", "--repo", help="path to point to any zet repo")
+    parser.add_argument("-r", "--repo", help="point to a custom ZK repo")
     parser.add_argument(
         "-c",
         "--config",
         default=C.DEFAULT_CFG_LOCATION,
-        help="path to alternate config file",
+        help="use an alternative config file",
     )
-
-    # https://stackoverflow.com/a/8521644/812183
     parser.add_argument(
         "-V",
         "--version",
@@ -70,20 +68,22 @@ def _get_parser() -> ArgumentParser:
 
     subparsers = parser.add_subparsers(dest="command")
 
-    init_parser = subparsers.add_parser("init", help="initialize a git ZK repository")
+    init_parser = subparsers.add_parser(
+        "init", help="initialize a git ZK repo at configured or given path"
+    )
     init_parser.add_argument(
         "path",
         nargs="?",
-        help="repo path, by default ~/zet; if target dir exists, it must be empty",
+        help="repo path, by default '~/zet'; if target dir exists, it must be empty",
     )
 
     subparsers.add_parser("add", help="add a new zettel")
 
-    edit_parser = subparsers.add_parser("edit", help="edit a zettel")
+    edit_parser = subparsers.add_parser("edit", help="edit an existing zettel")
     edit_parser.add_argument(
         "id",
         nargs="?",
-        help="zettel id, by default edits zettel with the newest timestamp",
+        help="zettel id, defaults to zettel with the newest timestamp",
     )
 
     remove_parser = subparsers.add_parser("rm", help="remove a zettel")
@@ -93,16 +93,16 @@ def _get_parser() -> ArgumentParser:
     show_parser.add_argument(
         "id",
         nargs="?",
-        help="zettel id, by default shows zettel with the newest timestamp",
+        help="zettel id, defaults to zettel with the newest timestamp",
     )
     show_parser.add_argument(
         "-l",
         "--link",
         action="store_true",
-        help="show zettel as a relative Markdown link",
+        help="show zettel as a relative Markdown link for pasting in other zettels",
     )
 
-    list_parser = subparsers.add_parser("list", help="list zettels in given repo")
+    list_parser = subparsers.add_parser("list", help="list all zettels")
     list_parser.add_argument(
         "-p",
         "--pretty",
@@ -113,30 +113,30 @@ def _get_parser() -> ArgumentParser:
         "-l",
         "--link",
         action="store_true",
-        help="print zettels as relative Markdown links",
+        help="print zettels as relative Markdown links for pasting in other zettels",
     )
     list_parser.add_argument(
         "-r",
         "--reverse",
         action="store_true",
-        help="reverse the output (so the newest are first)",
+        help="reverse the output (newest first)",
     )
 
-    tags_parser = subparsers.add_parser("tags", help="list tags in given repo")
+    tags_parser = subparsers.add_parser("tags", help="list all tags and count them")
     tags_parser.add_argument(
         "-r",
         "--reverse",
         action="store_true",
-        help="reverse the output to be descending",
+        help="reverse the output",
     )
     tags_parser.add_argument(
         "--count",
         action="store_true",
-        help="count the total number of all tags in zet repo (non-unique)",
+        help="count the total number of all tags in ZK repo (non-unique)",
     )
 
     clean_parser = subparsers.add_parser(
-        "clean", help="delete empty folders in zet repo"
+        "clean", help=f"delete empty folders in '{C.ZETDIR}' folder in ZK repo"
     )
     clean_parser.add_argument(
         "-d",
@@ -152,7 +152,7 @@ def _get_parser() -> ArgumentParser:
     )
 
     grep_parser = subparsers.add_parser(
-        "grep", help="run 'git grep' with some handy flags in zet repo"
+        "grep", help="run 'git grep' with some handy flags in ZK repo"
     )
     grep_parser.add_argument(
         "-i",
@@ -178,12 +178,12 @@ def _get_parser() -> ArgumentParser:
         help="grep patterns, pass 'git grep' options after '--'",
     )
 
-    status_parser = subparsers.add_parser("status", help="run 'git status' in zet repo")
+    status_parser = subparsers.add_parser("status", help="run 'git status' in ZK repo")
     _add_git_cmd_options(status_parser, "status")
 
-    subparsers.add_parser("pull", help="run 'git pull --rebase' in zet repo")
+    subparsers.add_parser("pull", help="run 'git pull --rebase' in ZK repo")
 
-    push_parser = subparsers.add_parser("push", help="run 'git push' in zet repo")
+    push_parser = subparsers.add_parser("push", help="run 'git push' in ZK repo")
     _add_git_cmd_options(push_parser, "push")
 
     subparsers.add_parser(
@@ -339,7 +339,7 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
 
     if args.command == "pull":
         # --rebase is used to maintain a linear history without merges, as this
-        # seems to be a reasonable approach in zet repo that is usually personal.
+        # seems to be a reasonable approach in ZK repo that is usually personal.
         return _call_git(config, "pull", ["--rebase"])
 
     if args.command == "clean":
