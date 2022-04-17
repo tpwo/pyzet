@@ -1,13 +1,14 @@
-# Quick start with pyzet
+# Pyzet tutorial
 
-## Disclaimer for Windows users
+## Disclaimer for Windows user
 
 This instruction is written with a Linux user in mind. If you're on
-Windows, and you don't want to use WSL2, you can still follow it, but it
-will be much easier, if you do it using Git Bash that comes with Git for
-Windows. With that, all commands will be very similar, and the main
-difference will be the location of your home folder. On Linux, it's by
-default:
+Windows, and you don't want to use
+[WSL2](https://docs.microsoft.com/en-us/windows/wsl/install), you can
+still follow it, but it will be much easier, if you do it using Git Bash
+that comes with Git for Windows. With that, all commands will be very
+similar, and the main difference will be the location of your home
+folder. On Linux, it's by default:
 
     $ echo $HOME
     /home/<your-username>
@@ -30,8 +31,8 @@ Home directory written with this is mind should look like this:
 
 ## Installation
 
-Install pyzet using one of the methods described in the main readme,
-e.g.:
+If you haven't already, install pyzet using one of the methods described
+in the main readme, e.g.:
 
     pip install pyzet
 
@@ -46,26 +47,30 @@ For more detailed information, you can always use `--help` flag: `pyzet
 
 ## Initial configuration
 
-Let's start by initializing our zettelkasten repository:
+Let's start by initializing our Zettelkasten repository:
 
     $ pyzet init
     ERROR: config file at '/home/<your-username>/.config/pyzet/pyzet.yaml' not found.
     Add it or use '--config' flag.
 
-Whoops! If you saw a similar error, it means that you also don't have a
-config file at this moment.
+Whoops! If you saw a similar error, it means that you haven't used the
+quick start commands provided in the [main
+readme](https://github.com/wojdatto/pyzet#quick-start). Otherwise,
+please feel free to skip to the next section.
 
-Let's create the simplest config file possible at
-`~/.config/pyzet/pyzet.yaml` that will contain only a single line:
+We have to create a config file at `~/.config/pyzet/pyzet.yaml`.
+
+Let's create the simplest config file possible that will contain only a
+single line:
 
     repo: ~/zet
 
-You can quickly do it with these two commands:
+E.g. you should be able to quickly do it with these two commands:
 
     mkdir -p ~/.config/pyzet
     echo 'repo: ~/zet' > ~/.config/pyzet/pyzet.yaml
 
-Now, it should work:
+Now, the command from above should work:
 
     $ pyzet init
     Initialized empty Git repository in /home/<your-username>/zet/.git/
@@ -83,14 +88,24 @@ will be enough).
 
 For the sake of this tutorial, let's ignore a prompt to add a remote for
 our newly created Git repo. However, you'd probably like to do this in
-your standard pyzet workflow. Probably, a good idea is to create a
+your standard pyzet workflow. Probably, a convenient idea is to create a
 private `zet` repository on any online Git hosting of your choice.
 
 ## Basic interaction with zettels
 
-Now, you can proceed with adding your first zettel with `pyzet add`. The
-text editor should open. Let's add some example text using
-[Markdown](https://commonmark.org/):
+Now, you can proceed with adding your first zettel with `pyzet add`.
+
+The text editor should open. By default, it will be Vim. If you prefer
+something else, you can add another line to the config file:
+
+    editor: <path-to-your-editor>
+
+However, not every editor might work seamlessly with pyzet. In the [main
+readme](https://github.com/wojdatto/pyzet#supported-editors) you can see
+a list of editors with some comments about the compatibility.
+
+Once you're happy with the text editor, add some example text using
+[Markdown](https://commonmark.org/) syntax:
 
 ```markdown
 # This is my first zettel created with pyzet
@@ -211,7 +226,7 @@ tags` command that allows you to interact with them:
     1       #example-tag
     2       #tutorial
 
-The number shows how many times each tag was used in your zettelkasten
+The number shows how many times each tag was used in your Zettelkasten
 repository. You can use it to maintain more coherent tag naming over
 time. There are also some additional options, you can see them with
 `pyzet tags -h` (and this is true for almost every command, BTW).
@@ -252,6 +267,14 @@ your ZK repo:
     $ pyzet status
     On branch main
     nothing to commit, working tree clean
+
+If the above command doesn't work for you, your Git executable is
+probably installed in some non-default location for your system.
+
+To tell pyzet where to look, you need to add another line to the config
+file:
+
+    git: <path-to-your-git-executable>
 
 For the remaining Git-interaction commands, you have to make sure that
 your Git configuration including name, email, and remote is correct.
@@ -401,8 +424,9 @@ Now you can just run `pyzet clean --force` to get rid of this warning.
 This concludes the tutorial. It should give you a basic idea how to use
 pyzet, and create your own ZK repository with it.
 
-If you're new to the zettelkasten, it might be helpful to read more
-about it. I suggest to go through `Inspiration and further reading`
+If you're new to the Zettelkasten, it might be helpful to read more
+about it. I suggest to go through [Inspiration and further
+reading](https://github.com/wojdatto/pyzet#inspiration-and-further-reading)
 section in the main readme.
 
 If you have any questions or suggestions, feel free to create an issue
