@@ -2,15 +2,107 @@
 
 [![Tests](https://github.com/wojdatto/pyzet/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/wojdatto/pyzet/actions/workflows/tests.yml)
 
-A small CLI tool that makes it easier to use Zettelkasten with git
-repos.
+> "I, of course, do not think everything by myself. It happens mainly
+> within the Zettelkasten".
 
-## How to use?
+`pyzet` is a CLI tool targeted at note-taking and personal knowledge
+management using the Zettelkasten approach with Git repos.
 
-The current version is limited in its capabilities, so it might be
-frustrating to use. Don't hesitate to add an issue or PR, if you have
-any idea how to improve or expand this tool, or if you've experienced
-any problems. Any feedback is welcome!
+## Installation
+
+Prerequisites:
+
+* Python 3.7+
+* Git 2.25+ (but older also should be fine)
+
+Linux, macOS, and Windows are supported.
+
+You can install pyzet with pip:
+
+    pip install pyzet
+    pyzet --help
+
+Alternatively, directly from GitHub you can install the newest version
+that may contain some yet unreleased changes (you can inspect
+[changelog](https://github.com/wojdatto/pyzet/blob/main/CHANGELOG.md)
+for more details):
+
+    pip install git+https://github.com/wojdatto/pyzet.git
+
+> ⚠️<br>
+> `pyzet` is a work in progress, so you may encounter difficulties and
+> annoyances while using it. Don't hesitate to [add an
+> issue](https://github.com/wojdatto/pyzet/issues/new), if you've
+> experienced a problem or you have any idea how to improve or extend
+> it. **Any feedback is welcome!**
+
+## Quick start
+
+Create the simplest required config file, and initialize your
+Zettelkasten repository.
+
+Linux/macOS:
+
+```bash
+mkdir -p ~/.config/pyzet
+echo 'repo: ~/zet' > ~/.config/pyzet/pyzet.yaml
+pyzet init
+```
+
+Windows (with `PowerShell`):
+
+```powershell
+mkdir -p ~/.config/pyzet
+echo 'repo: ~/zet' | Set-Content ~/.config/pyzet/pyzet.yaml
+pyzet init
+```
+
+`pyzet --help` will tell you more about available commands.
+
+`pyzet sample-config` show you how you can extend your config file. You
+should especially do this when:
+
+1. Your Git executable isn't in the usual default location.
+2. You don't want Vim as the text editor used by pyzet.
+
+## Tutorial
+
+Please see the full tutorial
+[here](https://github.com/wojdatto/pyzet/tree/main/docs).
+
+## Summary of commands
+
+```none
+$ pyzet -h
+usage: pyzet [-h] [-r REPO] [-c CONFIG] [-V] [-v]
+             {init,add,edit,rm,show,list,tags,clean,grep,status,pull,push,sample-config} ...
+
+positional arguments:
+  {init,add,edit,rm,show,list,tags,clean,grep,status,pull,push,sample-config}
+    init                initialize a git ZK repo at configured or given path
+    add                 add a new zettel
+    edit                edit an existing zettel
+    rm                  remove a zettel
+    show                print zettel contents
+    list                list all zettels
+    tags                list all tags and count them
+    clean               delete empty folders in 'zettels' folder in ZK repo
+    grep                run 'git grep' with some handy flags in ZK repo
+    status              run 'git status' in ZK repo
+    pull                run 'git pull --rebase' in ZK repo
+    push                run 'git push' in ZK repo
+    sample-config       produce a sample pyzet.yaml file
+
+options:
+  -h, --help            show this help message and exit
+  -r REPO, --repo REPO  point to a custom ZK repo
+  -c CONFIG, --config CONFIG
+                        use an alternative config file
+  -V, --version         show program's version number and exit
+  -v, --verbose         increase verbosity of the output
+```
+
+## Configuration
 
 The basic configuration of pyzet is set via YAML file which should be
 placed at `~/.config/pyzet/pyzet.yaml`. However, there is a `--config`
@@ -64,43 +156,6 @@ If you're on Linux (or Git Bash on Windows), you can use the commands:
 to create required folders and a copy of the above correct config file
 into the default location.
 
-## Quick start
-
-Please see the tutorial
-[here](https://github.com/wojdatto/pyzet/tree/main/docs).
-
-## Summary of commands
-
-```none
-$ pyzet -h
-usage: pyzet [-h] [-r REPO] [-c CONFIG] [-V] [-v]
-             {init,add,edit,rm,show,list,tags,clean,grep,status,pull,push,sample-config} ...
-
-positional arguments:
-  {init,add,edit,rm,show,list,tags,clean,grep,status,pull,push,sample-config}
-    init                initialize a git ZK repo at configured or given path
-    add                 add a new zettel
-    edit                edit an existing zettel
-    rm                  remove a zettel
-    show                print zettel contents
-    list                list all zettels
-    tags                list all tags and count them
-    clean               delete empty folders in 'zettels' folder in ZK repo
-    grep                run 'git grep' with some handy flags in ZK repo
-    status              run 'git status' in ZK repo
-    pull                run 'git pull --rebase' in ZK repo
-    push                run 'git push' in ZK repo
-    sample-config       produce a sample pyzet.yaml file
-
-options:
-  -h, --help            show this help message and exit
-  -r REPO, --repo REPO  point to a custom ZK repo
-  -c CONFIG, --config CONFIG
-                        use an alternative config file
-  -V, --version         show program's version number and exit
-  -v, --verbose         increase verbosity of the output
-```
-
 ## Supported editors
 
 Pyzet is a CLI application which cooperates with a text editor of
@@ -146,29 +201,11 @@ whole program to save a zettel):
 
     editor: C:/Program Files/Microsoft VS Code/Code.exe
 
-## How to run?
+### macOS
 
-Python 3.7 or later is needed.
+Not yet tested. CLI editors compatible with Linux should work fine.
 
-The simplest way to install is to use pip:
-
-    pip install pyzet
-    pyzet --help
-
-You can also obtain the newest version directly from this repository:
-
-    pip install git+https://github.com/wojdatto/pyzet.git
-
-### OS compatibility
-
-Both Windows and Unix are supported, but the current version is 5-10
-times faster with the latter. One of the reasons of worse performance
-might be Windows Defender with its realtime protection.
-
-On of the workarounds is trying to use pyzet with
-[WSL2](https://docs.microsoft.com/en-us/windows/wsl/install).
-
-### Manual installation
+## Manual installation
 
 Manual installation is also possible. Clone the repo and run the install
 command. Using virtual environment is advised.
@@ -189,6 +226,8 @@ Windows:
     .\venv\Scripts\activate
     pip install .
     pyzet --help
+
+## Contributing
 
 ### Development installation
 
@@ -216,6 +255,38 @@ depending on your preference.
 Automatic test coverage is good, but still not ideal at this point, and
 some commands are only tested manually. This is especially true in case
 of commands that require a user input.
+
+### GitHub Actions
+
+Continuous integration with GitHub Actions is configured for the `main`
+branch, `test-me-<any-name>` branches, and for each branch with an
+active pull request.
+
+There are two checks:
+
+* `tox` running tests against each supported Python version
+
+* `pre-commit` running with hooks defined in the [config
+  file](https://github.com/wojdatto/pyzet/blob/main/.pre-commit-config.yaml)
+
+## Performance
+
+From real world testing, performance of `pyzet` doesn't seem to be a big
+issue at this moment.
+
+E.g. `pyzet list` (probably the slowest command) takes ~150 ms in repo
+with 500 zettels.
+
+Generally, we focus on using other performant utilities like `git grep`
+to do the hard work, and Python is performing a role of a handy
+interface.
+
+### Windows users
+
+A significant performance boost can be achieved after moving to
+[WSL2](https://docs.microsoft.com/en-us/windows/wsl/install). You have
+to run `pyzet` using Python interpreter from Linux, and your zet repo
+needs to be placed on the Linux partition.
 
 ## Zettel formatting rules and guidelines
 
@@ -363,7 +434,8 @@ See also:
 * <https://gsilvapt.me/posts/building-a-zettelkasten-the-simple-way/> --
   even simpler approach to Zettelkasten
 
-* <https://github.com/gsilvapt/pmz.git> -- similar tool written in Go
+* <https://github.com/gsilvapt/pmz.git> -- similar tool written in Go by
+  the author of the above
 
 * <https://github.com/Zettlr/Zettlr.git> -- if you cannot live without a
   GUI, this might be an alternative tool for you. There is also an
