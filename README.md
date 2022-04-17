@@ -192,10 +192,9 @@ Windows:
 
 ### Development installation
 
-Development dependencies are stored in
-[requirements-dev.txt](requirements-dev.txt). To install the package in
-editable mode with the dev dependencies run the following after cloning
-the repo:
+Development dependencies are stored in `requirements-dev.txt`. To
+install the package in editable mode with the dev dependencies run the
+following after cloning the repo:
 
     pip install -e .
     pip install -r requirements-dev.txt
