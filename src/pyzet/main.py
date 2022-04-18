@@ -76,6 +76,13 @@ def _get_parser() -> ArgumentParser:
         nargs="?",
         help="repo path, by default '~/zet'; if target dir exists, it must be empty",
     )
+    init_parser.add_argument(
+        "-b",
+        "--initial-branch",
+        nargs="?",
+        default="main",
+        help="override the name of the initial branch, by default 'main'",
+    )
 
     subparsers.add_parser("add", help="add a new zettel")
 
@@ -308,7 +315,7 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
     if args.command == "init":
         if args.path:
             config.repo = Path(args.path)
-        return init_repo(config)
+        return init_repo(config, args.initial_branch)
 
     if args.command == "add":
         return add_zettel(config)
@@ -473,14 +480,14 @@ def clean_zet_repo(repo_path: Path, is_dry_run: bool, is_force: bool) -> int:
     return 0
 
 
-def init_repo(config: Config) -> int:
+def init_repo(config: Config, branch_name: str) -> int:
     """Initializes a git repository in a given path."""
     # We create both main ZK folder, and the folder that keeps all the zettels.
     # This is split, as each one can raise an Exception,
     # and we'd like to have a nice error message in such case.
     _create_empty_folder(config.repo)
     _create_empty_folder(Path(config.repo, C.ZETDIR))
-    _call_git(config, "init")
+    _call_git(config, "init", ["--initial-branch", branch_name])
     logging.info(f"init: create git repo '{config.repo.absolute()}'")
     return 0
 
