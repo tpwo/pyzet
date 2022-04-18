@@ -31,10 +31,11 @@ for more details):
 
 > ⚠️\
 > `pyzet` is a work in progress, so you may encounter difficulties and
-> annoyances while using it. Don't hesitate to [add an
-> issue](https://github.com/wojdatto/pyzet/issues/new), if you've
-> experienced a problem or you have any idea how to improve or extend
-> it. **Any feedback is welcome!**
+> annoyances while using it. If you have any problem, question, or
+> suggestion, feel free to create an issue on GitHub. We have many ideas
+> how to expand pyzet, so make sure to go through [opened
+> issues](https://github.com/wojdatto/pyzet/issues) first. **Any
+> feedback is welcome!**
 
 ## Quick start
 
@@ -75,10 +76,10 @@ Please see the full tutorial
 ```none
 $ pyzet -h
 usage: pyzet [-h] [-r REPO] [-c CONFIG] [-V] [-v]
-             {init,add,edit,rm,show,list,tags,clean,grep,status,pull,push,sample-config} ...
+             {init,add,edit,rm,show,list,tags,clean,grep,status,pull,push,remote,sample-config} ...
 
 positional arguments:
-  {init,add,edit,rm,show,list,tags,clean,grep,status,pull,push,sample-config}
+  {init,add,edit,rm,show,list,tags,clean,grep,status,pull,push,remote,sample-config}
     init                initialize a git ZK repo at configured or given path
     add                 add a new zettel
     edit                edit an existing zettel
@@ -91,6 +92,7 @@ positional arguments:
     status              run 'git status' in ZK repo
     pull                run 'git pull --rebase' in ZK repo
     push                run 'git push' in ZK repo
+    remote              run 'git remote' in ZK repo
     sample-config       produce a sample pyzet.yaml file
 
 options:

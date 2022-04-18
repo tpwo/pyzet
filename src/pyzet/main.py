@@ -186,6 +186,9 @@ def _get_parser() -> ArgumentParser:
     push_parser = subparsers.add_parser("push", help="run 'git push' in ZK repo")
     _add_git_cmd_options(push_parser, "push")
 
+    remote_parser = subparsers.add_parser("remote", help="run 'git remote' in ZK repo")
+    _add_git_cmd_options(remote_parser, "remote")
+
     subparsers.add_parser(
         "sample-config", help=f"produce a sample {C.CONFIG_FILE} file"
     )
@@ -200,7 +203,7 @@ def _add_git_cmd_options(parser: ArgumentParser, cmd_name: str) -> None:
         type=str,
         nargs="*",
         default=[],
-        help=f"pass 'git {cmd_name}' options, use '--' before including them",
+        help=f"pass 'git {cmd_name}' options, use '--' before including flags",
     )
 
 
@@ -334,7 +337,7 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
             path=Path(config.repo, C.ZETDIR),
         )
 
-    if args.command in ("status", "push"):
+    if args.command in ("status", "push", "remote"):
         return _call_git(config, args.command, args.options)
 
     if args.command == "pull":
@@ -479,7 +482,6 @@ def init_repo(config: Config) -> int:
     _create_empty_folder(Path(config.repo, C.ZETDIR))
     _call_git(config, "init")
     logging.info(f"init: create git repo '{config.repo.absolute()}'")
-    print("Git repo was initialized. Please add a remote manually.")
     return 0
 
 
