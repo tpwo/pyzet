@@ -12,6 +12,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 * Reorganization & update of the readme and tutorial (#36).
 * Update URL formatting suggested in the docs (#30).
+* Simplify zettel relative links by removing `--` from them (#31).
 
 ## [0.5.0] - 2022-04-04
 
