@@ -196,9 +196,10 @@ def _get_parser() -> ArgumentParser:
     remote_parser = subparsers.add_parser("remote", help="run 'git remote' in ZK repo")
     _add_git_cmd_options(remote_parser, "remote")
 
-    subparsers.add_parser(
+    sample_config_parser = subparsers.add_parser(
         "sample-config", help=f"produce a sample {C.CONFIG_FILE} file"
     )
+    sample_config_parser.add_argument("kind", choices=["unix", "windows"])
 
     return parser
 
@@ -216,7 +217,7 @@ def _add_git_cmd_options(parser: ArgumentParser, cmd_name: str) -> None:
 
 def _parse_args(args: Namespace) -> int:
     if args.command == "sample-config":
-        return sample_config()
+        return sample_config(args.kind)
     config = _get_config(args.config, args.repo, args.command)
     id_: str | None
     try:

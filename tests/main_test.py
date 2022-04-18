@@ -6,8 +6,7 @@ import pytest
 
 import pyzet.constants as C
 from pyzet.main import main
-
-TEST_CFG = ("--config", f"testing/{C.CONFIG_FILE}")
+from testing.constants import TEST_CFG
 
 
 def test_no_argv(capsys):
