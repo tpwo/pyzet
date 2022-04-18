@@ -29,7 +29,7 @@ for more details):
 
     pip install git+https://github.com/wojdatto/pyzet.git
 
-> ⚠️<br>
+> ⚠️\
 > `pyzet` is a work in progress, so you may encounter difficulties and
 > annoyances while using it. Don't hesitate to [add an
 > issue](https://github.com/wojdatto/pyzet/issues/new), if you've
@@ -325,12 +325,14 @@ Try to use consistent Markdown formatting. We recommend:
 
 * Use only `*` for unordered lists
 
-* If items of unordered lists take more than a single line (will happen
-  if you wrap after 72 chars), separate them with a single blank line
+* If any item of an unordered lists take more than a single line,
+  separate all of them with a single blank line
 
-* Use `<>` to show that something is a link. GitHub and VSCode will
-  detect it even without it, but this is not true for every tool that
-  supports Markdown
+* Use `<>` to show that something is an URL. GitHub and VSCode will
+  detect it even without it thanks to
+  [GFM](https://github.github.com/gfm/#autolinks-extension-), but this
+  is not true for every tool that supports Markdown (i.e. CommonMark
+  doesn't support it).
 
 ### Title line
 
@@ -359,31 +361,52 @@ them is as follows:
 ```markdown
 Refs:
 
-* <http://described-example.com/> -- This is an example description
 * <http://example.com/>
+
+* This is an example description\
+  <http://described-example.com/>
 ```
 
 ZettelMark doesn't specify a keyword for a reference block, but we like
 `Refs` as it plays nice with `Tags` that will be described next.
 However, at this point, it's all up to the user preference.
 
-`--` is used here as poor man's [En
-dash](https://en.wikipedia.org/wiki/Dash#En_dash) as it's not available
-directly from ASCII. It's used to separate a link from the description,
-and currently isn't parsed.
+If there is no URL description, an URL should be simply placed with a
+single space between it and `*`.
 
-#### One reference per line
+If an URL have a description, it should go first. A Markdown syntax for
+a hard line break (`\`) is used at the end of the description for a
+better rendering in the HTML. Then, a link should start from a new line
+preceded with two spaces, so it's aligned with the description.
 
-Even if a reference line is longer, ZettelMark tells not to wrap lines
-in this section, probably for easier parsing. This doesn't matter as
-long as `Refs` are not parsed by pyzet, but it seems like a reasonable
-rule to follow, so we recommend it:
+Along with `\`, Markdown supports different syntax for hard breaks:
+
+* two or more spaces
+* inserting HTML `<br>` tag
+
+We believe that `\` is superior to both of them, as a significant
+trailing whitespace doesn't seem to be a right idea due to many reasons
+(e.g. it's very well hidden from you while editing). Also, a good
+practice is to avoid using plain HTML in Markdown files which eliminates
+approach with `<br>`.
+
+#### References shouldn't be wrapped
+
+Even if a reference line is longer than 72 characters, ZettelMark tells
+not to wrap lines in this section, probably for easier parsing. This
+doesn't matter as long as `Refs` are not parsed by pyzet, but it seems
+like a reasonable rule to follow, so we recommend it:
 
 ```markdown
 Refs:
 
-* <http://described-example.com/> -- This is an example of a slightly longer description
 * <http://example.com/>
+
+* This is an example of a a very long description for some very interesting link\
+  <http://described-example.com/>
+
+* This is an example of a slightly shorter description\
+  <http://this-is-a-very-long-example-link-that-also-should-not-be-wrapped.com/>
 ```
 
 ### Tags
@@ -428,19 +451,21 @@ maintains a Bash CLI tool
 
 See also:
 
-* <https://luhmann.surge.sh/> -- two essays by the creator of
-  Zettelkasten, Niklas Luhmann
+* Two essays by the creator of Zettelkasten, Niklas Luhmann\
+  <https://luhmann.surge.sh/>
 
-* <https://gsilvapt.me/posts/building-a-zettelkasten-the-simple-way/> --
-  even simpler approach to Zettelkasten
+* Even simpler approach to Zettelkasten\
+  <https://gsilvapt.me/posts/building-a-zettelkasten-the-simple-way/>
 
-* <https://github.com/gsilvapt/pmz.git> -- similar tool written in Go by
-  the author of the above
+* Similar tool written in Go by the author of the above\
+  <https://github.com/gsilvapt/pmz>
 
-* <https://github.com/Zettlr/Zettlr.git> -- if you cannot live without a
-  GUI, this might be an alternative tool for you. There is also an
-  [interesting video](https://youtu.be/c5Tst3-zcWI) from the author of
-  this tool that describes his vision of Zettelkasten.
+* A Zettelkasten tool for people who prefer to have a GUI\
+  <https://github.com/Zettlr/Zettlr>
+
+  There is also an [interesting video](https://youtu.be/c5Tst3-zcWI)
+  from the author of this tool that describes his vision of
+  Zettelkasten.
 
 ## License
 
