@@ -14,6 +14,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 * Update URL formatting suggested in the docs (#30).
 * Simplify zettel relative links by removing `--` from them (#31).
 
+### Fixed
+
+* Fix `pyzet init` when a custom target path was provided (#40).
+
 ## [0.5.0] - 2022-04-04
 
 ### Added
