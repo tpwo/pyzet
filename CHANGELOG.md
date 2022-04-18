@@ -8,6 +8,11 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+* Reorganization & update of the readme and tutorial (#36).
+* Update URL formatting suggested in the docs (#30).
+
 ## [0.5.0] - 2022-04-04
 
 ### Added

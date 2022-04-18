@@ -32,7 +32,8 @@ Home directory written with this is mind should look like this:
 ## Installation
 
 If you haven't already, install pyzet using one of the methods described
-in the main readme, e.g.:
+in the [main readme](https://github.com/wojdatto/pyzet#installation),
+e.g.:
 
     pip install pyzet
 
@@ -116,12 +117,18 @@ are easier to read in the terminal.
 
 Refs:
 
-* <https://github.com/wojdatto/pyzet> -- this way you can add links
+* This way you can add links\
+  <https://github.com/wojdatto/pyzet>
 
 Tags:
 
     #tutorial
 ```
+
+You can see that I used a special syntax to add a link. You can read
+more about it in the [main
+readme](https://github.com/wojdatto/pyzet#references), but note that at
+this point it's only a convention.
 
 Save the file and exit from your editor. You should see a similar
 output:
@@ -144,7 +151,8 @@ Now, you can run `pyzet show` to see your zettel:
 
     Refs:
 
-    * <https://github.com/wojdatto/pyzet> -- this way you can add links
+    * This way you can add links\
+    <https://github.com/wojdatto/pyzet>
 
     Tags:
 
@@ -425,9 +433,9 @@ This concludes the tutorial. It should give you a basic idea how to use
 pyzet, and create your own ZK repository with it.
 
 If you're new to the Zettelkasten, it might be helpful to read more
-about it. I suggest to go through [Inspiration and further
-reading](https://github.com/wojdatto/pyzet#inspiration-and-further-reading)
-section in the main readme.
+about it. I suggest to go through *Inspiration and further reading*
+section in the [main
+readme](https://github.com/wojdatto/pyzet#inspiration-and-further-reading).
 
 If you have any questions or suggestions, feel free to create an issue
 or pull request.

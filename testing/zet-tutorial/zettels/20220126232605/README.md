@@ -6,7 +6,8 @@ are easier to read in the terminal.
 
 Refs:
 
-* <https://github.com/wojdatto/pyzet> -- this way you can add links
+* This way you can add links\
+  <https://github.com/wojdatto/pyzet>
 
 Tags:
 
