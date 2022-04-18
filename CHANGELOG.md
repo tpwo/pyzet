@@ -18,6 +18,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 * Reorganization & update of the readme and tutorial (#36).
 * Update URL formatting suggested in the docs (#30).
 * Simplify zettel relative links by removing `--` from them (#31).
+* Extend `pyzet sample-config` to provide sane defaults also for Windows
+  (#38).
 
 ### Fixed
 
