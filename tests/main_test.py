@@ -1,3 +1,4 @@
+import logging
 import tempfile
 from pathlib import Path
 
@@ -24,6 +25,42 @@ def test_help(capsys):
     out, err = capsys.readouterr()
     assert out.startswith("usage: pyzet")
     assert err == ""
+
+
+def test_init_repo_flag(capsys, caplog):
+    caplog.set_level(logging.INFO)
+    with tempfile.TemporaryDirectory() as repo_dir:
+        main([*TEST_CFG, "--repo", repo_dir, "init"])
+
+        out, _ = capsys.readouterr()
+        assert out == "Git repo was initialized. Please add a remote manually.\n"
+        assert f"init: create git repo '{repo_dir}'" in caplog.text
+        assert Path(repo_dir, C.ZETDIR).exists()
+
+
+def test_init_custom_target(capsys, caplog):
+    caplog.set_level(logging.INFO)
+    with tempfile.TemporaryDirectory() as init_dir:
+        main([*TEST_CFG, "init", init_dir])
+
+        out, _ = capsys.readouterr()
+        assert out == "Git repo was initialized. Please add a remote manually.\n"
+        assert f"init: create git repo '{init_dir}'" in caplog.text
+        assert Path(init_dir, C.ZETDIR).exists()
+
+
+def test_init_repo_flag_and_custom_target(capsys, caplog):
+    # Custom target should be preferred over repo passed with '--repo'
+    caplog.set_level(logging.INFO)
+    with tempfile.TemporaryDirectory() as repo_dir:
+        with tempfile.TemporaryDirectory() as init_dir:
+            main([*TEST_CFG, "--repo", repo_dir, "init", init_dir])
+
+            out, _ = capsys.readouterr()
+            assert out == "Git repo was initialized. Please add a remote manually.\n"
+            assert f"init: create git repo '{init_dir}'" in caplog.text
+            assert Path(init_dir, C.ZETDIR).exists()
+            assert not Path(repo_dir, C.ZETDIR).exists()
 
 
 def test_init_error_folder_exists():

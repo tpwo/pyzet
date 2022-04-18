@@ -304,7 +304,7 @@ def _get_last_zettel_id(repo_path: Path) -> str:
 def _parse_args_without_id(args: Namespace, config: Config) -> int:
     if args.command == "init":
         if args.path:
-            config.repo = args.path
+            config.repo = Path(args.path)
         return init_repo(config)
 
     if args.command == "add":
