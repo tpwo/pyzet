@@ -97,7 +97,7 @@ def test_show_link(capsys):
     main([*TEST_CFG, "show", "20211016205158", "--link"])
 
     out, err = capsys.readouterr()
-    assert out == "* [20211016205158](../20211016205158) -- Zet test entry\n"
+    assert out == "* [20211016205158](../20211016205158) Zet test entry\n"
     assert err == ""
 
 
@@ -154,9 +154,9 @@ def test_list_link(capsys):
 
     out, err = capsys.readouterr()
     assert out == (
-        "* [20211016205158](../20211016205158) -- Zet test entry\n"
-        "* [20211016223643](../20211016223643) -- Another zet test entry\n"
-        "* [20220101220852](../20220101220852) -- Zettel with UTF-8\n"
+        "* [20211016205158](../20211016205158) Zet test entry\n"
+        "* [20211016223643](../20211016223643) Another zet test entry\n"
+        "* [20220101220852](../20220101220852) Zettel with UTF-8\n"
     )
     assert err == ""
 
@@ -166,9 +166,9 @@ def test_list_link_reverse(capsys):
 
     out, err = capsys.readouterr()
     assert out == (
-        "* [20220101220852](../20220101220852) -- Zettel with UTF-8\n"
-        "* [20211016223643](../20211016223643) -- Another zet test entry\n"
-        "* [20211016205158](../20211016205158) -- Zet test entry\n"
+        "* [20220101220852](../20220101220852) Zettel with UTF-8\n"
+        "* [20211016223643](../20211016223643) Another zet test entry\n"
+        "* [20211016205158](../20211016205158) Zet test entry\n"
     )
     assert err == ""
 

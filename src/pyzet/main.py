@@ -452,7 +452,7 @@ def _get_md_relative_link(id_: str, title: str) -> str:
     Asterix at the beginning is a Markdown syntax for an unordered list, as links to
     zettels are usually just used in references section of a zettel.
     """
-    return f"* [{id_}](../{id_}) -- {title}"
+    return f"* [{id_}](../{id_}) {title}"
 
 
 def clean_zet_repo(repo_path: Path, is_dry_run: bool, is_force: bool) -> int:
