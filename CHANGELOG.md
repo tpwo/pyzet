@@ -8,6 +8,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+* Add pyzet remote command (#41).
+
 ### Changed
 
 * Reorganization & update of the readme and tutorial (#36).

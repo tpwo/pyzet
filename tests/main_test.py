@@ -27,37 +27,37 @@ def test_help(capsys):
     assert err == ""
 
 
-def test_init_repo_flag(capsys, caplog):
+def test_init_repo_flag(capfd, caplog):
     caplog.set_level(logging.INFO)
     with tempfile.TemporaryDirectory() as repo_dir:
         main([*TEST_CFG, "--repo", repo_dir, "init"])
 
-        out, _ = capsys.readouterr()
-        assert out == "Git repo was initialized. Please add a remote manually.\n"
+        out, _ = capfd.readouterr()
+        assert out == f"Initialized empty Git repository in {repo_dir}/.git/\n"
         assert f"init: create git repo '{repo_dir}'" in caplog.text
         assert Path(repo_dir, C.ZETDIR).exists()
 
 
-def test_init_custom_target(capsys, caplog):
+def test_init_custom_target(capfd, caplog):
     caplog.set_level(logging.INFO)
     with tempfile.TemporaryDirectory() as init_dir:
         main([*TEST_CFG, "init", init_dir])
 
-        out, _ = capsys.readouterr()
-        assert out == "Git repo was initialized. Please add a remote manually.\n"
+        out, _ = capfd.readouterr()
+        assert out == f"Initialized empty Git repository in {init_dir}/.git/\n"
         assert f"init: create git repo '{init_dir}'" in caplog.text
         assert Path(init_dir, C.ZETDIR).exists()
 
 
-def test_init_repo_flag_and_custom_target(capsys, caplog):
+def test_init_repo_flag_and_custom_target(capfd, caplog):
     # Custom target should be preferred over repo passed with '--repo'
     caplog.set_level(logging.INFO)
     with tempfile.TemporaryDirectory() as repo_dir:
         with tempfile.TemporaryDirectory() as init_dir:
             main([*TEST_CFG, "--repo", repo_dir, "init", init_dir])
 
-            out, _ = capsys.readouterr()
-            assert out == "Git repo was initialized. Please add a remote manually.\n"
+            out, _ = capfd.readouterr()
+            assert out == f"Initialized empty Git repository in {init_dir}/.git/\n"
             assert f"init: create git repo '{init_dir}'" in caplog.text
             assert Path(init_dir, C.ZETDIR).exists()
             assert not Path(repo_dir, C.ZETDIR).exists()
@@ -311,3 +311,17 @@ def test_clean_dry_run_and_force(capsys):
         assert out == f"will delete {id_}\n"
         assert err == ""
         assert Path(tmpdir, C.ZETDIR, id_).exists()
+
+
+def test_remote(capfd):
+    with tempfile.TemporaryDirectory() as init_dir:
+        main([*TEST_CFG, "init", init_dir])
+        _, _ = capfd.readouterr()  # We're not interested in the 'pyzet init' output
+
+        # Add remote, and then display it
+        main([*TEST_CFG, "--repo", init_dir, "remote", "add", "origin", "zet-remote"])
+        main([*TEST_CFG, "--repo", init_dir, "remote"])
+
+        out, err = capfd.readouterr()
+        assert out == "origin\n"
+        assert err == ""

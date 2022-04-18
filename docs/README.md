@@ -75,22 +75,44 @@ Now, the command from above should work:
 
     $ pyzet init
     Initialized empty Git repository in /home/<your-username>/zet/.git/
-    Git repo was initialized. Please add a remote manually.
 
 ## Zettelkasten with Git
 
-The idea behind pyzet is that each ZK repository is also a git
+The idea behind pyzet is that each ZK repository is also a Git
 repository to have ZK history under control. It also opens an ability to
-easily backup it to any Git hosting of your choice. Adding a remote
-needs to be done manually, so you have to know the basics of Git, and
-have it set up correctly (at the beginning, setting [commit name and
+easily backup it to any Git hosting of your choice.
+
+To use some of the Git interaction commands you have it set up correctly
+(at the beginning, setting [commit name and
 email](https://git-scm.com/book/en/v2/Getting-Started-First-Time-Git-Setup)
 will be enough).
 
-For the sake of this tutorial, let's ignore a prompt to add a remote for
-our newly created Git repo. However, you'd probably like to do this in
-your standard pyzet workflow. Probably, a convenient idea is to create a
-private `zet` repository on any online Git hosting of your choice.
+Probably, a convenient approach for creating a Git remote is to create a
+private `zet` repository on any online Git hosting of your choice. Then,
+you can easily point to it with this command:
+
+    pyzet remote add origin https://some-git-hosting/your-username/zet
+
+Its equivalent is going directly to `~/zet` folder and executing `git
+remote add...` command.
+
+If the above command doesn't work for you, your Git executable is
+probably installed in some non-default location for your system. Example
+error in such situation:
+
+    ERROR: '/usr/bin/git' cannot be found.
+
+To tell pyzet where to look, you need to add another line to the config
+file:
+
+    git: <path-to-your-git-executable>
+
+If your Git executable in on `PATH`, the following should work for you:
+
+    git: git
+
+Pyzet comes with a few more commands that allow for easier interaction
+with Git, and they will be discussed later in this tutorial.
 
 ## Basic interaction with zettels
 
@@ -103,7 +125,7 @@ something else, you can add another line to the config file:
 
 However, not every editor might work seamlessly with pyzet. In the [main
 readme](https://github.com/wojdatto/pyzet#supported-editors) you can see
-a list of editors with some comments about the compatibility.
+a list of editors with some comments about their compatibility.
 
 Once you're happy with the text editor, add some example text using
 [Markdown](https://commonmark.org/) syntax:
@@ -152,7 +174,7 @@ Now, you can run `pyzet show` to see your zettel:
     Refs:
 
     * This way you can add links\
-    <https://github.com/wojdatto/pyzet>
+      <https://github.com/wojdatto/pyzet>
 
     Tags:
 
@@ -223,7 +245,7 @@ to provide an ID to edit an older zettel.
 If you ever mess up during the editing of your zettel or you would like
 to cancel adding of the new zettel, there is always a way to withdraw --
 just remove *everything* from a zettel. This aborts the adding/editing
-process making no actual changes on the drive, and it the git repo.
+process making no actual changes on the drive, and in the Git repo.
 
 ## Tags
 
@@ -263,10 +285,10 @@ completely from the Git history which means that you need to rewrite it
 (i.e. remove any commit that involved adding/editing such zettel, and
 rebase commits that happened later.)
 
-## Git remote interaction
+## More interaction with Git repo
 
 Pyzet ships with a few commands that make it easier to interact with a
-Git remote. However, the work is always done by Git executable itself --
+Git repo. However, the work is always done by Git executable itself --
 pyzet just calls it with the correct parameters.
 
 The simplest command is `pyzet status` -- it just runs `git status` in
@@ -276,33 +298,71 @@ your ZK repo:
     On branch main
     nothing to commit, working tree clean
 
-If the above command doesn't work for you, your Git executable is
-probably installed in some non-default location for your system.
-
-To tell pyzet where to look, you need to add another line to the config
-file:
-
-    git: <path-to-your-git-executable>
+### Push and pull from Git remote
 
 For the remaining Git-interaction commands, you have to make sure that
 your Git configuration including name, email, and remote is correct.
 
 Once you're ready, you can try out these commands:
 
-* `pyzet pull` -- runs `git pull` in your ZK repo
 * `pyzet push` -- runs `git push` in your ZK repo
+* `pyzet pull` -- runs `git pull` in your ZK repo
 
-Also, for `status`, and `push` commands you can pass flags that will go
-directly to Git. However, the syntax is a bit weird, because you have to
-use `--` before supplying Git options. E.g. to make a force push you
-have to:
+By default, these commands probably won't work for you because you have
+to tell Git which remote branch it should track. If you're new to Git,
+you can check the [official
+tutorial](https://git-scm.com/book/en/v2/Git-Branching-Remote-Branches).
+
+### Passing flags to Git interaction commands
+
+You have to note that there is a special syntax for passing flags to Git
+interaction commands. A flag is an argument that starts with either a
+single dash `-` or a double dash `--`, e.g. `-f` / `--force` for Git
+force push to a remote.
+
+To pass these flags to a Git executable you have to tell pyzet not to
+parse them on its own.
+
+It can be done by adding a special pseudo-argument `--` before passing
+any of the flags that should be passed directly to Git (you can find
+more details about it in the [argparse
+docs](https://docs.python.org/3/library/argparse.html#arguments-containing)).
+
+E.g. to do the mentioned force push with `pyzet push` you have to:
 
     pyzet push -- -f
 
+Note that there is some freedom regarding the exact placement of `--`
+argument.
+
+E.g. we can bring back `pyzet remote` command. To add a new remote we
+used the following command:
+
+    pyzet remote add origin https://some-git-hosting/your-username/zet
+
+And to add a `--tags` flag to `pyzet remote add` you have to use either
+of the following:
+
+    pyzet remote add origin -- --tags https://some-git-hosting/your-username/zet
+    pyzet remote add -- origin --tags https://some-git-hosting/your-username/zet
+    pyzet remote -- add origin --tags https://some-git-hosting/your-username/zet
+
+At the end, the only thing to remember is to include `--` before any
+**Git flag**, but after the main action keyword (here: `remote`). So,
+the following **won't** work:
+
+    pyzet remote add origin --tags -- https://some-git-hosting/your-username/zet
+    pyzet -- remote add origin --tags https://some-git-hosting/your-username/zet
+
+### Git interaction summary
+
 Overall, Git integration is very simple, because pyzet don't want to
-complicate Git related stuff more than it's needed. We think that one
+complicate Git-related stuff more than it's needed. We think that one
 branch is enough, and for more sophisticated Git-related work you can
 just `cd ~/zet`, and run Git commands directly.
+
+Below, there is also a description of `pyzet grep` command which is the
+last one directly interacting with Git.
 
 ## Search for anything using grep
 
@@ -310,13 +370,16 @@ Grep is your friend when you try to look for something in your ZK repo.
 `pyzet grep` command works by running `git grep` with some handy default
 flags.
 
-The command offers some additional options, and you can check them out
-with `pyzet grep --help`. This also includes passing custom options
-directly to `git grep` with `--` similarly to `pyzet push` which was
-described earlier.
+Unlike `pyzet remote|status|push|pull`, this command offers some
+additional options, and you can check them out with `pyzet grep --help`.
+
+Of course, you can still pass custom options directly to `git grep` with
+`--`, as it was described earlier.
 
 Also, remember that `pyzet grep` will by default look only in files that
 are already tracked by Git.
+
+### Simple example
 
 Now, let's try running a grep search in our repo. Let's use `zettel` as
 a search pattern:
@@ -333,6 +396,8 @@ a search pattern:
 As you can see, we've got three matches in our two files. In your
 output, you should also see some nice coloring (e.g. matched pattern
 colored with red) if only your terminal configuration supports it.
+
+### Passing multiple patterns
 
 One of nice features of `pyzet grep` is the ability to provide multiple
 patterns, one after another. In such case, the output will include only
@@ -437,5 +502,7 @@ about it. I suggest to go through *Inspiration and further reading*
 section in the [main
 readme](https://github.com/wojdatto/pyzet#inspiration-and-further-reading).
 
-If you have any questions or suggestions, feel free to create an issue
-or pull request.
+If you have any problem, question, or suggestion, feel free to create an
+issue on GitHub. We have many ideas how to expand pyzet, so make sure to
+go through [opened issues](https://github.com/wojdatto/pyzet/issues)
+first. **Any feedback is welcome!**
