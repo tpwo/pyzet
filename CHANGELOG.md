@@ -11,6 +11,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 * Add pyzet remote command (#41).
+* Allow for changing the initial branch name in `pyzet init` (#42).
 
 ### Changed
 
