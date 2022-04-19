@@ -29,7 +29,7 @@ that may contain some yet unreleased changes (you can inspect
 [changelog](https://github.com/wojdatto/pyzet/blob/main/CHANGELOG.md)
 for more details):
 
-    pip install git+https://github.com/wojdatto/pyzet.git
+    pip install git+https://github.com/wojdatto/pyzet
 
 > ⚠️\
 > `pyzet` is a work in progress, so you may encounter difficulties and
@@ -70,7 +70,7 @@ config file. You should especially do this when:
 
 ## Tutorial
 
-Please see the full tutorial
+You can read the whole tutorial
 [here](https://github.com/wojdatto/pyzet/tree/main/docs).
 
 ## Summary of commands
@@ -186,29 +186,33 @@ On Windows, the following editors seem to work fine:
     editor: C:/Program Files/Windows NT/Accessories/wordpad.exe
     editor: notepad.exe
 
-Some issues were found with:
+#### Partial compatibility
 
-Notepad++ -- closing a tab is not enough, you have to close the whole
-program to save a zettel.
+##### Notepad++
+
+Closing a tab is not enough, you have to close the whole program to save
+a zettel.
 
     editor: C:/Program Files/Notepad++/notepad++.exe
 
-VS Code -- issues with adding a zettel. If zettel file already exists,
-then it seems to work similarly to Notepad++ (you have to close the
-whole program to save a zettel):
+##### VS Code
+
+Issues with adding a zettel. If zettel file already exists, then it
+seems to work similarly to Notepad++ (you have to close the whole
+program to save a zettel):
 
     editor: C:/Program Files/Microsoft VS Code/Code.exe
 
 ### macOS
 
-Not yet tested. CLI editors compatible with Linux should work fine.
+Not yet tested. CLI editors known from Linux should work fine.
 
 ## Manual installation
 
 Manual installation is also possible. Clone the repo and run the install
 command. Using virtual environment is advised.
 
-    git clone https://github.com/wojdatto/pyzet.git
+    git clone https://github.com/wojdatto/pyzet
     cd pyzet
 
 Linux:
@@ -438,9 +442,9 @@ popular in Windows world.
 
 There are different ways to guarantee that file ending is correct, and
 one of them is using pre-commit with `end-of-file-fixer` hook that
-[comes by default](https://github.com/pre-commit/pre-commit-hooks.git)
-with this tool. It's very easy to setup pre-commit with ZK Git
-repository, so we recommend it.
+[comes by default](https://github.com/pre-commit/pre-commit-hooks) with
+this tool. It's very easy to setup pre-commit with ZK Git repository, so
+we recommend it.
 
 ## Inspiration and further reading
 
@@ -450,7 +454,7 @@ Zettelkasten. Probably the best way to get a grasp of it, is to read
 about it in [his public Zettelkasten
 repo](https://github.com/rwxrob/zet/blob/main/README.md). Rob also
 maintains a Bash CLI tool
-[`cmd-zet`](https://github.com/rwxrob/cmd-zet.git).
+[`cmd-zet`](https://github.com/rwxrob/cmd-zet).
 
 See also:
 
