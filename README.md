@@ -2,6 +2,8 @@
 
 [![Tests](https://github.com/wojdatto/pyzet/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/wojdatto/pyzet/actions/workflows/tests.yml)
 
+---
+
 > "I, of course, do not think everything by myself. It happens mainly
 > within the Zettelkasten".
 
@@ -60,8 +62,8 @@ pyzet init
 
 `pyzet --help` will tell you more about available commands.
 
-`pyzet sample-config` show you how you can extend your config file. You
-should especially do this when:
+`pyzet sample-config unix|windows` will show you how you can extend your
+config file. You should especially do this when:
 
 1. Your Git executable isn't in the usual default location.
 2. You don't want Vim as the text editor used by pyzet.
@@ -136,27 +138,21 @@ tested.
 Also, remember that paths cannot include env variables, but you can use
 `~` to point to your `$HOME` directory.
 
-For the sake of this readme, we assume that your repo setting will be
-under `~/zet`.
-
-You can have multiple repos, and only a single config file, because
-there is `--repo` flag that you can always set to point to a custom repo
-(and possibly, create an alias that includes it). If this flag is used,
-the setting from YAML is ignored.
-
 An example correct config file:
 
     repo: ~/zet
     editor: /usr/bin/vim
     git: /usr/bin/git
 
-If you're on Linux (or Git Bash on Windows), you can use the commands:
+You can always display a sample config using `pyzet sample-config`
+command.
 
-    mkdir -p ~/.config/pyzet
-    pyzet sample-config > ~/.config/pyzet/pyzet.yaml
+### Support for multiple ZK repos
 
-to create required folders and a copy of the above correct config file
-into the default location.
+You can have multiple repos, and only a single config file, because
+there is `--repo` flag that you can always set to point to a custom repo
+(and possibly, create an alias that includes it). If `--repo` flag is
+used, the setting from YAML is ignored.
 
 ## Supported editors
 
@@ -257,6 +253,11 @@ depending on your preference.
 Automatic test coverage is good, but still not ideal at this point, and
 some commands are only tested manually. This is especially true in case
 of commands that require a user input.
+
+Most tests directly use pyzet CLI to run various commands, and then
+their output is compared against expected values. `--config` flag comes
+in handy there, as it allows to point to different test configs located
+inside `testing` folder.
 
 ### GitHub Actions
 
