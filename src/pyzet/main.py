@@ -20,7 +20,7 @@ from pyzet.sample_config import sample_config
 from pyzet.zettel import Zettel, get_zettel, get_zettels
 
 
-@attrs.define
+@attrs.frozen
 class Config:
     repo: Path
     editor: str
@@ -315,7 +315,8 @@ def _get_last_zettel_id(repo_path: Path) -> str:
 def _parse_args_without_id(args: Namespace, config: Config) -> int:
     if args.command == "init":
         if args.path:
-            config.repo = Path(args.path)
+            custom_path_config = attrs.evolve(config, repo=Path(args.path))
+            return init_repo(custom_path_config, args.initial_branch)
         return init_repo(config, args.initial_branch)
 
     if args.command == "add":
