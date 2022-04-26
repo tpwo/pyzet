@@ -32,7 +32,7 @@ def test_init_repo_flag(capfd, caplog):
         main([*TEST_CFG, "--repo", repo_dir, "init"])
 
         out, err = capfd.readouterr()
-        assert out == f"Initialized empty Git repository in {repo_dir}/.git/\n"
+        assert Path(repo_dir).name in out
         assert err == ""
         assert f"init: create git repo '{repo_dir}'" in caplog.text
         assert Path(repo_dir, C.ZETDIR).exists()
@@ -44,7 +44,7 @@ def test_init_repo_flag_custom_branch(capfd, caplog):
         main([*TEST_CFG, "--repo", repo_dir, "init", "-b", "foobar"])
 
         out, err = capfd.readouterr()
-        assert out == f"Initialized empty Git repository in {repo_dir}/.git/\n"
+        assert Path(repo_dir).name in out
         assert err == ""
         assert f"init: create git repo '{repo_dir}'" in caplog.text
         assert Path(repo_dir, C.ZETDIR).exists()
@@ -63,7 +63,7 @@ def test_init_custom_target(capfd, caplog):
         main([*TEST_CFG, "init", init_dir])
 
         out, err = capfd.readouterr()
-        assert out == f"Initialized empty Git repository in {init_dir}/.git/\n"
+        assert Path(init_dir).name in out
         assert err == ""
         assert f"init: create git repo '{init_dir}'" in caplog.text
         assert Path(init_dir, C.ZETDIR).exists()
@@ -75,7 +75,7 @@ def test_init_custom_target_custom_branch(capfd, caplog):
         main([*TEST_CFG, "init", init_dir, "-b", "foobar"])
 
         out, err = capfd.readouterr()
-        assert out == f"Initialized empty Git repository in {init_dir}/.git/\n"
+        assert Path(init_dir).name in out
         assert err == ""
         assert f"init: create git repo '{init_dir}'" in caplog.text
         assert Path(init_dir, C.ZETDIR).exists()
@@ -96,7 +96,7 @@ def test_init_repo_flag_and_custom_target(capfd, caplog):
             main([*TEST_CFG, "--repo", repo_dir, "init", init_dir])
 
             out, err = capfd.readouterr()
-            assert out == f"Initialized empty Git repository in {init_dir}/.git/\n"
+            assert Path(init_dir).name in out
             assert err == ""
             assert f"init: create git repo '{init_dir}'" in caplog.text
             assert Path(init_dir, C.ZETDIR).exists()
