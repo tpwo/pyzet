@@ -14,7 +14,7 @@ def test_grep(capfd):
 20211016223643/README.md
 # Another zet test entry
 """
-    assert out == expected
+    assert out.replace("\r", "") == expected
     assert err == ""
 
 
@@ -32,7 +32,7 @@ def test_grep_ignore_case(capfd):
 20220101220852/README.md
 # Zettel with UTF-8
 """
-    assert out == expected
+    assert out.replace("\r", "") == expected
     assert err == ""
 
 
@@ -49,7 +49,7 @@ Hello there!
 # Another zet test entry
 Hello everyone
 """
-    assert out == expected
+    assert out.replace("\r", "") == expected
     assert err == ""
 
 
@@ -64,7 +64,7 @@ def test_grep_line_number(capfd):
 20211016223643/README.md
 3:Hello everyone
 """
-    assert out == expected
+    assert out.replace("\r", "") == expected
     assert err == ""
 
 
@@ -81,7 +81,7 @@ def test_grep_title_and_line_number(capfd):
 1:# Another zet test entry
 3:Hello everyone
 """
-    assert out == expected
+    assert out.replace("\r", "") == expected
     assert err == ""
 
 
@@ -98,7 +98,7 @@ def test_grep_multiple_matches_in_file(capfd):
 # Another zet test entry
     #test-tag
 """
-    assert out == expected
+    assert out.replace("\r", "") == expected
     assert err == ""
 
 
@@ -116,7 +116,7 @@ def test_grep_multiple_matches_in_file_title(capfd):
 # Another zet test entry
     #test-tag
 """
-    assert out == expected
+    assert out.replace("\r", "") == expected
     assert err == ""
 
 
@@ -133,7 +133,7 @@ def test_grep_multiple_matches_in_file_line_number(capfd):
 1:# Another zet test entry
 7:    #test-tag
 """
-    assert out == expected
+    assert out.replace("\r", "") == expected
     assert err == ""
 
 
@@ -151,7 +151,7 @@ def test_grep_multiple_matches_in_file_title_and_line_number(capfd):
 1:# Another zet test entry
 7:    #test-tag
 """
-    assert out == expected
+    assert out.replace("\r", "") == expected
     assert err == ""
 
 
@@ -164,7 +164,7 @@ def test_grep_two_patterns(capfd):
 Hello everyone
     #test-tag
 """
-    assert out == expected
+    assert out.replace("\r", "") == expected
     assert err == ""
 
 
@@ -178,7 +178,7 @@ def test_grep_three_patterns(capfd):
 Hello everyone
     #test-tag
 """
-    assert out == expected
+    assert out.replace("\r", "") == expected
     assert err == ""
 
 
@@ -192,7 +192,7 @@ def test_grep_three_patterns_verbose(capfd):
 Hello everyone
     #test-tag
 """
-    assert out == expected
+    assert out.replace("\r", "") == expected
     assert err == ""
 
 
@@ -205,7 +205,7 @@ def test_grep_two_patterns_line_number(capfd):
 3:Hello everyone
 7:    #test-tag
 """
-    assert out == expected
+    assert out.replace("\r", "") == expected
     assert err == ""
 
 
@@ -218,7 +218,7 @@ def test_grep_two_patterns_line_number_last(capfd):
 3:Hello everyone
 7:    #test-tag
 """
-    assert out == expected
+    assert out.replace("\r", "") == expected
     assert err == ""
 
 
@@ -263,7 +263,7 @@ def test_grep_two_patterns_line_number_verbose(capfd):
 3:Hello everyone
 7:    #test-tag
 """
-    assert out == expected
+    assert out.replace("\r", "") == expected
     assert err == ""
 
 
@@ -279,7 +279,7 @@ def test_grep_multiple_patterns_line_number(capfd):
 3:Hello everyone
 7:    #test-tag
 """
-    assert out == expected
+    assert out.replace("\r", "") == expected
     assert err == ""
 
 
@@ -295,7 +295,7 @@ def test_grep_multiple_patterns_line_number_different_order(capfd):
 3:Hello everyone
 7:    #test-tag
 """
-    assert out == expected
+    assert out.replace("\r", "") == expected
     assert err == ""
 
 
@@ -308,7 +308,7 @@ def test_grep_with_option_and_pattern(capfd):
 20211016223643/README.md
 # Another zet test entry
 """
-    assert out == expected
+    assert out.replace("\r", "") == expected
     assert err == ""
 
 
@@ -321,7 +321,7 @@ def test_grep_line_number_with_options(capfd):
 3:Hello everyone
 7:    #test-tag
 """
-    assert out == expected
+    assert out.replace("\r", "") == expected
     assert err == ""
 
 
@@ -346,5 +346,5 @@ def test_grep_title_and_line_number_with_options(capfd):
 3:Hello everyone
 7:    #test-tag
 """
-    assert out == expected
+    assert out.replace("\r", "") == expected
     assert err == ""
