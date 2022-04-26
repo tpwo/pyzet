@@ -246,6 +246,8 @@ def _get_config(args: Namespace) -> Config:
         )
     config = process_yaml(yaml_cfg, args.config, args.repo)
     if args.command == "init":  # if we initialize repo, the folder may not exist
+        if args.path:
+            return attrs.evolve(config, repo=Path(args.path))
         return config
     if not config.repo.is_dir():
         raise SystemExit(
@@ -314,9 +316,6 @@ def _get_last_zettel_id(repo_path: Path) -> str:
 
 def _parse_args_without_id(args: Namespace, config: Config) -> int:
     if args.command == "init":
-        if args.path:
-            custom_path_config = attrs.evolve(config, repo=Path(args.path))
-            return init_repo(custom_path_config, args.initial_branch)
         return init_repo(config, args.initial_branch)
 
     if args.command == "add":
