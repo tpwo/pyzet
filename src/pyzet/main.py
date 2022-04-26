@@ -218,7 +218,7 @@ def _add_git_cmd_options(parser: ArgumentParser, cmd_name: str) -> None:
 def _parse_args(args: Namespace) -> int:
     if args.command == "sample-config":
         return sample_config(args.kind)
-    config = _get_config(args.config, args.repo, args.command)
+    config = _get_config(args)
     id_: str | None
     try:
         # show & edit commands use nargs="?" which makes
@@ -234,18 +234,18 @@ def _parse_args(args: Namespace) -> int:
     return _parse_args_without_id(args, config)
 
 
-def _get_config(config_file: str, args_repo_path: str, command: str) -> Config:
+def _get_config(args: Namespace) -> Config:
     """Gets config from YAML."""
     try:
-        with open(config_file) as file:
+        with open(args.config) as file:
             yaml_cfg = yaml.safe_load(file)
     except FileNotFoundError:
         raise SystemExit(
-            f"ERROR: config file at '{Path(config_file).as_posix()}' "
+            f"ERROR: config file at '{Path(args.config).as_posix()}' "
             "not found.\nAdd it or use '--config' flag."
         )
-    config = process_yaml(yaml_cfg, config_file, args_repo_path)
-    if command == "init":  # if we initialize repo, the folder may not exist
+    config = process_yaml(yaml_cfg, args.config, args.repo)
+    if args.command == "init":  # if we initialize repo, the folder may not exist
         return config
     if not config.repo.is_dir():
         raise SystemExit(
