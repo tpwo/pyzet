@@ -8,10 +8,10 @@ import shutil
 import subprocess
 from argparse import ArgumentParser, Namespace
 from collections import Counter
-from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 
+import attrs
 import yaml
 
 import pyzet.constants as C
@@ -20,7 +20,7 @@ from pyzet.sample_config import sample_config
 from pyzet.zettel import Zettel, get_zettel, get_zettels
 
 
-@dataclass
+@attrs.define
 class Config:
     repo: Path
     editor: str
