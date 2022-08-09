@@ -3,7 +3,10 @@ from pathlib import Path
 import pytest
 
 import pyzet.constants as C
-from pyzet.zettel import Zettel, get_markdown_title, get_zettel, get_zettels
+from pyzet.zettel import get_markdown_title
+from pyzet.zettel import get_zettel
+from pyzet.zettel import get_zettels
+from pyzet.zettel import Zettel
 
 
 def test_get_zettels():
