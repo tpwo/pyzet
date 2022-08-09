@@ -6,7 +6,8 @@ import itertools
 import logging
 import shutil
 import subprocess
-from argparse import ArgumentParser, Namespace
+from argparse import ArgumentParser
+from argparse import Namespace
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
@@ -17,7 +18,9 @@ import yaml
 import pyzet.constants as C
 from pyzet import utils
 from pyzet.sample_config import sample_config
-from pyzet.zettel import Zettel, get_zettel, get_zettels
+from pyzet.zettel import get_zettel
+from pyzet.zettel import get_zettels
+from pyzet.zettel import Zettel
 
 
 @attrs.frozen
