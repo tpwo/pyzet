@@ -1,3 +1,4 @@
+import shutil
 from pathlib import Path
 
 import pytest
@@ -51,6 +52,29 @@ def test_get_zettels_reverse():
             tags=['test-tag', 'another-tag', 'tag-after-two-spaces'],
         ),
     ]
+
+
+def test_get_zettels_skip_file(tmp_path):
+    zettel = 'testing/zet/zettels/20220101220852'
+    zet_repo = Path(tmp_path, C.ZETDIR)
+    zet_repo.mkdir()
+    shutil.copytree(zettel, Path(zet_repo, '20220101220852'))
+
+    # Create a file, to see if it will be correctly skipped
+    Path(zet_repo, 'foo').touch()
+
+    actual = get_zettels(zet_repo)
+    expected = [
+        Zettel(title='Zettel with UTF-8', id_='20220101220852', tags=[])
+    ]
+    assert actual == expected
+
+
+def test_get_zettels_dir_not_found():
+    with pytest.raises(SystemExit) as excinfo:
+        get_zettels(Path('/foo/bar/baz/abc'))
+    (msg,) = excinfo.value.args
+    assert msg == "ERROR: folder /foo/bar/baz/abc doesn't exist."
 
 
 def test_open_zettel():
