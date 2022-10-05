@@ -11,9 +11,9 @@ from pyzet.zettel import Zettel
 
 
 def test_get_zettels():
-    output = get_zettels(path=Path('testing/zet', C.ZETDIR))
+    actual = get_zettels(path=Path('testing/zet', C.ZETDIR))
 
-    assert output == [
+    assert actual == [
         Zettel(
             title='Zet test entry',
             id_='20211016205158',
@@ -33,9 +33,9 @@ def test_get_zettels():
 
 
 def test_get_zettels_reverse():
-    output = get_zettels(path=Path('testing/zet', C.ZETDIR), is_reversed=True)
+    actual = get_zettels(path=Path('testing/zet', C.ZETDIR), is_reversed=True)
 
-    assert output == [
+    assert actual == [
         Zettel(
             title='Zettel with UTF-8',
             id_='20220101220852',
