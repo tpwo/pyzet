@@ -4,10 +4,10 @@ repos:
     hooks:
     -   id: reorder-python-imports
         args: ['--application-directories=.:src']
--   repo: https://github.com/psf/black
-    rev: 22.8.0
+-   repo: https://github.com/grantjenks/blue
+    rev: v0.9.1
     hooks:
-    -   id: black
+    -   id: blue
 -   repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.3.0
     hooks:
