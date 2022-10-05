@@ -24,10 +24,12 @@ git: {C.git_win_path}
 
 
 def sample_config(kind: str) -> int:
-    if kind == "unix":
-        print(SAMPLE_CONFIG_UNIX, end="")
-    elif kind == "windows":
-        print(SAMPLE_CONFIG_WINDOWS, end="")
+    if kind == 'unix':
+        print(SAMPLE_CONFIG_UNIX, end='')
+    elif kind == 'windows':
+        print(SAMPLE_CONFIG_WINDOWS, end='')
     else:
-        raise NotImplementedError(f"ERROR: sample config kind '{kind}' not recognized.")
+        raise NotImplementedError(
+            f"ERROR: sample config kind '{kind}' not recognized."
+        )
     return 0
