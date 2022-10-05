@@ -72,9 +72,9 @@ def test_get_zettels_skip_file(tmp_path):
 
 def test_get_zettels_dir_not_found():
     with pytest.raises(SystemExit) as excinfo:
-        get_zettels(Path('/foo/bar/baz/abc'))
+        get_zettels(Path('fooBarNonexistent'))
     (msg,) = excinfo.value.args
-    assert msg == "ERROR: folder /foo/bar/baz/abc doesn't exist."
+    assert msg == "ERROR: folder fooBarNonexistent doesn't exist."
 
 
 def test_open_zettel():
