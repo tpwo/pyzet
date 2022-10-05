@@ -102,24 +102,23 @@ def test_init_repo_flag_and_custom_target(tmp_path, capfd, caplog):
 def test_init_error_folder_exists():
     with pytest.raises(SystemExit) as excinfo:
         main([*TEST_CFG, 'init'])
-    assert (
-        str(excinfo.value)
-        == "ERROR: 'testing/zet' folder exists and it's not empty."
-    )
+    (msg,) = excinfo.value.args
+    assert msg == "ERROR: 'testing/zet' folder exists and it's not empty."
 
 
 def test_init_error_file_exists_at_path():
     with pytest.raises(SystemExit) as excinfo:
         main([*TEST_CFG, '-r', 'README.md', 'init'])
-    assert str(excinfo.value) == "ERROR: 'README.md' exists and is a file."
+    (msg,) = excinfo.value.args
+    assert msg == "ERROR: 'README.md' exists and is a file."
 
 
 def test_init_error_config_file_missing():
     with pytest.raises(SystemExit) as excinfo:
         main(['-c', 'some/nonexistent/path', 'init'])
+    (msg,) = excinfo.value.args
     assert (
-        str(excinfo.value)
-        == "ERROR: config file at 'some/nonexistent/path' not found.\n"
+        msg == "ERROR: config file at 'some/nonexistent/path' not found.\n"
         "Add it or use '--config' flag."
     )
 
@@ -127,14 +126,16 @@ def test_init_error_config_file_missing():
 def test_edit_error_editor_not_found():
     with pytest.raises(SystemExit) as excinfo:
         main(['-c', 'testing/pyzet-wrong.yaml', 'edit'])
-    assert str(excinfo.value) == "ERROR: editor 'not-vim' cannot be found."
+    (msg,) = excinfo.value.args
+    assert msg == "ERROR: editor 'not-vim' cannot be found."
 
 
 def test_edit_error_missing_repo_in_yaml():
     with pytest.raises(SystemExit) as excinfo:
         main(['-c', 'testing/pyzet-missing-repo.yaml', 'edit'])
+    (msg,) = excinfo.value.args
     assert (
-        str(excinfo.value) == "ERROR: field 'repo' missing from"
+        msg == "ERROR: field 'repo' missing from"
         " 'testing/pyzet-missing-repo.yaml'."
     )
 
@@ -264,13 +265,15 @@ def test_list_error_no_zettels(tmp_path):
     Path(tmp_path, C.ZETDIR).mkdir(parents=True)
     with pytest.raises(SystemExit) as excinfo:
         main([*TEST_CFG, '--repo', tmp_path.as_posix(), 'list'])
-    assert str(excinfo.value) == 'ERROR: there are no zettels at given repo.'
+    (msg,) = excinfo.value.args
+    assert msg == 'ERROR: there are no zettels at given repo.'
 
 
 def test_list_wrong_alternative_repo():
     with pytest.raises(SystemExit) as excinfo:
         main([*TEST_CFG, '--repo', 'some/nonexistent/path', 'list'])
-    assert str(excinfo.value).startswith('ERROR: wrong repo path')
+    (msg,) = excinfo.value.args
+    assert msg.startswith('ERROR: wrong repo path')
 
 
 def test_tags(capsys):
