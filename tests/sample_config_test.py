@@ -70,7 +70,5 @@ def test_sample_error(capsys):
 def test_sample_error_direct():
     with pytest.raises(NotImplementedError) as excinfo:
         sample_config(kind='foobar')
-    assert (
-        str(excinfo.value)
-        == "ERROR: sample config kind 'foobar' not recognized."
-    )
+    (msg,) = excinfo.value.args
+    assert msg == "ERROR: sample config kind 'foobar' not recognized."
