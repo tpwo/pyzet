@@ -281,16 +281,16 @@ def process_yaml(
     Only 'repo' field is required. If other fields are missing,
     a default value will be used.
     """
-    try:
-        if repo_path:
-            repo = Path(repo_path)
-        else:
+    if repo_path:
+        repo = Path(repo_path)
+    else:
+        try:
             repo = Path(yaml_cfg['repo']).expanduser()
-    except KeyError:
-        raise SystemExit(
-            "ERROR: field 'repo' missing from"
-            f" '{Path(config_file).as_posix()}'."
-        )
+        except KeyError:
+            raise SystemExit(
+                "ERROR: field 'repo' missing from"
+                f" '{Path(config_file).as_posix()}'."
+            )
     return Config(
         repo=repo,
         editor=_get_config_option(yaml_cfg, 'editor', C.VIM_PATH),
