@@ -1,5 +1,4 @@
 import logging
-import tempfile
 from pathlib import Path
 
 import pytest
@@ -26,81 +25,78 @@ def test_help(capsys):
     assert err == ""
 
 
-def test_init_repo_flag(capfd, caplog):
+def test_init_repo_flag(tmp_path, capfd, caplog):
     caplog.set_level(logging.INFO)
-    with tempfile.TemporaryDirectory() as repo_dir:
-        main([*TEST_CFG, "--repo", repo_dir, "init"])
 
-        out, err = capfd.readouterr()
-        assert Path(repo_dir).name in out
-        assert err == ""
-        assert f"init: create git repo '{repo_dir}'" in caplog.text
-        assert Path(repo_dir, C.ZETDIR).exists()
+    main([*TEST_CFG, "--repo", tmp_path.as_posix(), "init"])
+
+    out, err = capfd.readouterr()
+    assert tmp_path.name in out
+    assert err == ""
+    assert f"init: create git repo '{tmp_path}'" in caplog.text
+    assert Path(tmp_path, C.ZETDIR).exists()
 
 
-def test_init_repo_flag_custom_branch(capfd, caplog):
+def test_init_repo_flag_custom_branch(tmp_path, capfd, caplog):
     caplog.set_level(logging.INFO)
-    with tempfile.TemporaryDirectory() as repo_dir:
-        main([*TEST_CFG, "--repo", repo_dir, "init", "-b", "foobar"])
+    main([*TEST_CFG, "--repo", tmp_path.as_posix(), "init", "-b", "foobar"])
 
-        out, err = capfd.readouterr()
-        assert Path(repo_dir).name in out
-        assert err == ""
-        assert f"init: create git repo '{repo_dir}'" in caplog.text
-        assert Path(repo_dir, C.ZETDIR).exists()
+    out, err = capfd.readouterr()
+    assert tmp_path.name in out
+    assert err == ""
+    assert f"init: create git repo '{tmp_path}'" in caplog.text
+    assert Path(tmp_path, C.ZETDIR).exists()
 
-        # Verify if the branch name was assigned correctly
-        # by checking `pyzet status` output.
-        main([*TEST_CFG, "--repo", repo_dir, "status"])
-        out, err = capfd.readouterr()
-        assert out.startswith("On branch foobar")
-        assert err == ""
+    # Verify if the branch name was assigned correctly
+    # by checking `pyzet status` output.
+    main([*TEST_CFG, "--repo", tmp_path.as_posix(), "status"])
+    out, err = capfd.readouterr()
+    assert out.startswith("On branch foobar")
+    assert err == ""
 
 
-def test_init_custom_target(capfd, caplog):
+def test_init_custom_target(tmp_path, capfd, caplog):
     caplog.set_level(logging.INFO)
-    with tempfile.TemporaryDirectory() as init_dir:
-        main([*TEST_CFG, "init", init_dir])
+    main([*TEST_CFG, "init", tmp_path.as_posix()])
 
-        out, err = capfd.readouterr()
-        assert Path(init_dir).name in out
-        assert err == ""
-        assert f"init: create git repo '{init_dir}'" in caplog.text
-        assert Path(init_dir, C.ZETDIR).exists()
+    out, err = capfd.readouterr()
+    assert Path(tmp_path).name in out
+    assert err == ""
+    assert f"init: create git repo '{tmp_path}'" in caplog.text
+    assert Path(tmp_path, C.ZETDIR).exists()
 
 
-def test_init_custom_target_custom_branch(capfd, caplog):
+def test_init_custom_target_custom_branch(tmp_path, capfd, caplog):
     caplog.set_level(logging.INFO)
-    with tempfile.TemporaryDirectory() as init_dir:
-        main([*TEST_CFG, "init", init_dir, "-b", "foobar"])
+    main([*TEST_CFG, "init", tmp_path.as_posix(), "-b", "foobar"])
 
-        out, err = capfd.readouterr()
-        assert Path(init_dir).name in out
-        assert err == ""
-        assert f"init: create git repo '{init_dir}'" in caplog.text
-        assert Path(init_dir, C.ZETDIR).exists()
+    out, err = capfd.readouterr()
+    assert tmp_path.name in out
+    assert err == ""
+    assert f"init: create git repo '{tmp_path}'" in caplog.text
+    assert Path(tmp_path, C.ZETDIR).exists()
 
-        # Verify if the branch name was assigned correctly
-        # by checking `pyzet status` output.
-        main([*TEST_CFG, "--repo", init_dir, "status"])
-        out, err = capfd.readouterr()
-        assert out.startswith("On branch foobar")
-        assert err == ""
+    # Verify if the branch name was assigned correctly
+    # by checking `pyzet status` output.
+    main([*TEST_CFG, "--repo", tmp_path.as_posix(), "status"])
+    out, err = capfd.readouterr()
+    assert out.startswith("On branch foobar")
+    assert err == ""
 
 
-def test_init_repo_flag_and_custom_target(capfd, caplog):
+def test_init_repo_flag_and_custom_target(tmp_path, capfd, caplog):
     # Custom target should be preferred over repo passed with '--repo'
     caplog.set_level(logging.INFO)
-    with tempfile.TemporaryDirectory() as repo_dir:
-        with tempfile.TemporaryDirectory() as init_dir:
-            main([*TEST_CFG, "--repo", repo_dir, "init", init_dir])
+    repo_dir = Path(tmp_path, "repo-dir")
+    init_dir = Path(tmp_path, "init-dir")
+    main([*TEST_CFG, "--repo", repo_dir.as_posix(), "init", init_dir.as_posix()])
 
-            out, err = capfd.readouterr()
-            assert Path(init_dir).name in out
-            assert err == ""
-            assert f"init: create git repo '{init_dir}'" in caplog.text
-            assert Path(init_dir, C.ZETDIR).exists()
-            assert not Path(repo_dir, C.ZETDIR).exists()
+    out, err = capfd.readouterr()
+    assert init_dir.name in out
+    assert err == ""
+    assert f"init: create git repo '{init_dir}'" in caplog.text
+    assert Path(init_dir, C.ZETDIR).exists()
+    assert not Path(repo_dir, C.ZETDIR).exists()
 
 
 def test_init_error_folder_exists():
@@ -250,25 +246,24 @@ def test_list_link_reverse(capsys):
     assert err == ""
 
 
-def test_list_warning_empty_folder(caplog):
+def test_list_warning_empty_folder(tmp_path, caplog):
     id_ = "20211016205158"
-    id2_ = "20211016205159"
-    with tempfile.TemporaryDirectory() as tmpdir:
-        Path(tmpdir, C.ZETDIR, id_).mkdir(parents=True)
-        Path(tmpdir, C.ZETDIR, id2_).mkdir(parents=True)
-        with open(Path(tmpdir, C.ZETDIR, id2_, C.ZETTEL_FILENAME), "a") as file:
-            file.write("# Test")
+    Path(tmp_path, C.ZETDIR, id_).mkdir(parents=True)
 
-        main([*TEST_CFG, "--repo", tmpdir, "list"])
-        assert f"empty zet folder {id_} detected" in caplog.text
+    zettel2 = Path(tmp_path, C.ZETDIR, "20211016205159")
+    zettel2.mkdir(parents=True)
+    with open(Path(zettel2, C.ZETTEL_FILENAME), "w") as file:
+        file.write("# Test")
+
+    main([*TEST_CFG, "--repo", tmp_path.as_posix(), "list"])
+    assert f"empty zet folder {id_} detected" in caplog.text
 
 
-def test_list_error_no_zettels():
-    with tempfile.TemporaryDirectory() as tmpdir:
-        Path(tmpdir, C.ZETDIR).mkdir(parents=True)
-        with pytest.raises(SystemExit) as excinfo:
-            main([*TEST_CFG, "--repo", tmpdir, "list"])
-        assert str(excinfo.value) == "ERROR: there are no zettels at given repo."
+def test_list_error_no_zettels(tmp_path):
+    Path(tmp_path, C.ZETDIR).mkdir(parents=True)
+    with pytest.raises(SystemExit) as excinfo:
+        main([*TEST_CFG, "--repo", tmp_path.as_posix(), "list"])
+    assert str(excinfo.value) == "ERROR: there are no zettels at given repo."
 
 
 def test_list_wrong_alternative_repo():
@@ -301,67 +296,63 @@ def test_tags_count(capsys):
     assert err == ""
 
 
-def test_clean(capsys):
+def test_clean(tmp_path, capsys):
     id_ = "20211016205158"
-    with tempfile.TemporaryDirectory() as tmpdir:
-        Path(tmpdir, C.ZETDIR, id_).mkdir(parents=True)
+    Path(tmp_path, C.ZETDIR, id_).mkdir(parents=True)
 
-        main([*TEST_CFG, "--repo", tmpdir, "clean"])
+    main([*TEST_CFG, "--repo", tmp_path.as_posix(), "clean"])
 
-        out, err = capsys.readouterr()
-        assert out == f"will delete {id_}\nUse '--force' to proceed with deletion\n"
-        assert err == ""
-        assert not Path(tmpdir, id_).exists()
+    out, err = capsys.readouterr()
+    assert out == f"will delete {id_}\nUse '--force' to proceed with deletion\n"
+    assert err == ""
+    assert not Path(tmp_path, id_).exists()
 
 
-def test_clean_force(capsys):
+def test_clean_force(tmp_path, capsys):
     id_ = "20211016205158"
-    with tempfile.TemporaryDirectory() as tmpdir:
-        Path(tmpdir, C.ZETDIR, id_).mkdir(parents=True)
+    Path(tmp_path, C.ZETDIR, id_).mkdir(parents=True)
 
-        main([*TEST_CFG, "--repo", tmpdir, "clean", "--force"])
+    main([*TEST_CFG, "--repo", tmp_path.as_posix(), "clean", "--force"])
 
-        out, err = capsys.readouterr()
-        assert out == f"deleting {id_}\n"
-        assert err == ""
-        assert not Path(tmpdir, id_).exists()
+    out, err = capsys.readouterr()
+    assert out == f"deleting {id_}\n"
+    assert err == ""
+    assert not Path(tmp_path, id_).exists()
 
 
-def test_clean_dry_run(capsys):
+def test_clean_dry_run(tmp_path, capsys):
     id_ = "20211016205158"
-    with tempfile.TemporaryDirectory() as tmpdir:
-        Path(tmpdir, C.ZETDIR, id_).mkdir(parents=True)
+    Path(tmp_path, C.ZETDIR, id_).mkdir(parents=True)
 
-        main([*TEST_CFG, "--repo", tmpdir, "clean", "--dry-run"])
+    main([*TEST_CFG, "--repo", tmp_path.as_posix(), "clean", "--dry-run"])
 
-        out, err = capsys.readouterr()
-        assert out == f"will delete {id_}\nUse '--force' to proceed with deletion\n"
-        assert err == ""
-        assert Path(tmpdir, C.ZETDIR, id_).exists()
+    out, err = capsys.readouterr()
+    assert out == f"will delete {id_}\nUse '--force' to proceed with deletion\n"
+    assert err == ""
+    assert Path(tmp_path, C.ZETDIR, id_).exists()
 
 
-def test_clean_dry_run_and_force(capsys):
+def test_clean_dry_run_and_force(tmp_path, capsys):
     id_ = "20211016205158"
-    with tempfile.TemporaryDirectory() as tmpdir:
-        Path(tmpdir, C.ZETDIR, id_).mkdir(parents=True)
+    Path(tmp_path, C.ZETDIR, id_).mkdir(parents=True)
 
-        main([*TEST_CFG, "--repo", tmpdir, "clean", "--dry-run", "--force"])
+    main([*TEST_CFG, "--repo", tmp_path.as_posix(), "clean", "--dry-run", "--force"])
 
-        out, err = capsys.readouterr()
-        assert out == f"will delete {id_}\n"
-        assert err == ""
-        assert Path(tmpdir, C.ZETDIR, id_).exists()
+    out, err = capsys.readouterr()
+    assert out == f"will delete {id_}\n"
+    assert err == ""
+    assert Path(tmp_path, C.ZETDIR, id_).exists()
 
 
-def test_remote(capfd):
-    with tempfile.TemporaryDirectory() as init_dir:
-        main([*TEST_CFG, "init", init_dir])
-        _, _ = capfd.readouterr()  # We're not interested in the 'pyzet init' output
+def test_remote(tmp_path, capfd):
+    init_dir = tmp_path.as_posix()
+    main([*TEST_CFG, "init", init_dir])
+    _, _ = capfd.readouterr()  # We're not interested in the 'pyzet init' output
 
-        # Add remote, and then display it
-        main([*TEST_CFG, "--repo", init_dir, "remote", "add", "origin", "zet-remote"])
-        main([*TEST_CFG, "--repo", init_dir, "remote"])
+    # Add remote, and then display it
+    main([*TEST_CFG, "--repo", init_dir, "remote", "add", "origin", "zet-remote"])
+    main([*TEST_CFG, "--repo", init_dir, "remote"])
 
-        out, err = capfd.readouterr()
-        assert out == "origin\n"
-        assert err == ""
+    out, err = capfd.readouterr()
+    assert out == "origin\n"
+    assert err == ""
