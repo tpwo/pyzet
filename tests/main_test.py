@@ -8,6 +8,11 @@ from pyzet.main import main
 from testing.constants import TEST_CFG
 
 
+@pytest.fixture
+def set_info_lvl(caplog):
+    caplog.set_level(logging.INFO)
+
+
 def test_no_argv(capsys):
     # It should just print the usage help
     main([])
@@ -25,9 +30,8 @@ def test_help(capsys):
     assert err == ''
 
 
+@pytest.mark.usefixtures('set_info_lvl')
 def test_init_repo_flag(tmp_path, capfd, caplog):
-    caplog.set_level(logging.INFO)
-
     main([*TEST_CFG, '--repo', tmp_path.as_posix(), 'init'])
 
     out, err = capfd.readouterr()
@@ -37,8 +41,8 @@ def test_init_repo_flag(tmp_path, capfd, caplog):
     assert Path(tmp_path, C.ZETDIR).exists()
 
 
+@pytest.mark.usefixtures('set_info_lvl')
 def test_init_repo_flag_custom_branch(tmp_path, capfd, caplog):
-    caplog.set_level(logging.INFO)
     main([*TEST_CFG, '--repo', tmp_path.as_posix(), 'init', '-b', 'foobar'])
 
     out, err = capfd.readouterr()
@@ -55,8 +59,8 @@ def test_init_repo_flag_custom_branch(tmp_path, capfd, caplog):
     assert err == ''
 
 
+@pytest.mark.usefixtures('set_info_lvl')
 def test_init_custom_target(tmp_path, capfd, caplog):
-    caplog.set_level(logging.INFO)
     main([*TEST_CFG, 'init', tmp_path.as_posix()])
 
     out, err = capfd.readouterr()
@@ -66,8 +70,8 @@ def test_init_custom_target(tmp_path, capfd, caplog):
     assert Path(tmp_path, C.ZETDIR).exists()
 
 
+@pytest.mark.usefixtures('set_info_lvl')
 def test_init_custom_target_custom_branch(tmp_path, capfd, caplog):
-    caplog.set_level(logging.INFO)
     main([*TEST_CFG, 'init', tmp_path.as_posix(), '-b', 'foobar'])
 
     out, err = capfd.readouterr()
@@ -84,9 +88,9 @@ def test_init_custom_target_custom_branch(tmp_path, capfd, caplog):
     assert err == ''
 
 
+@pytest.mark.usefixtures('set_info_lvl')
 def test_init_repo_flag_and_custom_target(tmp_path, capfd, caplog):
     # Custom target should be preferred over repo passed with '--repo'
-    caplog.set_level(logging.INFO)
     repo_dir = Path(tmp_path, 'repo-dir')
     init_dir = Path(tmp_path, 'init-dir')
     main([*TEST_CFG, '-r', repo_dir.as_posix(), 'init', init_dir.as_posix()])
