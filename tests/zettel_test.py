@@ -12,8 +12,7 @@ from pyzet.zettel import Zettel
 
 def test_get_zettels():
     actual = get_zettels(path=Path('testing/zet', C.ZETDIR))
-
-    assert actual == [
+    expected = [
         Zettel(
             title='Zet test entry',
             id_='20211016205158',
@@ -30,12 +29,12 @@ def test_get_zettels():
             tags=[],
         ),
     ]
+    assert actual == expected
 
 
 def test_get_zettels_reverse():
     actual = get_zettels(path=Path('testing/zet', C.ZETDIR), is_reversed=True)
-
-    assert actual == [
+    expected = [
         Zettel(
             title='Zettel with UTF-8',
             id_='20220101220852',
@@ -52,6 +51,7 @@ def test_get_zettels_reverse():
             tags=['test-tag', 'another-tag', 'tag-after-two-spaces'],
         ),
     ]
+    assert actual == expected
 
 
 def test_get_zettels_skip_file(tmp_path):
@@ -83,10 +83,8 @@ def test_open_zettel():
         id_='20211016205158',
         tags=['test-tag', 'another-tag', 'tag-after-two-spaces'],
     )
-
-    assert (
-        get_zettel(Path(f'testing/zet/{C.ZETDIR}/20211016205158')) == expected
-    )
+    actual = get_zettel(Path(f'testing/zet/{C.ZETDIR}/20211016205158'))
+    assert actual == expected
 
 
 def test_get_markdown_title():
@@ -111,9 +109,8 @@ def test_get_markdown_title():
 )
 def test_get_markdown_title_warning(test_input, caplog):
     assert get_markdown_title(test_input, id_='20211016205159') == test_input
-    assert (
-        f'wrong title formatting: 20211016205159 "{test_input}"' in caplog.text
-    )
+    msg = f'wrong title formatting: 20211016205159 "{test_input}"'
+    assert msg in caplog.text
 
 
 def test_get_markdown_value_error():
