@@ -30,49 +30,16 @@ def test_help(capsys):
     assert err == ''
 
 
+@pytest.mark.parametrize(
+    ('opts', 'branch'),
+    (
+        pytest.param((), 'main', id='default branch'),
+        pytest.param(('-b', 'foobar'), 'foobar', id='custom branch'),
+    ),
+)
 @pytest.mark.usefixtures('set_info_lvl')
-def test_init_repo_flag(tmp_path, capfd, caplog):
-    main([*TEST_CFG, '--repo', tmp_path.as_posix(), 'init'])
-
-    out, err = capfd.readouterr()
-    assert tmp_path.name in out
-    assert err == ''
-    assert f"init: create git repo '{tmp_path}'" in caplog.text
-    assert Path(tmp_path, C.ZETDIR).exists()
-
-
-@pytest.mark.usefixtures('set_info_lvl')
-def test_init_repo_flag_custom_branch(tmp_path, capfd, caplog):
-    main([*TEST_CFG, '--repo', tmp_path.as_posix(), 'init', '-b', 'foobar'])
-
-    out, err = capfd.readouterr()
-    assert tmp_path.name in out
-    assert err == ''
-    assert f"init: create git repo '{tmp_path}'" in caplog.text
-    assert Path(tmp_path, C.ZETDIR).exists()
-
-    # Verify if the branch name was assigned correctly
-    # by checking `pyzet status` output.
-    main([*TEST_CFG, '--repo', tmp_path.as_posix(), 'status'])
-    out, err = capfd.readouterr()
-    assert out.startswith('On branch foobar')
-    assert err == ''
-
-
-@pytest.mark.usefixtures('set_info_lvl')
-def test_init_custom_target(tmp_path, capfd, caplog):
-    main([*TEST_CFG, 'init', tmp_path.as_posix()])
-
-    out, err = capfd.readouterr()
-    assert Path(tmp_path).name in out
-    assert err == ''
-    assert f"init: create git repo '{tmp_path}'" in caplog.text
-    assert Path(tmp_path, C.ZETDIR).exists()
-
-
-@pytest.mark.usefixtures('set_info_lvl')
-def test_init_custom_target_custom_branch(tmp_path, capfd, caplog):
-    main([*TEST_CFG, 'init', tmp_path.as_posix(), '-b', 'foobar'])
+def test_init_repo_flag(tmp_path, capfd, caplog, opts, branch):
+    main([*TEST_CFG, '--repo', tmp_path.as_posix(), 'init', *opts])
 
     out, err = capfd.readouterr()
     assert tmp_path.name in out
@@ -84,7 +51,32 @@ def test_init_custom_target_custom_branch(tmp_path, capfd, caplog):
     # by checking `pyzet status` output.
     main([*TEST_CFG, '--repo', tmp_path.as_posix(), 'status'])
     out, err = capfd.readouterr()
-    assert out.startswith('On branch foobar')
+    assert out.startswith(f'On branch {branch}')
+    assert err == ''
+
+
+@pytest.mark.parametrize(
+    ('opts', 'branch'),
+    (
+        pytest.param((), 'main', id='default branch'),
+        pytest.param(('-b', 'foobar'), 'foobar', id='custom branch'),
+    ),
+)
+@pytest.mark.usefixtures('set_info_lvl')
+def test_init_custom_target(tmp_path, capfd, caplog, opts, branch):
+    main([*TEST_CFG, 'init', tmp_path.as_posix(), *opts])
+
+    out, err = capfd.readouterr()
+    assert tmp_path.name in out
+    assert err == ''
+    assert f"init: create git repo '{tmp_path}'" in caplog.text
+    assert Path(tmp_path, C.ZETDIR).exists()
+
+    # Verify if the branch name was assigned correctly
+    # by checking `pyzet status` output.
+    main([*TEST_CFG, '--repo', tmp_path.as_posix(), 'status'])
+    out, err = capfd.readouterr()
+    assert out.startswith(f'On branch {branch}')
     assert err == ''
 
 
