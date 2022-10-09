@@ -368,7 +368,7 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
         return _call_git(
             config,
             'grep',
-            grep_opts,
+            tuple(grep_opts),
             path=Path(config.repo, C.ZETDIR),
         )
 
@@ -376,13 +376,13 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
         return _call_git(config, args.command, args.options)
 
     if args.command == 'remote':
-        return _call_git(config, 'remote', ['-v', *args.options])
+        return _call_git(config, 'remote', ('-v', *args.options))
 
     if args.command == 'pull':
         # --rebase is used to maintain a linear history without merges,
         # as this seems to be a reasonable approach in ZK repo that is
         # usually personal.
-        return _call_git(config, 'pull', ['--rebase'])
+        return _call_git(config, 'pull', ('--rebase',))
 
     if args.command == 'clean':
         return clean_zet_repo(
@@ -526,7 +526,7 @@ def init_repo(config: Config, branch_name: str) -> int:
     # we'd like to have a nice error message in such case.
     _create_empty_folder(config.repo)
     _create_empty_folder(Path(config.repo, C.ZETDIR))
-    _call_git(config, 'init', ['--initial-branch', branch_name])
+    _call_git(config, 'init', ('--initial-branch', branch_name))
     logging.info(f"init: create git repo '{config.repo.absolute()}'")
     return 0
 
@@ -593,7 +593,7 @@ def edit_zettel(id_: str, config: Config, editor: str) -> int:
             f"edit: zettel modification aborted '{zettel_path.absolute()}'"
         )
         print('Editing zettel aborted, restoring the version from git...')
-        _call_git(config, 'restore', [zettel_path.as_posix()])
+        _call_git(config, 'restore', (zettel_path.as_posix(),))
     else:
         if _check_for_file_changes(zettel_path, config):
             _commit_zettel(
@@ -630,7 +630,7 @@ def _check_for_file_changes(filepath: Path, config: Config) -> bool:
     # Run 'git add' to avoid false negatives, as 'git diff --staged' is
     # used for detection. This is important when there are external
     # factors that impact the committing process (like pre-commit).
-    _call_git(config, 'add', [filepath.as_posix()])
+    _call_git(config, 'add', (filepath.as_posix(),))
 
     git_diff_out = _get_git_output(
         config, 'diff', ['--staged', filepath.as_posix()]
@@ -683,8 +683,8 @@ def remove_zettel(id_: str, config: Config) -> int:
 
 
 def _commit_zettel(config: Config, zettel_path: Path, message: str) -> None:
-    _call_git(config, 'add', [zettel_path.as_posix()])
-    _call_git(config, 'commit', ['-m', message])
+    _call_git(config, 'add', (zettel_path.as_posix(),))
+    _call_git(config, 'commit', ('-m', message))
     logging.info(
         f"_commit_zettel: committed '{zettel_path.absolute()}'"
         " with message '{message}'"
@@ -694,11 +694,11 @@ def _commit_zettel(config: Config, zettel_path: Path, message: str) -> None:
 def _call_git(
     config: Config,
     command: str,
-    options: list[str] | None = None,
+    options: tuple[str, ...] | None = None,
     path: Path | None = None,
 ) -> int:
     if options is None:
-        options = []
+        options = tuple()
     if path is None:
         path = config.repo
     cmd = [_get_git_cmd(config.git), '-C', path.as_posix(), command, *options]
