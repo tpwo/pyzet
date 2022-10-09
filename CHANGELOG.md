@@ -8,6 +8,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+* Include `-v` flag in `pyzet remote` by default (#48).
+
 ## [0.6.0] - 2022-04-18
 
 ### Added

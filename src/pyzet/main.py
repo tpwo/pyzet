@@ -206,7 +206,7 @@ def _get_parser() -> ArgumentParser:
     _add_git_cmd_options(push_parser, 'push')
 
     remote_parser = subparsers.add_parser(
-        'remote', help="run 'git remote' in ZK repo"
+        'remote', help="run 'git remote -v' in ZK repo"
     )
     _add_git_cmd_options(remote_parser, 'remote')
 
@@ -372,8 +372,11 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
             path=Path(config.repo, C.ZETDIR),
         )
 
-    if args.command in ('status', 'push', 'remote'):
+    if args.command in ('status', 'push'):
         return _call_git(config, args.command, args.options)
+
+    if args.command == 'remote':
+        return _call_git(config, 'remote', ['-v', *args.options])
 
     if args.command == 'pull':
         # --rebase is used to maintain a linear history without merges,

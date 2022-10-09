@@ -360,5 +360,9 @@ def test_remote(tmp_path, capfd):
     main([*TEST_CFG, '--repo', init_dir, 'remote'])
 
     out, err = capfd.readouterr()
-    assert out == 'foo\n'
+    expected = """\
+foo\tzet-remote (fetch)
+foo\tzet-remote (push)
+"""
+    assert out == expected
     assert err == ''
