@@ -93,7 +93,7 @@ positional arguments:
     status              run 'git status' in ZK repo
     pull                run 'git pull --rebase' in ZK repo
     push                run 'git push' in ZK repo
-    remote              run 'git remote' in ZK repo
+    remote              run 'git remote -v' in ZK repo
     sample-config       produce a sample pyzet.yaml file
 
 options:
