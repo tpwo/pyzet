@@ -622,7 +622,7 @@ def _check_for_file_in_git(filepath: Path, config: Config) -> bool:
 
     If 'git log' output is empty, the file wasn't committed.
     """
-    return _get_git_output(config, 'log', [filepath.as_posix()]) != b''
+    return _get_git_output(config, 'log', (filepath.as_posix(),)) != b''
 
 
 def _check_for_file_changes(filepath: Path, config: Config) -> bool:
@@ -633,7 +633,7 @@ def _check_for_file_changes(filepath: Path, config: Config) -> bool:
     _call_git(config, 'add', (filepath.as_posix(),))
 
     git_diff_out = _get_git_output(
-        config, 'diff', ['--staged', filepath.as_posix()]
+        config, 'diff', ('--staged', filepath.as_posix())
     )
     # If 'git diff' output is empty, the file wasn't modified.
     return git_diff_out != b''
@@ -707,7 +707,9 @@ def _call_git(
     return 0
 
 
-def _get_git_output(config: Config, command: str, options: list[str]) -> bytes:
+def _get_git_output(
+    config: Config, command: str, options: tuple[str, ...]
+) -> bytes:
     repo = config.repo.as_posix()
     cmd = [_get_git_cmd(config.git), '-C', repo, command, *options]
     logging.debug(f'_get_git_output: subprocess.run({cmd})')
