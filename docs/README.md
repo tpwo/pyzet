@@ -18,8 +18,8 @@ And on Git Bash it will be shown as:
     $ echo $HOME
     /c/Users/<your-username>
 
-which is very Git Bash specific and won't work if put it in the config
-file.
+which is very Git Bash specific and won't work if you put it in the
+config file.
 
 Generally, in your config file you can use Windows-like path, but we
 suggest to use forward slashes `/` rather than backslashes `\` or double
@@ -66,7 +66,7 @@ single line:
 
     repo: ~/zet
 
-E.g. you should be able to quickly do it with these two commands:
+You should be able to quickly do it with these two commands:
 
     mkdir -p ~/.config/pyzet
     echo 'repo: ~/zet' > ~/.config/pyzet/pyzet.yaml
@@ -340,8 +340,8 @@ used the following command:
 
     pyzet remote add origin https://some-git-hosting/your-username/zet
 
-And to add a `--tags` flag to `pyzet remote add` you have to use either
-of the following:
+And to add, for example, a `--tags` flag to `pyzet remote add` you have
+to use either of the following:
 
     pyzet remote add origin -- --tags https://some-git-hosting/your-username/zet
     pyzet remote add -- origin --tags https://some-git-hosting/your-username/zet
@@ -349,10 +349,10 @@ of the following:
 
 At the end, the only thing to remember is to include `--` before any
 **Git flag**, but after the main action keyword (here: `remote`). So,
-the following **won't** work:
+the following **won't work**:
 
-    pyzet remote add origin --tags -- https://some-git-hosting/your-username/zet
-    pyzet -- remote add origin --tags https://some-git-hosting/your-username/zet
+    pyzet remote add origin --tags -- https://some-git-hosting/your-username/zet # ERROR
+    pyzet -- remote add origin --tags https://some-git-hosting/your-username/zet # ERROR
 
 ### Git interaction summary
 
