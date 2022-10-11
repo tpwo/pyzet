@@ -304,7 +304,7 @@ def test_clean(tmp_path, capsys):
 
     out, err = capsys.readouterr()
     assert (
-        out == f"will delete {id_}\nUse '--force' to proceed with deletion\n"
+        out == f"will delete {id_}\nuse '--force' to proceed with deletion\n"
     )
     assert err == ''
     assert not Path(tmp_path, id_).exists()
@@ -330,7 +330,7 @@ def test_clean_dry_run(tmp_path, capsys):
 
     out, err = capsys.readouterr()
     assert (
-        out == f"will delete {id_}\nUse '--force' to proceed with deletion\n"
+        out == f"will delete {id_}\nuse '--force' to proceed with deletion\n"
     )
     assert err == ''
     assert Path(tmp_path, C.ZETDIR, id_).exists()
