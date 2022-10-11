@@ -515,7 +515,7 @@ def clean_zet_repo(repo_path: Path, is_dry_run: bool, is_force: bool) -> int:
             else:
                 print(f'will delete {folder.name}')
     if is_any_empty and not is_force:
-        print("Use '--force' to proceed with deletion")
+        print("use '--force' to proceed with deletion")
     return 0
 
 

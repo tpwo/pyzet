@@ -469,7 +469,7 @@ Let's try it. At first, let's create an empty folder with `mkdir
 
     $ pyzet clean
     will delete test
-    Use '--force' to proceed with deletion
+    use '--force' to proceed with deletion
 
 Let's do as asked:
 
