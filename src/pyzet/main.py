@@ -237,7 +237,7 @@ def _parse_args(args: Namespace) -> int:
     try:
         # show & edit commands use nargs="?" which makes
         # args.command str rather than single element list.
-        if args.command in ('show', 'edit'):
+        if args.command in {'show', 'edit'}:
             id_ = args.id
         else:
             id_ = args.id[0]
@@ -372,7 +372,7 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
             path=Path(config.repo, C.ZETDIR),
         )
 
-    if args.command in ('status', 'push'):
+    if args.command in {'status', 'push'}:
         return _call_git(config, args.command, args.options)
 
     if args.command == 'remote':
