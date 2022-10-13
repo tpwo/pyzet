@@ -487,7 +487,7 @@ Let's remove `REAMDE.md` from our only zettel:
 And now, list the zettels:
 
     $ pyzet list
-    WARNING: empty zet folder 20220126232605 detected
+    WARNING: empty zet folder '20220126232605' detected
     ERROR: there are no zettels at given repo.
 
 Now you can just run `pyzet clean --force` to get rid of this warning.
