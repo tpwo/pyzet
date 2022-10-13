@@ -254,7 +254,7 @@ def test_list_warning_empty_folder(tmp_path, caplog):
         file.write('# Test')
 
     main([*TEST_CFG, '--repo', tmp_path.as_posix(), 'list'])
-    assert f'empty zet folder {id_} detected' in caplog.text
+    assert f"empty zet folder '{id_}' detected" in caplog.text
 
 
 def test_list_error_no_zettels(tmp_path):

@@ -28,7 +28,7 @@ def get_zettels(path: Path, is_reversed: bool = False) -> list[Zettel]:
                     f"get_zettels: zettel appended '{item.absolute()}'"
                 )
             except FileNotFoundError:
-                logging.warning(f'empty zet folder {item.name} detected')
+                logging.warning(f"empty zet folder '{item.name}' detected")
             except ValueError:
                 # Skips dirs with different naming convention and skips
                 # zettels without a text in the first line (i.e. during
