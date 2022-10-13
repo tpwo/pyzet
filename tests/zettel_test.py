@@ -16,17 +16,17 @@ def test_get_zettels():
         Zettel(
             title='Zet test entry',
             id_='20211016205158',
-            tags=['test-tag', 'another-tag', 'tag-after-two-spaces'],
+            tags=('test-tag', 'another-tag', 'tag-after-two-spaces'),
         ),
         Zettel(
             title='Another zet test entry',
             id_='20211016223643',
-            tags=['test-tag'],
+            tags=('test-tag',),
         ),
         Zettel(
             title='Zettel with UTF-8',
             id_='20220101220852',
-            tags=[],
+            tags=(),
         ),
     ]
     assert actual == expected
@@ -38,17 +38,17 @@ def test_get_zettels_reverse():
         Zettel(
             title='Zettel with UTF-8',
             id_='20220101220852',
-            tags=[],
+            tags=(),
         ),
         Zettel(
             title='Another zet test entry',
             id_='20211016223643',
-            tags=['test-tag'],
+            tags=('test-tag',),
         ),
         Zettel(
             title='Zet test entry',
             id_='20211016205158',
-            tags=['test-tag', 'another-tag', 'tag-after-two-spaces'],
+            tags=('test-tag', 'another-tag', 'tag-after-two-spaces'),
         ),
     ]
     assert actual == expected
@@ -65,7 +65,7 @@ def test_get_zettels_skip_file(tmp_path):
 
     actual = get_zettels(zet_repo)
     expected = [
-        Zettel(title='Zettel with UTF-8', id_='20220101220852', tags=[])
+        Zettel(title='Zettel with UTF-8', id_='20220101220852', tags=())
     ]
     assert actual == expected
 
@@ -81,7 +81,7 @@ def test_open_zettel():
     expected = Zettel(
         title='Zet test entry',
         id_='20211016205158',
-        tags=['test-tag', 'another-tag', 'tag-after-two-spaces'],
+        tags=('test-tag', 'another-tag', 'tag-after-two-spaces'),
     )
     actual = get_zettel(Path(f'testing/zet/{C.ZETDIR}/20211016205158'))
     assert actual == expected

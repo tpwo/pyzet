@@ -3,7 +3,6 @@ from __future__ import annotations
 import logging
 import os
 import re
-from dataclasses import field
 from datetime import datetime
 from pathlib import Path
 from typing import NamedTuple
@@ -14,7 +13,7 @@ import pyzet.constants as C
 class Zettel(NamedTuple):
     title: str
     id_: str
-    tags: list[str] = field(default_factory=list)
+    tags: tuple[str, ...]
 
 
 def get_zettels(path: Path, is_reversed: bool = False) -> list[Zettel]:
@@ -47,7 +46,7 @@ def get_zettel(path: Path) -> Zettel:
         Path(path, C.ZETTEL_FILENAME)
     )
     title = get_markdown_title(title_line.strip(), path.name)
-    tags = get_tags(tags_line.strip()) if tags_line.startswith(4 * ' ') else []
+    tags = get_tags(tags_line.strip()) if tags_line.startswith(4 * ' ') else ()
     logging.debug(f"get_zettel: '{path.name}' with title '{title}'")
     return Zettel(title=title, id_=path.name, tags=tags)
 
@@ -97,7 +96,7 @@ def get_markdown_title(title_line: str, id_: str) -> str:
     return res
 
 
-def get_tags(line: str) -> list[str]:
-    tags = [tag.lstrip('#') for tag in line.split()]
+def get_tags(line: str) -> tuple[str, ...]:
+    tags = tuple(tag.lstrip('#') for tag in line.split())
     logging.debug(f'get_tags: extracted {tags}')
     return tags
