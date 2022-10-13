@@ -3,24 +3,18 @@ from __future__ import annotations
 import logging
 import os
 import re
-from dataclasses import dataclass
 from dataclasses import field
 from datetime import datetime
 from pathlib import Path
+from typing import NamedTuple
 
 import pyzet.constants as C
 
 
-@dataclass
-class Zettel:
+class Zettel(NamedTuple):
     title: str
     id_: str
-    timestamp: datetime | None = None
     tags: list[str] = field(default_factory=list)
-
-    def __post_init__(self) -> None:
-        if not self.timestamp:
-            self.timestamp = _get_timestamp(self.id_)
 
 
 def get_zettels(path: Path, is_reversed: bool = False) -> list[Zettel]:
@@ -49,14 +43,13 @@ def get_zettels(path: Path, is_reversed: bool = False) -> list[Zettel]:
 
 
 def get_zettel(path: Path) -> Zettel:
-    timestamp = _get_timestamp(path.name)
     title_line, tags_line = _get_first_and_last_line(
         Path(path, C.ZETTEL_FILENAME)
     )
     title = get_markdown_title(title_line.strip(), path.name)
     tags = get_tags(tags_line.strip()) if tags_line.startswith(4 * ' ') else []
     logging.debug(f"get_zettel: '{path.name}' with title '{title}'")
-    return Zettel(title=title, id_=path.name, timestamp=timestamp, tags=tags)
+    return Zettel(title=title, id_=path.name, tags=tags)
 
 
 def _get_first_and_last_line(path: Path) -> tuple[str, str]:
@@ -80,7 +73,7 @@ def _get_first_and_last_line(path: Path) -> tuple[str, str]:
     return title_line, tags_line
 
 
-def _get_timestamp(id_: str) -> datetime:
+def get_timestamp(id_: str) -> datetime:
     return datetime.strptime(id_, C.ZULU_DATETIME_FORMAT)
 
 

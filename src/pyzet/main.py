@@ -18,6 +18,7 @@ import yaml
 import pyzet.constants as C
 from pyzet import utils
 from pyzet.sample_config import sample_config
+from pyzet.zettel import get_timestamp
 from pyzet.zettel import get_zettel
 from pyzet.zettel import get_zettels
 from pyzet.zettel import Zettel
@@ -449,7 +450,7 @@ def list_zettels(
 
 def _get_zettel_repr(zettel: Zettel, is_pretty: bool, is_link: bool) -> str:
     if is_pretty:
-        return f'{zettel.timestamp} -- {zettel.title}'
+        return f'{get_timestamp(zettel.id_)} -- {zettel.title}'
     if is_link:
         return _get_md_relative_link(zettel.id_, zettel.title)
     return f'{zettel.id_} -- {zettel.title}'
