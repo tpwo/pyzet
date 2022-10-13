@@ -596,7 +596,7 @@ def edit_zettel(id_: str, config: Config, editor: str) -> int:
         print('Editing zettel aborted, restoring the version from git...')
         _call_git(config, 'restore', (zettel_path.as_posix(),))
     else:
-        if _check_for_file_changes(zettel_path, config):
+        if _file_was_modified(zettel_path, config):
             _commit_zettel(
                 config,
                 zettel_path,
@@ -613,12 +613,12 @@ def edit_zettel(id_: str, config: Config, editor: str) -> int:
 
 
 def _get_edit_commit_msg(zettel_path: Path, title: str, config: Config) -> str:
-    if _check_for_file_in_git(zettel_path, config):
+    if _was_committed_to_git(zettel_path, config):
         return f'ED: {title}'
     return title
 
 
-def _check_for_file_in_git(filepath: Path, config: Config) -> bool:
+def _was_committed_to_git(filepath: Path, config: Config) -> bool:
     """Returns True if a file was committed to git.
 
     If 'git log' output is empty, the file wasn't committed.
@@ -626,7 +626,7 @@ def _check_for_file_in_git(filepath: Path, config: Config) -> bool:
     return _get_git_output(config, 'log', (filepath.as_posix(),)) != b''
 
 
-def _check_for_file_changes(filepath: Path, config: Config) -> bool:
+def _file_was_modified(filepath: Path, config: Config) -> bool:
     """Returns True if a file was modified in a working dir."""
     # Run 'git add' to avoid false negatives, as 'git diff --staged' is
     # used for detection. This is important when there are external
