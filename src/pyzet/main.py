@@ -457,8 +457,9 @@ def _get_zettel_repr(zettel: Zettel, is_pretty: bool, is_link: bool) -> str:
 
 def list_tags(path: Path, is_reversed: bool) -> int:
     zettels = get_zettels(Path(path, C.ZETDIR))
-    all_tags = itertools.chain(*[t for t in [z.tags for z in zettels]])
-
+    all_tags = itertools.chain.from_iterable(
+        t for t in (z.tags for z in zettels)
+    )
     # Chain is reverse sorted for the correct alphabetical displaying of
     # tag counts. This is because Counter's most_common() method
     # remembers the insertion order.
@@ -467,7 +468,7 @@ def list_tags(path: Path, is_reversed: bool) -> int:
     target = (
         tags.most_common() if is_reversed else reversed(tags.most_common())
     )
-    [print(f'{occurrences}\t#{tag}') for tag, occurrences in target]
+    print(*(f'{occurrences}\t#{tag}' for tag, occurrences in target), sep='\n')
     return 0
 
 
