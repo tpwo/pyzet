@@ -11,8 +11,8 @@ from argparse import Namespace
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
+from typing import NamedTuple
 
-import attrs
 import yaml
 
 import pyzet.constants as C
@@ -24,8 +24,7 @@ from pyzet.zettel import get_zettels
 from pyzet.zettel import Zettel
 
 
-@attrs.frozen
-class Config:
+class Config(NamedTuple):
     repo: Path
     editor: str
     git: str
@@ -263,7 +262,7 @@ def _get_config(args: Namespace) -> Config:
     # if we initialize repo, the folder may not exist
     if args.command == 'init':
         if args.path:
-            return attrs.evolve(config, repo=Path(args.path))
+            return config._replace(repo=Path(args.path))
         return config
     if not config.repo.is_dir():
         raise SystemExit(
