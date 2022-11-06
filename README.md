@@ -30,7 +30,7 @@ for more details):
 
     pip install git+https://github.com/wojdatto/pyzet
 
-> ⚠️\
+> **Warning**\
 > `pyzet` is a work in progress, so you may encounter difficulties and
 > annoyances while using it. If you have any problem, question, or
 > suggestion, feel free to create an issue on GitHub. We have many ideas
