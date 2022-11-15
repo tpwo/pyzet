@@ -18,6 +18,8 @@ repos:
     -   id: debug-statements
     -   id: name-tests-test
     -   id: requirements-txt-fixer
+    -   id: file-contents-sorter
+        files: \.gitignore
 -   repo: https://github.com/asottile/pyupgrade
     rev: v3.3.1
     hooks:

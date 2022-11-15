@@ -1,12 +1,12 @@
-__pycache__/
+*.egg-info/
+*.pyc
 .coverage
 .idea/
 .tox
 .vscode/
-*.pyc
+__pycache__/
 build/
 coverage.xml
 dist/
 htmlcov/
-src/*.egg-info/
 venv/
