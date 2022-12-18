@@ -123,7 +123,7 @@ something else, you can add another line to the config file:
 
     editor: <path-to-your-editor>
 
-However, not every editor might work seamlessly with pyzet. In the [main
+Not every editor might work seamlessly with pyzet. In the [main
 readme](https://github.com/wojdatto/pyzet#supported-editors) you can see
 a list of editors with some comments about their compatibility.
 
@@ -243,8 +243,8 @@ need to provide an ID to edit an older zettel.
 ## Rage quit option
 
 If you ever mess up during the editing of your zettel or you would like
-to cancel adding of the new zettel, there is always a way to withdraw --
-just remove *everything* from a zettel. This aborts the adding/editing
+to cancel adding of the new zettel, there is always a way to withdraw:
+remove *everything* from a zettel. This aborts the adding/editing
 process making no actual changes on the drive, and in the Git repo.
 
 ## Tags
@@ -288,10 +288,10 @@ rebase commits that happened later).
 ## More interaction with Git repo
 
 Pyzet ships with a few commands that make it easier to interact with a
-Git repo. However, the work is always done by Git executable itself --
-pyzet just calls it with the correct parameters.
+Git repo. The work is always done by Git executable itself -- pyzet
+calls it with the correct parameters.
 
-The simplest command is `pyzet status` -- it just runs `git status` in
+The simplest command is `pyzet status` -- it runs `git status` in
 your ZK repo:
 
     $ pyzet status
@@ -359,7 +359,7 @@ the following **won't work**:
 Overall, Git integration is very simple, because pyzet don't want to
 complicate Git-related stuff more than it's needed. We think that one
 branch is enough, and for more sophisticated Git-related work you can
-just `cd ~/zet`, and run Git commands directly.
+`cd ~/zet`, and run Git commands directly.
 
 Below, there is also a description of `pyzet grep` command which is the
 last one directly interacting with Git.
@@ -373,8 +373,8 @@ flags.
 Unlike `pyzet remote|status|push|pull`, this command offers some
 additional options, and you can check them out with `pyzet grep --help`.
 
-Of course, you can still pass custom options directly to `git grep` with
-`--`, as it was described earlier.
+You can still pass custom options directly to `git grep` with `--`, as
+it was described earlier.
 
 Also, remember that `pyzet grep` will by default look only in files that
 are already tracked by Git.
@@ -490,7 +490,7 @@ And now, list the zettels:
     WARNING: empty zet folder '20220126232605' detected
     ERROR: there are no zettels at given repo.
 
-Now you can just run `pyzet clean --force` to get rid of this warning.
+Now you can run `pyzet clean --force` to get rid of this warning.
 
 ## Summary
 

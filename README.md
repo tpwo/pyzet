@@ -108,9 +108,9 @@ options:
 ## Configuration
 
 The basic configuration of pyzet is set via YAML file which should be
-placed at `~/.config/pyzet/pyzet.yaml`. However, there is a `--config`
-flag that can be used to point to a custom config file using relative or
-global path.
+placed at `~/.config/pyzet/pyzet.yaml`. There is a `--config` flag that
+can be used to point to a custom config file using relative or global
+path.
 
 Config file contains a set of possible fields of which only `repo` is
 required to be set. The remaining ones will use default values if they
@@ -247,10 +247,10 @@ For running tests more easily, you might also want to install `tox`:
 
 Pyzet uses pytest and tox to run automatic tests. Use `pytest` command
 to test against the current Python version, or use `tox` to test against
-all supported Python versions (you, of course, have to install them
-first). Tox will also allow you to easily measure test coverage along
-with generating a coverage report. [Pre-commit](https://pre-commit.com/)
-is also configured as one of tox's envs, but it can be run independently
+all supported Python versions (you have to install them first). Tox will
+also allow you to easily measure test coverage along with generating
+a coverage report. [Pre-commit](https://pre-commit.com/) is also
+configured as one of tox's envs, but it can be run independently
 depending on your preference.
 
 Automatic test coverage is good, but still not ideal at this point, and
@@ -374,11 +374,11 @@ Refs:
 ```
 
 ZettelMark doesn't specify a keyword for a reference block, but we like
-`Refs` as it plays nice with `Tags` that will be described next.
-However, at this point, it's all up to the user preference.
+`Refs` as it plays nice with `Tags` that will be described next.  At
+this point, it's all up to the user preference.
 
-If there is no URL description, an URL should be simply placed with a
-single space between it and `*`.
+If there is no URL description, an URL should be placed with a single
+space between it and `*`.
 
 If an URL have a description, it should go first. A Markdown syntax for
 a hard line break (`\`) is used at the end of the description for a
@@ -442,8 +442,8 @@ popular in Windows world.
 There are different ways to guarantee that file ending is correct, and
 one of them is using pre-commit with `end-of-file-fixer` hook that
 [comes by default](https://github.com/pre-commit/pre-commit-hooks) with
-that tool. It's very easy to setup pre-commit with ZK Git repository, so
-we recommend it.
+that tool. It's very simple to setup pre-commit with ZK Git repository,
+so we recommend it.
 
 ## Inspiration and further reading
 
