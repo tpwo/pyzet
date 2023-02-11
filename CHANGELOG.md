@@ -8,6 +8,11 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+* Auto-squash commits after multiple edits to the same zettel in a row
+  (#51)
+
 ### Changed
 
 * Include `-v` flag in `pyzet remote` by default (#48).

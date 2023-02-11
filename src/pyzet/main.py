@@ -597,15 +597,32 @@ def edit_zettel(id_: str, config: Config, editor: str) -> int:
         _call_git(config, 'restore', (zettel_path.as_posix(),))
     else:
         if _file_was_modified(zettel_path, config):
-            _commit_zettel(
-                config,
-                zettel_path,
-                _get_edit_commit_msg(zettel_path, zettel.title, config),
-            )
-            print(f'{id_} was edited')
+            output = _get_files_touched_last_commit(config).decode('utf-8')
+            if output == f'{C.ZETDIR}/{id_}/{C.ZETTEL_FILENAME}\n':
+                # If we touch the same zettel as in the last commit,
+                # than we automatically squash the new changes with the
+                # last commit, so the Git history can be simplified.
+                _call_git(config, 'add', (zettel_path.as_posix(),))
+                _call_git(config, 'commit', ('--amend', '--no-edit'))
+                print(
+                    f'{id_} was edited and auto-squashed with the last commit'
+                    '\nForce push might be required'
+                )
+            else:
+                _commit_zettel(
+                    config,
+                    zettel_path,
+                    _get_edit_commit_msg(zettel_path, zettel.title, config),
+                )
+                print(f'{id_} was edited')
         else:
             print(f"{id_} wasn't modified")
     return 0
+
+
+def _get_files_touched_last_commit(config: Config) -> bytes:
+    """Returns Git output listing files touched in the last commit."""
+    return _get_git_output(config, 'diff', ('--name-only', 'HEAD', 'HEAD^'))
 
 
 def _get_edit_commit_msg(zettel_path: Path, title: str, config: Config) -> str:
