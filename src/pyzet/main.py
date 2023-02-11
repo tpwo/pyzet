@@ -602,12 +602,8 @@ def edit_zettel(id_: str, config: Config, editor: str) -> int:
                 zettel_path,
                 _get_edit_commit_msg(zettel_path, zettel.title, config),
             )
-            logging.info(f"edit: zettel modified '{zettel_path.absolute()}'")
             print(f'{id_} was edited')
         else:
-            logging.info(
-                f"edit: zettel not modified '{zettel_path.absolute()}'"
-            )
             print(f"{id_} wasn't modified")
     return 0
 
