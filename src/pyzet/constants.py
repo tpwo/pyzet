@@ -1,12 +1,8 @@
 import sys
+from importlib import metadata
 from pathlib import Path
 
-if sys.version_info < (3, 8):  # pragma: no cover (<PY38)
-    import importlib_metadata
-else:  # pragma: no cover (PY38+)
-    import importlib.metadata as importlib_metadata
-
-VERSION = importlib_metadata.version('pyzet')
+VERSION = metadata.version('pyzet')
 
 CONFIG_FILE = 'pyzet.yaml'
 DEFAULT_CFG_LOCATION = Path(Path.home(), '.config', 'pyzet', CONFIG_FILE)

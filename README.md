@@ -14,7 +14,7 @@ management using the Zettelkasten approach with Git repos.
 
 Prerequisites:
 
-* Python 3.7+
+* Python 3.8+
 * Git 2.25+ (but older also should be fine)
 
 Linux, macOS, and Windows are supported.
