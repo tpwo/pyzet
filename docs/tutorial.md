@@ -88,8 +88,8 @@ Tags:
 ```
 
 You can see that we used a special syntax to add a link. You can read
-more about it in the [formatting guidelines](
-https://github.com/wojdatto/pyzet/blob/main/docs/zettel-formatting.md#references),
+more about it in the [formatting
+guidelines](https://github.com/wojdatto/pyzet/blob/main/docs/zettel-formatting.md#references),
 but note that at this point it's only a convention.
 
 Save the file and exit from your editor. You should see a similar
