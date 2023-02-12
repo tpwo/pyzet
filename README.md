@@ -155,56 +155,10 @@ used, the setting from YAML is ignored.
 
 ## Supported editors
 
-Pyzet is a CLI application which cooperates with a text editor of
-choice. The best integration can be probably achieved when also using a
-CLI text editor.
-
-But this is not necessary. Currently, pyzet can cooperate with different
-text editors, even these that have a GUI but the integration is not
-ideal.
-
-Below are listed editors that pyzet was tested with. To use a given
-editor, add an `editor` field to your config file.
-
-### Linux
-
-The actual testing was done on Ubuntu WSL2 with these CLI editors, and
-they work fine:
-
-    editor: vim
-    editor: nano
-
-### Windows
-
-On Windows, the following editors seem to work fine:
-
-    editor: vim  # only if running pyzet from Git Bash
-    editor: nano # only if running pyzet from Git Bash
-    editor: C:/Program Files/Git/usr/bin/vim.exe
-    editor: C:/Program Files/Git/usr/bin/nano.exe
-    editor: C:/Program Files/Windows NT/Accessories/wordpad.exe
-    editor: notepad.exe
-
-#### Partial compatibility
-
-##### Notepad++
-
-Closing a tab is not enough, you have to close the whole program to save
-a zettel.
-
-    editor: C:/Program Files/Notepad++/notepad++.exe
-
-##### VS Code
-
-Issues with adding a zettel. If zettel file already exists, then it
-seems to work similarly to Notepad++ (you have to close the whole
-program to save a zettel):
-
-    editor: C:/Program Files/Microsoft VS Code/Code.exe
-
-### macOS
-
-Not yet tested. CLI editors known from Linux should work fine.
+Pyzet launches editor you defined in the config file with just
+a positional argument of the zettel filename. It works fine with any
+editor that doesn't require additional parameters to start (e.g., vim or
+nano).
 
 ## Manual installation
 
