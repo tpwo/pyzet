@@ -18,9 +18,9 @@ from pyzet import utils
 from pyzet.grep import define_grep_cli
 from pyzet.grep import grep
 from pyzet.sample_config import sample_config
-from pyzet.utils import _get_git_output
 from pyzet.utils import call_git
 from pyzet.utils import Config
+from pyzet.utils import get_git_output
 from pyzet.zettel import get_timestamp
 from pyzet.zettel import get_zettel
 from pyzet.zettel import get_zettels
@@ -550,7 +550,7 @@ def edit_zettel(id_: str, config: Config, editor: str) -> int:
 
 def _get_files_touched_last_commit(config: Config) -> bytes:
     """Returns Git output listing files touched in the last commit."""
-    return _get_git_output(config, 'diff', ('--name-only', 'HEAD', 'HEAD^'))
+    return get_git_output(config, 'diff', ('--name-only', 'HEAD', 'HEAD^'))
 
 
 def _get_edit_commit_msg(zettel_path: Path, title: str, config: Config) -> str:
@@ -564,7 +564,7 @@ def _was_committed_to_git(filepath: Path, config: Config) -> bool:
 
     If 'git log' output is empty, the file wasn't committed.
     """
-    return _get_git_output(config, 'log', (filepath.as_posix(),)) != b''
+    return get_git_output(config, 'log', (filepath.as_posix(),)) != b''
 
 
 def _file_was_modified(filepath: Path, config: Config) -> bool:
@@ -574,7 +574,7 @@ def _file_was_modified(filepath: Path, config: Config) -> bool:
     # factors that impact the committing process (like pre-commit).
     call_git(config, 'add', (filepath.as_posix(),))
 
-    git_diff_out = _get_git_output(
+    git_diff_out = get_git_output(
         config, 'diff', ('--staged', filepath.as_posix())
     )
     # If 'git diff' output is empty, the file wasn't modified.
