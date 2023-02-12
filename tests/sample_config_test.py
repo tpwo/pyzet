@@ -4,6 +4,12 @@ from pyzet.main import main
 from pyzet.sample_config import sample_config
 from testing.constants import TEST_CFG
 
+_header = """\
+# See https://github.com/wojdatto/pyzet for more information.
+#
+# Put this file at\
+"""
+
 
 def test_sample_config_unix(capsys):
     main([*TEST_CFG, 'sample-config', 'unix'])
@@ -11,13 +17,7 @@ def test_sample_config_unix(capsys):
 
     # The assertion is split, because there is one line which is
     # generated dynamically.
-    assert out.startswith(
-        """\
-# See https://github.com/wojdatto/pyzet for more information.
-#
-# Put this file at\
-"""
-    )
+    assert out.startswith(_header)
     assert out.endswith(
         """\
 # Below options use global paths, but feel free
@@ -35,13 +35,7 @@ def test_sample_config_windows(capsys):
 
     # The assertion is split, because there is one line which is
     # generated dynamically.
-    assert out.startswith(
-        """\
-# See https://github.com/wojdatto/pyzet for more information.
-#
-# Put this file at\
-"""
-    )
+    assert out.startswith(_header)
     assert out.endswith(
         """\
 # Below options use global paths, but feel free
