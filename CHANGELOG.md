@@ -8,6 +8,8 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.7.0] - 2023-02-12
+
 ### Added
 
 * Auto-squash commits after multiple edits to the same zettel in a row
@@ -113,7 +115,8 @@ Initial release.
 
 <!-- Links -->
 
-[Unreleased]: https://github.com/wojdatto/pyzet/compare/v0.6.0...HEAD
+[Unreleased]: https://github.com/wojdatto/pyzet/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/wojdatto/pyzet/releases/tag/v0.7.0
 [0.6.0]: https://github.com/wojdatto/pyzet/releases/tag/v0.6.0
 [0.5.0]: https://github.com/wojdatto/pyzet/releases/tag/v0.5.0
 [0.4.0]: https://github.com/wojdatto/pyzet/releases/tag/v0.4.0
