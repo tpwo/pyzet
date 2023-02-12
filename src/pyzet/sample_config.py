@@ -1,4 +1,19 @@
+from __future__ import annotations
+
+from argparse import _SubParsersAction
+from argparse import ArgumentParser
+
 import pyzet.constants as C
+
+
+def define_sample_config_cli(
+    subparsers: _SubParsersAction[ArgumentParser],
+) -> None:
+    sample_config_parser = subparsers.add_parser(
+        'sample-config', help=f'produce a sample {C.CONFIG_FILE} file'
+    )
+    sample_config_parser.add_argument('kind', choices=('unix', 'windows'))
+
 
 _header = f"""\
 # See https://github.com/wojdatto/pyzet for more information.

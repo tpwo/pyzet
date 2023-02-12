@@ -17,6 +17,7 @@ import pyzet.constants as C
 from pyzet import utils
 from pyzet.grep import define_grep_cli
 from pyzet.grep import grep
+from pyzet.sample_config import define_sample_config_cli
 from pyzet.sample_config import sample_config
 from pyzet.utils import call_git
 from pyzet.utils import Config
@@ -182,10 +183,7 @@ def _get_parser() -> ArgumentParser:
     )
     _add_git_cmd_options(remote_parser, 'remote')
 
-    sample_config_parser = subparsers.add_parser(
-        'sample-config', help=f'produce a sample {C.CONFIG_FILE} file'
-    )
-    sample_config_parser.add_argument('kind', choices=['unix', 'windows'])
+    define_sample_config_cli(subparsers)
 
     return parser
 
