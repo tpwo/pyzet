@@ -8,70 +8,28 @@ Windows, and you don't want to use
 still follow it, but it will be much easier, if you do it using Git Bash
 that comes with Git for Windows. With that, all commands will be very
 similar, and the main difference will be the location of your home
-folder. On Linux, it's by default:
-
-    $ echo $HOME
-    /home/<your-username>
-
-And on Git Bash it will be shown as:
-
-    $ echo $HOME
-    /c/Users/<your-username>
-
-which is very Git Bash specific and won't work if you put it in the
-config file.
-
-Generally, in your config file you can use Windows-like path, but we
-suggest to use forward slashes `/` rather than backslashes `\` or double
-backslashes `\\`, because it wasn't thoroughly tested.
-
-Home directory written with this is mind should look like this:
+folder which is:
 
     C:/Users/<your-username>
 
-## Installation
+Note that we're using forward slashes `/` and not backslashes `\`.
+Please do the same in your config file, regardless of your platform.
 
-If you haven't already, install pyzet using one of the methods described
-in the [main readme](https://github.com/wojdatto/pyzet#installation),
-e.g.:
+## Installation and initial configuration
 
-    pip install pyzet
-
-Now, run `pyzet` command to see if it is installed correctly. You should
-see a usage hint:
+Install pyzet, as it's described in the [main
+readme](https://github.com/wojdatto/pyzet#installation). Run `pyzet`
+command to see if it is installed correctly. You should see a usage
+hint:
 
     $ pyzet
     usage: pyzet [-h] <here will a list of flags and available commands>
 
-For more detailed information, you can always use `--help` flag: `pyzet
+For more detailed information, you can always use `-h/--help` flag: `pyzet
 -h`.
 
-## Initial configuration
-
-Let's start by initializing our Zettelkasten repository:
-
-    $ pyzet init
-    ERROR: config file at '/home/<your-username>/.config/pyzet/pyzet.yaml' not found.
-    Add it or use '--config' flag.
-
-Whoops! If you saw a similar error, it means that you haven't used the
-quick start commands provided in the [main
-readme](https://github.com/wojdatto/pyzet#quick-start). Otherwise,
-please feel free to skip to the next section.
-
-We have to create a config file at `~/.config/pyzet/pyzet.yaml`.
-
-Let's create the simplest config file possible that will contain only a
-single line:
-
-    repo: ~/zet
-
-You should be able to quickly do it with these two commands:
-
-    mkdir -p ~/.config/pyzet
-    echo 'repo: ~/zet' > ~/.config/pyzet/pyzet.yaml
-
-Now, the command from above should work:
+Now, create a config file as described in the main readme, so you can
+initialize your ZK repo
 
     $ pyzet init
     Initialized empty Git repository in /home/<your-username>/zet/.git/
