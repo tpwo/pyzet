@@ -34,51 +34,28 @@ You can read the more detailed tutorial
 
 ## Configuration
 
-The basic configuration of pyzet is set via YAML file which should be
-placed at `~/.config/pyzet/pyzet.yaml`. There is a `--config` flag that
-can be used to point to a custom config file using relative or global
-path.
+A config file should be placed inside `~/.config/pyzet/pyzet.yaml`, and
+looks like this:
 
-Config file contains a set of possible fields of which only `repo` is
-required to be set. The remaining ones will use default values if they
-are not set in the config file.
+```yaml
+repo: ~/zet
+editor: /usr/bin/vim
+git: /usr/bin/git
+```
 
-### Default config values
+* `repo`: the location of the ZK Git repo
 
-On Linux (or actually: "not Windows", so it will trigger also on Mac)
-they will be compatible with Ubuntu and possibly some other distros:
+* `editor` (default: `/usr/bin/vim`): path to the editor used to add and
+  edit zettels
 
-    editor: /usr/bin/vim
-    git: /usr/bin/git
-
-On Windows the executables installed with Git for Windows are used as
-default options:
-
-    editor: C:/Program Files/Git/usr/bin/vim.exe
-    git: C:/Program Files/Git/cmd/git.exe
-
-Forward slashes `/` can be used even on Windows. Backslashes `\` or
-double backslashes `\\` should also work, but it wasn't thoroughly
-tested.
-
-Also, remember that paths cannot include env variables, but you can use
-`~` to point to your `$HOME` directory.
-
-An example correct config file:
-
-    repo: ~/zet
-    editor: /usr/bin/vim
-    git: /usr/bin/git
-
-You can always display a sample config using `pyzet sample-config`
-command.
+* `git` (default `/usr/bin/git`): path to the Git binary
 
 ### Support for multiple ZK repos
 
 You can have multiple repos, and only a single config file, because
 there is `--repo` flag that you can always set to point to a custom repo
 (and possibly, create an alias that includes it). If `--repo` flag is
-used, the setting from YAML is ignored.
+used, the value from YAML is ignored.
 
 ## Supported editors
 
