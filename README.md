@@ -160,28 +160,6 @@ a positional argument of the zettel filename. It works fine with any
 editor that doesn't require additional parameters to start (e.g., vim or
 nano).
 
-## Manual installation
-
-Manual installation is also possible. Clone the repo and run the install
-command. Using virtual environment is advised.
-
-    git clone https://github.com/wojdatto/pyzet
-    cd pyzet
-
-Linux:
-
-    python3 -m venv venv
-    . venv/bin/activate
-    pip install .
-    pyzet --help
-
-Windows:
-
-    python -m venv venv
-    .\venv\Scripts\activate
-    pip install .
-    pyzet --help
-
 ## Contributing
 
 ### Development installation
