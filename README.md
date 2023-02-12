@@ -2,8 +2,6 @@
 
 [![Tests](https://github.com/wojdatto/pyzet/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/wojdatto/pyzet/actions/workflows/tests.yml)
 
----
-
 > "I, of course, do not think everything by myself. It happens mainly
 > within the Zettelkasten".
 
@@ -175,56 +173,10 @@ For running tests more easily, you might also want to install `tox`:
 
     pip install tox
 
-### Running automatic tests
+Then you can easily run:
 
-Pyzet uses pytest and tox to run automatic tests. Use `pytest` command
-to test against the current Python version, or use `tox` to test against
-all supported Python versions (you have to install them first). Tox will
-also allow you to easily measure test coverage along with generating
-a coverage report. [Pre-commit](https://pre-commit.com/) is also
-configured as one of tox's envs, but it can be run independently
-depending on your preference.
-
-Automatic test coverage is good, but still not ideal at this point, and
-some commands are only tested manually. This is especially true in case
-of commands that require a user input.
-
-Most tests directly use pyzet CLI to run various commands, and then
-their output is compared against expected values. `--config` flag comes
-in handy there, as it allows to point to different test configs located
-inside `testing` folder.
-
-### GitHub Actions
-
-Continuous integration with GitHub Actions is configured for the `main`
-branch, `test-me-<any-name>` branches, and for each branch with an
-active pull request.
-
-There are two checks:
-
-* `tox` running tests against each supported Python version
-
-* `pre-commit` running with hooks defined in the [config
-  file](https://github.com/wojdatto/pyzet/blob/main/.pre-commit-config.yaml)
-
-## Performance
-
-From real world testing, performance of `pyzet` doesn't seem to be a big
-issue at this moment.
-
-E.g. `pyzet list` (probably the slowest command) takes ~150 ms in repo
-with 500 zettels.
-
-Generally, we focus on using other performant utilities like `git grep`
-to do the hard work, and Python is performing a role of a handy
-interface.
-
-### Windows users
-
-A significant performance boost can be achieved after moving to
-[WSL2](https://docs.microsoft.com/en-us/windows/wsl/install). You have
-to run `pyzet` using Python interpreter from Linux, and your zet repo
-needs to be placed on the Linux partition.
+    tox -e coverage    # pytest with test coverage
+    tox -e pre-commit  # run pre-commit checks on all files
 
 ## Zettel formatting rules and guidelines
 
