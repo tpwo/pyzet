@@ -18,8 +18,8 @@ from pyzet import utils
 from pyzet.grep import define_grep_cli
 from pyzet.grep import grep
 from pyzet.sample_config import sample_config
-from pyzet.utils import _call_git
 from pyzet.utils import _get_git_output
+from pyzet.utils import call_git
 from pyzet.utils import Config
 from pyzet.zettel import get_timestamp
 from pyzet.zettel import get_zettel
@@ -335,16 +335,16 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
         return grep(args, config)
 
     if args.command in {'status', 'push'}:
-        return _call_git(config, args.command, args.options)
+        return call_git(config, args.command, args.options)
 
     if args.command == 'remote':
-        return _call_git(config, 'remote', ('-v', *args.options))
+        return call_git(config, 'remote', ('-v', *args.options))
 
     if args.command == 'pull':
         # --rebase is used to maintain a linear history without merges,
         # as this seems to be a reasonable approach in ZK repo that is
         # usually personal.
-        return _call_git(config, 'pull', ('--rebase',))
+        return call_git(config, 'pull', ('--rebase',))
 
     if args.command == 'clean':
         return clean_zet_repo(
@@ -455,7 +455,7 @@ def init_repo(config: Config, branch_name: str) -> int:
     # we'd like to have a nice error message in such case.
     _create_empty_folder(config.repo)
     _create_empty_folder(Path(config.repo, C.ZETDIR))
-    _call_git(config, 'init', ('--initial-branch', branch_name))
+    call_git(config, 'init', ('--initial-branch', branch_name))
     logging.info(f"init: create git repo '{config.repo.absolute()}'")
     return 0
 
@@ -522,7 +522,7 @@ def edit_zettel(id_: str, config: Config, editor: str) -> int:
             f"edit: zettel modification aborted '{zettel_path.absolute()}'"
         )
         print('Editing zettel aborted, restoring the version from git...')
-        _call_git(config, 'restore', (zettel_path.as_posix(),))
+        call_git(config, 'restore', (zettel_path.as_posix(),))
     else:
         if _file_was_modified(zettel_path, config):
             output = _get_files_touched_last_commit(config).decode('utf-8')
@@ -530,8 +530,8 @@ def edit_zettel(id_: str, config: Config, editor: str) -> int:
                 # If we touch the same zettel as in the last commit,
                 # than we automatically squash the new changes with the
                 # last commit, so the Git history can be simplified.
-                _call_git(config, 'add', (zettel_path.as_posix(),))
-                _call_git(config, 'commit', ('--amend', '--no-edit'))
+                call_git(config, 'add', (zettel_path.as_posix(),))
+                call_git(config, 'commit', ('--amend', '--no-edit'))
                 print(
                     f'{id_} was edited and auto-squashed with the last commit'
                     '\nForce push might be required'
@@ -572,7 +572,7 @@ def _file_was_modified(filepath: Path, config: Config) -> bool:
     # Run 'git add' to avoid false negatives, as 'git diff --staged' is
     # used for detection. This is important when there are external
     # factors that impact the committing process (like pre-commit).
-    _call_git(config, 'add', (filepath.as_posix(),))
+    call_git(config, 'add', (filepath.as_posix(),))
 
     git_diff_out = _get_git_output(
         config, 'diff', ('--staged', filepath.as_posix())
@@ -625,8 +625,8 @@ def remove_zettel(id_: str, config: Config) -> int:
 
 
 def _commit_zettel(config: Config, zettel_path: Path, message: str) -> None:
-    _call_git(config, 'add', (zettel_path.as_posix(),))
-    _call_git(config, 'commit', ('-m', message))
+    call_git(config, 'add', (zettel_path.as_posix(),))
+    call_git(config, 'commit', ('-m', message))
     logging.info(
         f"_commit_zettel: committed '{zettel_path.absolute()}'"
         " with message '{message}'"

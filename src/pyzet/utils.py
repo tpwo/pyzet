@@ -16,7 +16,7 @@ class Config(NamedTuple):
     git: str
 
 
-def _call_git(
+def call_git(
     config: Config,
     command: str,
     options: tuple[str, ...] | None = None,
@@ -27,7 +27,7 @@ def _call_git(
     if path is None:
         path = config.repo
     cmd = [_get_git_cmd(config.git), '-C', path.as_posix(), command, *options]
-    logging.debug(f'_call_git: subprocess.run({cmd})')
+    logging.debug(f'call_git: subprocess.run({cmd})')
     subprocess.run(cmd)
     return 0
 

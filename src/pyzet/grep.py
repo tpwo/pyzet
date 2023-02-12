@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any
 
 import pyzet.constants as C
-from pyzet.utils import _call_git
+from pyzet.utils import call_git
 from pyzet.utils import Config
 
 
@@ -45,7 +45,7 @@ def grep(args: Namespace, config: Config) -> int:
     )
     patterns = _parse_grep_patterns(args.patterns)
     grep_opts.extend(patterns)
-    return _call_git(
+    return call_git(
         config,
         'grep',
         tuple(grep_opts),
