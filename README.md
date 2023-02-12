@@ -30,7 +30,7 @@ folders):
 Run `pyzet init` to create Git repo.
 
 You can read the more detailed tutorial
-[here](https://github.com/wojdatto/pyzet/tree/main/docs).
+[here](https://github.com/wojdatto/pyzet/blob/main/docs/tutorial.md).
 
 ## Configuration
 
