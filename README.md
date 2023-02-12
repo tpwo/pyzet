@@ -40,15 +40,12 @@ looks like this:
 ```yaml
 repo: ~/zet
 editor: /usr/bin/vim
-git: /usr/bin/git
 ```
 
 * `repo`: the location of the ZK Git repo
 
 * `editor` (default: `/usr/bin/vim`): path to the editor used to add and
   edit zettels
-
-* `git` (default `/usr/bin/git`): path to the Git binary
 
 ### Support for multiple ZK repos
 

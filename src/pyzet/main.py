@@ -266,7 +266,6 @@ def process_yaml(
     return Config(
         repo=repo,
         editor=_get_config_option(yaml_cfg, 'editor', C.VIM_PATH),
-        git=_get_config_option(yaml_cfg, 'git', C.GIT_PATH),
     )
 
 

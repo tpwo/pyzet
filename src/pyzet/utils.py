@@ -13,7 +13,6 @@ from typing import NamedTuple
 class Config(NamedTuple):
     repo: Path
     editor: str
-    git: str
 
 
 def call_git(
@@ -26,7 +25,7 @@ def call_git(
         options = tuple()
     if path is None:
         path = config.repo
-    cmd = [_get_git_cmd(config.git), '-C', path.as_posix(), command, *options]
+    cmd = [_get_git_bin(), '-C', path.as_posix(), command, *options]
     logging.debug(f'call_git: subprocess.run({cmd})')
     subprocess.run(cmd)
     return 0
@@ -36,17 +35,17 @@ def get_git_output(
     config: Config, command: str, options: tuple[str, ...]
 ) -> bytes:
     repo = config.repo.as_posix()
-    cmd = [_get_git_cmd(config.git), '-C', repo, command, *options]
+    cmd = [_get_git_bin(), '-C', repo, command, *options]
     logging.debug(f'get_git_output: subprocess.run({cmd})')
     return subprocess.run(cmd, capture_output=True, check=True).stdout
 
 
 @functools.lru_cache(maxsize=1)
-def _get_git_cmd(git_path: str) -> str:
-    git = Path(git_path).expanduser().as_posix()
-    if shutil.which(git) is None:
+def _get_git_bin() -> str:
+    git = shutil.which('git')
+    if git is None:
         raise SystemExit(f"ERROR: '{git}' cannot be found.")
-    logging.debug(f"_get_git_cmd: found at '{git}'")
+    logging.debug(f"_get_git_bin: found at '{git}'")
     return git
 
 

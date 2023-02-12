@@ -17,6 +17,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 * Include `-v` flag in `pyzet remote` by default (#48).
 
+### Removed
+
+* Get rid of `git` config field, and just use Git from PATH (#53).
+
 ## [0.6.0] - 2022-04-18
 
 ### Added

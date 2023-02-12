@@ -51,24 +51,6 @@ you can easily point to it with this command:
 
     pyzet remote add origin https://some-git-hosting/your-username/zet
 
-Its equivalent is going directly to `~/zet` folder and executing `git
-remote add...` command.
-
-If the above command doesn't work for you, your Git executable is
-probably installed in some non-default location for your system. Example
-error in such situation:
-
-    ERROR: '/usr/bin/git' cannot be found.
-
-To tell pyzet where to look, you need to add another line to the config
-file:
-
-    git: <path-to-your-git-executable>
-
-If your Git executable in on `PATH`, the following should work for you:
-
-    git: git
-
 Pyzet comes with a few more commands that allow for easier interaction
 with Git, and they will be discussed later in this tutorial.
 
