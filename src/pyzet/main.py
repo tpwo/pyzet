@@ -426,7 +426,7 @@ def show_zettel_as_md_link(id_: str, repo_path: Path) -> int:
 def _get_md_relative_link(id_: str, title: str) -> str:
     """Returns a representation of a zettel that is a relative Markdown link.
 
-    Asterix at the beginning is a Markdown syntax for an unordered list,
+    Asterisk at the beginning is a Markdown syntax for an unordered list,
     as links to zettels are usually just used in references section of a
     zettel.
     """
