@@ -265,22 +265,8 @@ def process_yaml(
             )
     return Config(
         repo=repo,
-        editor=_get_config_option(yaml_cfg, 'editor', C.VIM_PATH),
+        editor=yaml_cfg.get('editor', C.VIM_PATH),
     )
-
-
-def _get_config_option(
-    yaml_cfg: dict[str, str], option: str, default: str
-) -> str:
-    if yaml_cfg.get(option):
-        value = yaml_cfg[option]
-        logging.debug(f"_get_config_option: {option} '{value}' found in YAML")
-        return value
-    else:
-        logging.debug(
-            f"_get_config_option: using default {option} '{default}'"
-        )
-        return default
 
 
 def _parse_args_with_id(
