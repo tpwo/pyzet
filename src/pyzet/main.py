@@ -74,7 +74,7 @@ def _get_parser() -> ArgumentParser:
     init_parser.add_argument(
         'path',
         nargs='?',
-        help="repo path, by default '~/zet';"
+        help='use a different dir than specified in the config file;'
         ' if target dir exists, it must be empty',
     )
     init_parser.add_argument(
