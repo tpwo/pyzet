@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import argparse
-import functools
 import itertools
 import logging
 import shutil
@@ -11,23 +10,21 @@ from argparse import Namespace
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
-from typing import NamedTuple
 
 import yaml
 
 import pyzet.constants as C
 from pyzet import utils
+from pyzet.grep import define_grep_cli
+from pyzet.grep import grep
 from pyzet.sample_config import sample_config
+from pyzet.utils import _call_git
+from pyzet.utils import _get_git_output
+from pyzet.utils import Config
 from pyzet.zettel import get_timestamp
 from pyzet.zettel import get_zettel
 from pyzet.zettel import get_zettels
 from pyzet.zettel import Zettel
-
-
-class Config(NamedTuple):
-    repo: Path
-    editor: str
-    git: str
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -166,32 +163,7 @@ def _get_parser() -> ArgumentParser:
         help='force, use it to actually delete anything',
     )
 
-    grep_parser = subparsers.add_parser(
-        'grep', help="run 'git grep' with some handy flags in ZK repo"
-    )
-    grep_parser.add_argument(
-        '-i',
-        '--ignore-case',
-        action='store_true',
-        help='case insensitive matching',
-    )
-    grep_parser.add_argument(
-        '-t',
-        '--title',
-        action='store_true',
-        help='add zettel title to matching lines',
-    )
-    grep_parser.add_argument(
-        '-n',
-        '--line-number',
-        action='store_true',
-        help='prefix the line number to matching lines',
-    )
-    grep_parser.add_argument(
-        'patterns',
-        nargs='+',
-        help="grep patterns, pass 'git grep' options after '--'",
-    )
+    define_grep_cli(subparsers)
 
     status_parser = subparsers.add_parser(
         'status', help="run 'git status' in ZK repo"
@@ -360,17 +332,7 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
         return list_tags(config.repo, is_reversed=args.reverse)
 
     if args.command == 'grep':
-        grep_opts = _build_grep_options(
-            args.ignore_case, args.line_number, args.title
-        )
-        patterns = _parse_grep_patterns(args.patterns)
-        grep_opts.extend(patterns)
-        return _call_git(
-            config,
-            'grep',
-            tuple(grep_opts),
-            path=Path(config.repo, C.ZETDIR),
-        )
+        return grep(args, config)
 
     if args.command in {'status', 'push'}:
         return _call_git(config, args.command, args.options)
@@ -390,40 +352,6 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
         )
 
     raise NotImplementedError
-
-
-def _build_grep_options(
-    ignore_case: bool, line_number: bool, title: bool
-) -> list[str]:
-    opts = ['-I', '--heading', '--break', '--all-match']
-    if ignore_case:
-        opts.append('--ignore-case')
-    if line_number:
-        opts.append('--line-number')
-    if title:
-        zettel_title_pattern = r'^#\s.*'
-        opts.extend(_add_git_grep_pattern(zettel_title_pattern))
-    return opts
-
-
-def _parse_grep_patterns(patterns: list[str]) -> list[str]:
-    opts = []
-    for idx, pat in enumerate(patterns):
-        if pat.startswith('-'):
-            # Flags started appearing, so there is no more patterns
-            opts.extend(patterns[idx:])
-            break
-        opts.extend(_add_git_grep_pattern(pat))
-    return opts
-
-
-def _add_git_grep_pattern(pattern: str) -> tuple[str, str, str]:
-    """Uses 'git grep' syntax for including multiple patterns.
-
-    This approach works only with --all-match, i.e. only a file that
-    includes all of patterns will be matched.
-    """
-    return '--or', '-e', pattern
 
 
 def _validate_id(id_: str, command: str, config: Config) -> None:
@@ -703,37 +631,3 @@ def _commit_zettel(config: Config, zettel_path: Path, message: str) -> None:
         f"_commit_zettel: committed '{zettel_path.absolute()}'"
         " with message '{message}'"
     )
-
-
-def _call_git(
-    config: Config,
-    command: str,
-    options: tuple[str, ...] | None = None,
-    path: Path | None = None,
-) -> int:
-    if options is None:
-        options = tuple()
-    if path is None:
-        path = config.repo
-    cmd = [_get_git_cmd(config.git), '-C', path.as_posix(), command, *options]
-    logging.debug(f'_call_git: subprocess.run({cmd})')
-    subprocess.run(cmd)
-    return 0
-
-
-def _get_git_output(
-    config: Config, command: str, options: tuple[str, ...]
-) -> bytes:
-    repo = config.repo.as_posix()
-    cmd = [_get_git_cmd(config.git), '-C', repo, command, *options]
-    logging.debug(f'_get_git_output: subprocess.run({cmd})')
-    return subprocess.run(cmd, capture_output=True, check=True).stdout
-
-
-@functools.lru_cache(maxsize=1)
-def _get_git_cmd(git_path: str) -> str:
-    git = Path(git_path).expanduser().as_posix()
-    if shutil.which(git) is None:
-        raise SystemExit(f"ERROR: '{git}' cannot be found.")
-    logging.debug(f"_get_git_cmd: found at '{git}'")
-    return git

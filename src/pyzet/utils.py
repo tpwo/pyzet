@@ -1,6 +1,53 @@
+from __future__ import annotations
+
+import functools
 import io
 import logging
+import shutil
+import subprocess
 import sys
+from pathlib import Path
+from typing import NamedTuple
+
+
+class Config(NamedTuple):
+    repo: Path
+    editor: str
+    git: str
+
+
+def _call_git(
+    config: Config,
+    command: str,
+    options: tuple[str, ...] | None = None,
+    path: Path | None = None,
+) -> int:
+    if options is None:
+        options = tuple()
+    if path is None:
+        path = config.repo
+    cmd = [_get_git_cmd(config.git), '-C', path.as_posix(), command, *options]
+    logging.debug(f'_call_git: subprocess.run({cmd})')
+    subprocess.run(cmd)
+    return 0
+
+
+def _get_git_output(
+    config: Config, command: str, options: tuple[str, ...]
+) -> bytes:
+    repo = config.repo.as_posix()
+    cmd = [_get_git_cmd(config.git), '-C', repo, command, *options]
+    logging.debug(f'_get_git_output: subprocess.run({cmd})')
+    return subprocess.run(cmd, capture_output=True, check=True).stdout
+
+
+@functools.lru_cache(maxsize=1)
+def _get_git_cmd(git_path: str) -> str:
+    git = Path(git_path).expanduser().as_posix()
+    if shutil.which(git) is None:
+        raise SystemExit(f"ERROR: '{git}' cannot be found.")
+    logging.debug(f"_get_git_cmd: found at '{git}'")
+    return git
 
 
 def configure_console_print_utf8() -> None:
