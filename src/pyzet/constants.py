@@ -18,13 +18,6 @@ ZETTEL_WIDTH = 72
 # - no leading or trailing spaces
 MARKDOWN_TITLE = r'^#\s([\S]+.*[\S])$'
 
-# Default paths to Unix utilities installed with Git for Windows.
 vim_win_path = Path('C:/Program Files/Git/usr/bin/vim.exe').as_posix()
-git_win_path = Path('C:/Program Files/Git/cmd/git.exe').as_posix()
-
-# Default paths on Linux (at least on Ubuntu).
 vim_unix_path = Path('/usr/bin/vim').as_posix()
-git_unix_path = Path('/usr/bin/git').as_posix()
-
 VIM_PATH = vim_win_path if sys.platform == 'win32' else vim_unix_path
-GIT_PATH = git_win_path if sys.platform == 'win32' else git_unix_path
