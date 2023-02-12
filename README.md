@@ -15,26 +15,9 @@ Prerequisites:
 * Python 3.8+
 * Git 2.25+ (but older also should be fine)
 
-Unix (Linux/macOS), and Windows are supported.
-
-You can install pyzet with pip:
+Unix and Windows are supported. You can install pyzet with pip:
 
     pip install pyzet
-
-Alternatively, directly from GitHub you can install the newest version
-that may contain some yet unreleased changes (you can inspect
-[changelog](https://github.com/wojdatto/pyzet/blob/main/CHANGELOG.md)
-for more details):
-
-    pip install git+https://github.com/wojdatto/pyzet
-
-> **Warning**\
-> `pyzet` is a work in progress, so you may encounter difficulties and
-> annoyances while using it. If you have any problem, question, or
-> suggestion, feel free to create an issue on GitHub. We have many ideas
-> how to expand pyzet, so make sure to go through [opened
-> issues](https://github.com/wojdatto/pyzet/issues) first. **Any
-> feedback is welcome!**
 
 ## Tutorial
 
