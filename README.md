@@ -15,7 +15,7 @@ Prerequisites:
 * Python 3.8+
 * Git 2.25+ (but older also should be fine)
 
-Linux, macOS, and Windows are supported.
+Unix (Linux/macOS), and Windows are supported.
 
 You can install pyzet with pip:
 
@@ -36,38 +36,17 @@ for more details):
 > issues](https://github.com/wojdatto/pyzet/issues) first. **Any
 > feedback is welcome!**
 
-## Quick start
-
-Create the simplest required config file, and initialize your
-Zettelkasten repository.
-
-Linux/macOS:
-
-```bash
-mkdir -p ~/.config/pyzet
-echo 'repo: ~/zet' > ~/.config/pyzet/pyzet.yaml
-pyzet init
-```
-
-Windows (with `PowerShell`):
-
-```powershell
-mkdir -p ~/.config/pyzet
-echo 'repo: ~/zet' | Set-Content ~/.config/pyzet/pyzet.yaml
-pyzet init
-```
-
-`pyzet --help` will tell you more about available commands.
-
-`pyzet sample-config unix|windows` will show you how you can extend your
-config file. You should especially do this when:
-
-1. Your Git executable isn't in the usual default location.
-2. You don't want Vim as the text editor used by pyzet.
-
 ## Tutorial
 
-You can read the whole tutorial
+For the quick setup for the either platform (make sure to create missing
+folders):
+
+    pyzet sample-config unix > ~/.config/pyzet/pyzet.yaml
+    pyzet sample-config windows | Set-Content ~/.config/pyzet/pyzet.yaml
+
+Run `pyzet init` to create Git repo.
+
+You can read the more detailed tutorial
 [here](https://github.com/wojdatto/pyzet/tree/main/docs).
 
 ## Summary of commands
