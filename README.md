@@ -61,9 +61,7 @@ a positional argument of the zettel filename. It works fine with any
 editor that doesn't require additional parameters to start (e.g., vim or
 nano).
 
-## Contributing
-
-### Development installation
+## Development installation
 
 Development dependencies are stored in `requirements-dev.txt`. To
 install the package in editable mode with the dev dependencies run the
