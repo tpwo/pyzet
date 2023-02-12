@@ -1,16 +1,16 @@
 from __future__ import annotations
 
 from argparse import _SubParsersAction
+from argparse import ArgumentParser
 from argparse import Namespace
 from pathlib import Path
-from typing import Any
 
 import pyzet.constants as C
 from pyzet.utils import call_git
 from pyzet.utils import Config
 
 
-def define_grep_cli(subparsers: _SubParsersAction[Any]) -> None:
+def define_grep_cli(subparsers: _SubParsersAction[ArgumentParser]) -> None:
     grep_parser = subparsers.add_parser(
         'grep', help="run 'git grep' with some handy flags in ZK repo"
     )
