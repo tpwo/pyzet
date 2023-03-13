@@ -18,11 +18,9 @@ class Config(NamedTuple):
 def call_git(
     config: Config,
     command: str,
-    options: tuple[str, ...] | None = None,
+    options: tuple[str, ...] = (),
     path: Path | None = None,
 ) -> int:
-    if options is None:
-        options = tuple()
     if path is None:
         path = config.repo
     cmd = [_get_git_bin(), '-C', path.as_posix(), command, *options]
