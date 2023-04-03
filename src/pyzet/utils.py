@@ -23,7 +23,7 @@ def call_git(
 ) -> int:
     if path is None:
         path = config.repo
-    cmd = [_get_git_bin(), '-C', path.as_posix(), command, *options]
+    cmd = (_get_git_bin(), '-C', path.as_posix(), command, *options)
     logging.debug(f'call_git: subprocess.run({cmd})')
     subprocess.run(cmd)
     return 0
@@ -33,7 +33,7 @@ def get_git_output(
     config: Config, command: str, options: tuple[str, ...]
 ) -> bytes:
     repo = config.repo.as_posix()
-    cmd = [_get_git_bin(), '-C', repo, command, *options]
+    cmd = (_get_git_bin(), '-C', repo, command, *options)
     logging.debug(f'get_git_output: subprocess.run({cmd})')
     return subprocess.run(cmd, capture_output=True, check=True).stdout
 
