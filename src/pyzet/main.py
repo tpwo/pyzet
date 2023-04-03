@@ -19,6 +19,8 @@ from pyzet.grep import define_grep_cli
 from pyzet.grep import grep
 from pyzet.sample_config import define_sample_config_cli
 from pyzet.sample_config import sample_config
+from pyzet.sed import define_sed_cli
+from pyzet.sed import sed
 from pyzet.utils import call_git
 from pyzet.utils import Config
 from pyzet.utils import get_git_output
@@ -165,6 +167,7 @@ def _get_parser() -> ArgumentParser:
     )
 
     define_grep_cli(subparsers)
+    define_sed_cli(subparsers)
 
     status_parser = subparsers.add_parser(
         'status', help="run 'git status' in ZK repo"
@@ -316,6 +319,9 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
 
     if args.command == 'grep':
         return grep(args, config)
+
+    if args.command == 'sed':
+        return sed(args, config)
 
     if args.command in {'status', 'push'}:
         return call_git(config, args.command, args.options)
