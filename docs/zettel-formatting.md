@@ -6,7 +6,7 @@ zettel's content trying to extract information like title and tags.
 
 In fact, many rules described below are derived from Rob Muhlestein's
 ZettelMark specification that can be found
-[here](https://github.com/rwxrob/zet/blob/main/20210812154738/README.md),
+[here](https://github.com/rwxrob/zet/blob/11285028bc4f8b2cd0ed35e852dc580e9e74a104/20210812154738/README.md),
 which is also based on CommonMark.
 
 Some of the rules described below are only guidelines, but some of them
