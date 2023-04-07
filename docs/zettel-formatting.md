@@ -15,19 +15,24 @@ are needed for pyzet to correctly parse zettels.
 ## General formatting
 
 For a convenient reading of zettels in the source form, it's recommended
-to wrap lines. The [common standard](https://youtu.be/_U5heW26fvg) is to
-break line after 72 characters.
+to decide on whether to wrap lines or not in your zet repo. The case for
+wrapping during writing is similar to writing Git commit messages, and
+[here is an
+explanation](https://github.com/torvalds/linux/pull/17#issuecomment-5661185)
+of the reasons. But you can decide not to wrap the lines at all, and
+always rely on automatic text wrapping when they're displayed which is
+handled very well in case of Markdown.
 
 Ideal zettels shouldn't be too long, and they should be a brief text
 description of pretty much anything. Avoid pasting links in the zettel
 core content and prefer using references section (described below) for
 that.
 
-Pyzet supports tagging zettels with hashtags for easier searching in the
-future. For correct parsing, tags should all fit on a single line, so
-their number is naturally limited. Ideally they should only use keywords
-that are not a part of a zettel itself, so they can help obtaining
-non-obvious connections. The tagging rules are described below.
+Pyzet supports tagging zettels for easier searching in the future. For
+correct parsing, tags should all fit on a single line, so their number
+is naturally limited. Ideally they should only use keywords that are not
+a part of a zettel itself, so they can help obtaining non-obvious
+connections. The tagging rules are described below.
 
 Try to use consistent Markdown formatting. We recommend:
 
@@ -52,12 +57,6 @@ or trailing spaces.
 
 If wrong formatting is detected, a warning will be raised and pyzet will
 show you a raw title line instead of a parsed one.
-
-Ideally, title should not exceed 50 characters. This is because a title
-is also a commit message in a Zettelkasten repo, and GitHub will snip
-messages longer than 50 characters when displaying commit messages next
-to the files. At this point, this is not checked by pyzet, so no warning
-will be raised in that case.
 
 ```markdown
 # Example correct zettel title
