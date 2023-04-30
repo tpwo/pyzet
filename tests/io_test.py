@@ -16,7 +16,7 @@ def get_script_content(output: str) -> str:
     if os.name == 'posix':
         return f'#!/bin/sh\necho {shlex.quote(output)} > $1\n'
     if os.name == 'nt':
-        return f'@echo off\necho {output} > %1\n'
+        return f'@echo off\necho {output}>%1\n'
     raise NotImplementedError
 
 
