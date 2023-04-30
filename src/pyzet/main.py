@@ -565,15 +565,16 @@ def _file_was_modified(filepath: Path, config: Config) -> bool:
 
 
 def _open_file(filename: Path, editor: str) -> None:
-    # expanduser() converts ~ into home directory
     editor_path = Path(editor).expanduser().as_posix()
     if shutil.which(editor_path) is None:
         raise SystemExit(f"ERROR: editor '{editor_path}' cannot be found.")
-    try:
-        subprocess.run([editor_path, filename.as_posix()])
-    except FileNotFoundError:
+    out = subprocess.run(
+        [editor_path, filename.as_posix()], capture_output=True
+    )
+    if out.returncode != 0 and out.stderr != b'':
         raise SystemExit(
-            f'ERROR: cannot open {filename.as_posix()} with {editor_path}.'
+            f"ERROR: problem opening '{filename.as_posix()}' with "
+            "'{editor_path}'. Captured stderr: {out.stderr.decode()}"
         )
 
 
