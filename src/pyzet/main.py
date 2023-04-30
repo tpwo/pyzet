@@ -439,6 +439,7 @@ def init_repo(config: Config, branch_name: str) -> int:
     _create_empty_folder(config.repo)
     _create_empty_folder(Path(config.repo, C.ZETDIR))
     call_git(config, 'init', ('--initial-branch', branch_name))
+    call_git(config, 'commit', ('--allow-empty', '-m', 'Initial empty commit'))
     logging.info(f"init: create git repo '{config.repo.absolute()}'")
     return 0
 
