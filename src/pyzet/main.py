@@ -612,5 +612,5 @@ def _commit_zettel(config: Config, zettel_path: Path, message: str) -> None:
     call_git(config, 'commit', ('-m', message))
     logging.info(
         f"_commit_zettel: committed '{zettel_path.absolute()}'"
-        " with message '{message}'"
+        f" with message '{message}'"
     )
