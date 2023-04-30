@@ -28,15 +28,13 @@ def get_fake_editor(path: Path, output: str) -> str:
         with open(fake_editor_path, 'w') as f:
             f.write(get_script_content(output))
         fake_editor_path.chmod(0o755)
+        return fake_editor_path.as_posix()
     if os.name == 'nt':
         fake_editor_path = path / 'fake_editor.bat'
         with open(fake_editor_path, 'w') as f:
             f.write(get_script_content(output))
-    print('### FAKE EDITOR ###')
-    with open(fake_editor_path) as f:
-        print(f.read())
-    print('### END FAKE EDITOR ###')
-    return fake_editor_path.as_posix()
+        return fake_editor_path.as_posix()
+    raise NotImplementedError
 
 
 def test_open_file_saves_string_to_file(tmp_path):
