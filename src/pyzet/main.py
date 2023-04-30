@@ -282,7 +282,7 @@ def _parse_args_with_id(
         return show_zettel(id_, config.repo)
 
     if command == 'edit':
-        return edit_zettel(id_, config, config.editor)
+        return edit_zettel(id_, config)
 
     if command == 'rm':
         return remove_zettel(id_, config)
@@ -494,10 +494,10 @@ def add_zettel(config: Config) -> int:
     return 0
 
 
-def edit_zettel(id_: str, config: Config, editor: str) -> int:
+def edit_zettel(id_: str, config: Config) -> int:
     """Edits zettel and commits changes with 'ED:' in the message."""
     zettel_path = Path(config.repo, C.ZETDIR, id_, C.ZETTEL_FILENAME)
-    _open_file(zettel_path, editor)
+    _open_file(zettel_path, config.editor)
 
     try:
         zettel = get_zettel(zettel_path.parent)

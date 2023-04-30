@@ -61,7 +61,8 @@ def test_edit_zettel(tmp_path, caplog):
     add_zettel(cfg)
 
     fake_editor2 = get_fake_editor(tmp_path, '# Edited by a fake editor')
-    edit_zettel(id_, cfg, fake_editor2)
+    cfg2 = Config(repo=tmp_path / 'zet-repo', editor=fake_editor2)
+    edit_zettel(id_, cfg2)
     zettel = tmp_path / 'zet-repo' / 'zettels' / '20050402213701' / 'README.md'
     with open(zettel) as f:
         assert f.read() == '# Edited by a fake editor\n'
@@ -78,7 +79,7 @@ def test_edit_zettel_no_changes(tmp_path, caplog):
     init_repo(cfg, branch_name='main')
     add_zettel(cfg)
 
-    edit_zettel(id_, cfg, fake_editor)
+    edit_zettel(id_, cfg)
     zettel = tmp_path / 'zet-repo' / 'zettels' / '20050402213701' / 'README.md'
     with open(zettel) as f:
         assert f.read() == '# A test zettel\n'
