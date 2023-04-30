@@ -1,3 +1,4 @@
+import os
 import shlex
 from pathlib import Path
 
@@ -11,12 +12,20 @@ from pyzet.main import init_repo
 from pyzet.utils import Config
 
 
+def get_script_content(output: str) -> str:
+    if os.name == 'posix':
+        return f'#!/bin/sh\necho {shlex.quote(output)} > $1\n'
+    if os.name == 'nt':
+        return f'echo {output} > %1\n'
+    raise NotImplementedError
+
+
 def get_fake_editor(path: Path, output: str) -> str:
     """Creates a fake editor returning given output and return path to it."""
     # TODO: path of fake editor should be dynamic to avoid overwriting
     fake_editor_path = path / 'fake_editor'
     with open(fake_editor_path, 'w') as f:
-        f.write(f'#!/bin/sh\necho {shlex.quote(output)} > $1\n')
+        f.write(get_script_content(output))
     fake_editor_path.chmod(0o755)
     return fake_editor_path.as_posix()
 
