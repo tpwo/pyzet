@@ -14,12 +14,12 @@ from pyzet.utils import Config
 
 def get_fake_editor(path: Path, output: str, name: str = 'fake_editor') -> str:
     """Creates a fake editor returning given output and return path to it."""
-    if os.name == 'posix':
+    if os.name == 'posix':  # pragma: nt no cover
         fake_editor_path = path / name
         with open(fake_editor_path, 'x') as f:
             f.write(f'#!/bin/sh\necho {shlex.quote(output)} > $1\n')
         fake_editor_path.chmod(0o755)
-    if os.name == 'nt':
+    elif os.name == 'nt':  # pragma: posix no cover
         fake_editor_path = path / f'{name}.bat'
         with open(fake_editor_path, 'x') as f:
             f.write(f'@echo off\necho {output}>%1\n')

@@ -40,7 +40,7 @@ def get_git_output(
 
 @functools.lru_cache(maxsize=1)
 def _get_git_bin() -> str:
-    if (git := shutil.which('git')) is None:
+    if (git := shutil.which('git')) is None:  # pragma: no cover
         raise SystemExit(f"ERROR: '{git}' cannot be found.")
     logging.debug(f"_get_git_bin: found at '{git}'")
     return git
