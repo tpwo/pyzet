@@ -12,29 +12,18 @@ from pyzet.main import init_repo
 from pyzet.utils import Config
 
 
-def get_script_content(output: str) -> str:
-    if os.name == 'posix':
-        return f'#!/bin/sh\necho {shlex.quote(output)} > $1\n'
-    if os.name == 'nt':
-        return f'@echo off\necho {output}>%1\n'
-    raise NotImplementedError
-
-
-def get_fake_editor(path: Path, output: str) -> str:
+def get_fake_editor(path: Path, output: str, name: str = 'fake_editor') -> str:
     """Creates a fake editor returning given output and return path to it."""
-    # TODO: path of fake editor should be dynamic to avoid overwriting
     if os.name == 'posix':
-        fake_editor_path = path / 'fake_editor'
-        with open(fake_editor_path, 'w') as f:
-            f.write(get_script_content(output))
+        fake_editor_path = path / name
+        with open(fake_editor_path, 'x') as f:
+            f.write(f'#!/bin/sh\necho {shlex.quote(output)} > $1\n')
         fake_editor_path.chmod(0o755)
-        return fake_editor_path.as_posix()
     if os.name == 'nt':
-        fake_editor_path = path / 'fake_editor.bat'
-        with open(fake_editor_path, 'w') as f:
-            f.write(get_script_content(output))
-        return fake_editor_path.as_posix()
-    raise NotImplementedError
+        fake_editor_path = path / f'{name}.bat'
+        with open(fake_editor_path, 'x') as f:
+            f.write(f'@echo off\necho {output}>%1\n')
+    return fake_editor_path.as_posix()
 
 
 def test_open_file_saves_string_to_file(tmp_path):
@@ -76,7 +65,9 @@ def test_edit_zettel(tmp_path, caplog):
     init_repo(cfg, branch_name='main')
     add_zettel(cfg)
 
-    fake_editor2 = get_fake_editor(tmp_path, '# Edited by a fake editor')
+    fake_editor2 = get_fake_editor(
+        tmp_path, '# Edited by a fake editor', name='fake_editor2'
+    )
     cfg2 = Config(repo=tmp_path / 'zet-repo', editor=fake_editor2)
     edit_zettel(id_, cfg2)
     zettel = tmp_path / 'zet-repo' / 'zettels' / '20050402213701' / 'README.md'
