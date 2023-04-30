@@ -2,3 +2,4 @@ covdefaults
 coverage
 freezegun
 pytest
+pytest-env
