@@ -14,7 +14,7 @@ from pyzet.utils import Config
 
 def get_script_content(output: str) -> str:
     if os.name == 'posix':
-        return f'#!/bin/sh\necho {shlex.quote(output)} > $1\n'
+        return f'#!/bin/sh\nprintf {shlex.quote(output)} > $1\n'
     if os.name == 'nt':
         return f'echo {output} > %1\n'
     raise NotImplementedError
@@ -43,7 +43,7 @@ def test_open_file_saves_string_to_file(tmp_path):
     _open_file(filename, fake_editor)
 
     with open(filename) as f:
-        assert f.read() == 'Hello World!\n'
+        assert f.read() == 'Hello World!'
 
 
 def test_open_file_file_not_found(tmp_path):
@@ -62,7 +62,7 @@ def test_add_zettel(tmp_path):
     add_zettel(cfg)
     zettel = tmp_path / 'zettels' / '20050402213701' / 'README.md'
     with open(zettel) as f:
-        assert f.read() == '# Created by a fake editor\n'
+        assert f.read() == '# Created by a fake editor'
 
 
 @freezegun.freeze_time('2005-04-02 21:37:01')
@@ -81,7 +81,7 @@ def test_edit_zettel(tmp_path, caplog):
     edit_zettel(id_, cfg2)
     zettel = tmp_path / 'zet-repo' / 'zettels' / '20050402213701' / 'README.md'
     with open(zettel) as f:
-        assert f.read() == '# Edited by a fake editor\n'
+        assert f.read() == '# Edited by a fake editor'
 
 
 @freezegun.freeze_time('2005-04-02 21:37:01')
@@ -98,4 +98,4 @@ def test_edit_zettel_no_changes(tmp_path, caplog):
     edit_zettel(id_, cfg)
     zettel = tmp_path / 'zet-repo' / 'zettels' / '20050402213701' / 'README.md'
     with open(zettel) as f:
-        assert f.read() == '# A test zettel\n'
+        assert f.read() == '# A test zettel'
