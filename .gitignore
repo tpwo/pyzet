@@ -1,12 +1,9 @@
 *.egg-info/
 *.pyc
-.coverage
-.idea/
-.tox
 .vscode/
-__pycache__/
+/.coverage
+/.tox/
 build/
 coverage.xml
 dist/
 htmlcov/
-venv/
