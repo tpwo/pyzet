@@ -83,7 +83,7 @@ def _get_parser() -> ArgumentParser:
         '--initial-branch',
         nargs='?',
         default='main',
-        help="override the name of the initial branch, by default 'main'",
+        help='name of the git branch (default: %(default)s)',
     )
 
     subparsers.add_parser('add', help='add a new zettel')
