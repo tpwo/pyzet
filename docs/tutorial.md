@@ -420,7 +420,7 @@ And the folder was removed. If you ever happen to have an empty folder
 that matches the timestamp syntax used by pyzet, `pyzet list` output
 will show a warning about it. We can simulate it:
 
-Let's remove `REAMDE.md` from our only zettel:
+Let's remove `README.md` from our only zettel:
 
     rm ~/zet/zettels/20220126232605/README.md
 
