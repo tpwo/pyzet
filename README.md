@@ -29,8 +29,8 @@ folders):
 
 Run `pyzet init` to create Git repo.
 
-You can read the more detailed tutorial
-[here](https://github.com/tpwo/pyzet/blob/main/docs/tutorial.md).
+You can read the more detailed tutorial in
+[docs](https://github.com/tpwo/pyzet/blob/main/docs/tutorial.md).
 
 ## Configuration
 
@@ -62,6 +62,10 @@ used, the value from YAML is ignored.
 
 See [docs](https://github.com/tpwo/pyzet/blob/main/docs/supported-editors.md).
 
+## Writing parsable zettels
+
+See [docs](https://github.com/tpwo/pyzet/blob/main/docs/zettel-formatting.md).
+
 ## Development installation
 
 Development dependencies are stored in `requirements-dev.txt`. To
@@ -91,9 +95,6 @@ maintains a Bash CLI tool
 [`cmd-zet`](https://github.com/rwxrob/cmd-zet).
 
 See also:
-
-* Guidelines on writing and formatting zettels\
-  <https://github.com/tpwo/pyzet/blob/main/docs/zettel-formatting.md>
 
 * Two essays by the creator of Zettelkasten, Niklas Luhmann\
   <https://luhmann.surge.sh/>
