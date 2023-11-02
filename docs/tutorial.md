@@ -18,7 +18,7 @@ Please do the same in your config file, regardless of your platform.
 ## Installation and initial configuration
 
 Install pyzet, as it's described in the [main
-readme](https://github.com/wojdatto/pyzet#installation). Run `pyzet`
+readme](https://github.com/tpwo/pyzet#installation). Run `pyzet`
 command to see if it is installed correctly. You should see a usage
 hint:
 
@@ -64,7 +64,7 @@ something else, you can add another line to the config file:
     editor: <path-to-your-editor>
 
 Not every editor might work seamlessly with pyzet. In the [main
-readme](https://github.com/wojdatto/pyzet#supported-editors) you can see
+readme](https://github.com/tpwo/pyzet#supported-editors) you can see
 a list of editors with some comments about their compatibility.
 
 Once you're happy with the text editor, add some example text using
@@ -80,7 +80,7 @@ are easier to read in the terminal.
 Refs:
 
 * This way you can add links\
-  <https://github.com/wojdatto/pyzet>
+  <https://github.com/tpwo/pyzet>
 
 Tags:
 
@@ -89,7 +89,7 @@ Tags:
 
 You can see that we used a special syntax to add a link. You can read
 more about it in the [formatting
-guidelines](https://github.com/wojdatto/pyzet/blob/main/docs/zettel-formatting.md#references),
+guidelines](https://github.com/tpwo/pyzet/blob/main/docs/zettel-formatting.md#references),
 but note that at this point it's only a convention.
 
 Save the file and exit from your editor. You should see a similar
@@ -114,7 +114,7 @@ Now, you can run `pyzet show` to see your zettel:
     Refs:
 
     * This way you can add links\
-      <https://github.com/wojdatto/pyzet>
+      <https://github.com/tpwo/pyzet>
 
     Tags:
 
@@ -440,9 +440,9 @@ pyzet, and create your own ZK repository with it.
 If you're new to the Zettelkasten, it might be helpful to read more
 about it. We suggest to go through *Inspiration and further reading*
 section in the [main
-readme](https://github.com/wojdatto/pyzet#inspiration-and-further-reading).
+readme](https://github.com/tpwo/pyzet#inspiration-and-further-reading).
 
 If you have any problem, question, or suggestion, feel free to create an
 issue on GitHub. We have many ideas how to expand pyzet, so make sure to
-go through [opened issues](https://github.com/wojdatto/pyzet/issues)
+go through [opened issues](https://github.com/tpwo/pyzet/issues)
 first. **Any feedback is welcome!**

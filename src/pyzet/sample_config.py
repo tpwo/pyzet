@@ -16,7 +16,7 @@ def define_sample_config_cli(
 
 
 _header = f"""\
-# See https://github.com/wojdatto/pyzet for more information.
+# See https://github.com/tpwo/pyzet for more information.
 #
 # Put this file at {C.DEFAULT_CFG_LOCATION.as_posix()}
 # Below options use global paths, but feel free

@@ -7,7 +7,7 @@ are easier to read in the terminal.
 Refs:
 
 * This way you can add links\
-  <https://github.com/wojdatto/pyzet>
+  <https://github.com/tpwo/pyzet>
 
 Tags:
 

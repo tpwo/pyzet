@@ -1,6 +1,6 @@
 # pyzet
 
-[![Tests](https://github.com/wojdatto/pyzet/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/wojdatto/pyzet/actions/workflows/tests.yml)
+[![Tests](https://github.com/tpwo/pyzet/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/tpwo/pyzet/actions/workflows/tests.yml)
 
 > "I, of course, do not think everything by myself. It happens mainly
 > within the Zettelkasten".
@@ -30,7 +30,7 @@ folders):
 Run `pyzet init` to create Git repo.
 
 You can read the more detailed tutorial
-[here](https://github.com/wojdatto/pyzet/blob/main/docs/tutorial.md).
+[here](https://github.com/tpwo/pyzet/blob/main/docs/tutorial.md).
 
 ## Configuration
 
@@ -92,7 +92,7 @@ maintains a Bash CLI tool
 See also:
 
 * Guidelines on writing and formatting zettels\
-  <https://github.com/wojdatto/pyzet/blob/main/docs/zettel-formatting.md>
+  <https://github.com/tpwo/pyzet/blob/main/docs/zettel-formatting.md>
 
 * Two essays by the creator of Zettelkasten, Niklas Luhmann\
   <https://luhmann.surge.sh/>

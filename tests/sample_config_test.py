@@ -5,7 +5,7 @@ from pyzet.sample_config import sample_config
 from testing.constants import TEST_CFG
 
 _header = """\
-# See https://github.com/wojdatto/pyzet for more information.
+# See https://github.com/tpwo/pyzet for more information.
 #
 # Put this file at\
 """
