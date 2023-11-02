@@ -52,7 +52,7 @@ def _get_parser() -> ArgumentParser:
         '-c',
         '--config',
         default=C.DEFAULT_CFG_LOCATION,
-        help='use an alternative config file',
+        help='which config file to use (default: %(default)s)',
     )
     parser.add_argument(
         '-V',
@@ -84,7 +84,7 @@ def _get_parser() -> ArgumentParser:
         '--initial-branch',
         nargs='?',
         default='main',
-        help="override the name of the initial branch, by default 'main'",
+        help="initial branch name (default: %(default)s)",
     )
 
     subparsers.add_parser('add', help='add a new zettel')
