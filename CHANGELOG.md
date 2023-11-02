@@ -8,6 +8,12 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.8.0] - 2023-11-02
+
+### Added
+
+* Allow for passing editor CLI arguments (#54)
+
 ## [0.7.0] - 2023-02-12
 
 ### Added
@@ -115,7 +121,8 @@ Initial release.
 
 <!-- Links -->
 
-[Unreleased]: https://github.com/tpwo/pyzet/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/tpwo/pyzet/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/tpwo/pyzet/releases/tag/v0.8.0
 [0.7.0]: https://github.com/tpwo/pyzet/releases/tag/v0.7.0
 [0.6.0]: https://github.com/tpwo/pyzet/releases/tag/v0.6.0
 [0.5.0]: https://github.com/tpwo/pyzet/releases/tag/v0.5.0
