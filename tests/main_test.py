@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -350,21 +351,41 @@ def test_clean_dry_run_and_force(tmp_path, capsys):
     assert Path(tmp_path, C.ZETDIR, id_).exists()
 
 
-def test_remote(tmp_path, capfd):
+@pytest.fixture
+def pyzet_init(tmp_path):
     init_dir = tmp_path.as_posix()
     main([*TEST_CFG, 'init', init_dir])
-    # We're not interested in the 'pyzet init' output
-    _, _ = capfd.readouterr()
+    yield init_dir
 
-    # Add remote, and then display it
-    cmd = (*TEST_CFG, '-r', init_dir, 'remote', 'add', 'foo', 'zet-remote')
-    main([*cmd])
-    main([*TEST_CFG, '--repo', init_dir, 'remote'])
+
+remotes = (
+    ('https://github.com/tpwo/pyzet.git', 'https://github.com/tpwo/pyzet.git'),
+    ('git@github.com:tpwo/pyzet.git', 'https://github.com/tpwo/pyzet.git'),
+    ('git@gitlab.com:user/repo.git', 'https://gitlab.com/user/repo.git'),
+    ('git@bitbucket.org:user/repo.git', 'https://bitbucket.org/user/repo.git'),
+)
+
+
+@pytest.mark.parametrize(('raw', 'output'), remotes)
+def test_remote(raw, output, pyzet_init, capfd):
+    subprocess.run(('git', '-C', pyzet_init, 'remote', 'add', 'origin', raw))
+
+    main([*TEST_CFG, '--repo', pyzet_init, 'remote'])
 
     out, err = capfd.readouterr()
-    expected = """\
-foo\tzet-remote (fetch)
-foo\tzet-remote (push)
-"""
+    expected = output + '\n'
+    assert out == expected
+    assert err == ''
+
+
+@pytest.mark.parametrize(('raw', 'output'), remotes)
+def test_remote_custom_origin(raw, output, pyzet_init, capfd):
+    subprocess.run(('git', '-C', pyzet_init, 'remote', 'add', 'foo', raw))
+
+    test_cmd = [*TEST_CFG, '--repo', pyzet_init, 'remote', '--origin', 'foo']
+    main(test_cmd)
+
+    out, err = capfd.readouterr()
+    expected = output + '\n'
     assert out == expected
     assert err == ''

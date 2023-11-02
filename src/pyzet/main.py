@@ -84,7 +84,7 @@ def _get_parser() -> ArgumentParser:
         '--initial-branch',
         nargs='?',
         default='main',
-        help="initial branch name (default: %(default)s)",
+        help='initial branch name (default: %(default)s)',
     )
 
     subparsers.add_parser('add', help='add a new zettel')
@@ -180,7 +180,12 @@ def _get_parser() -> ArgumentParser:
     _add_git_cmd_options(push_parser, 'push')
 
     remote_parser = subparsers.add_parser(
-        'remote', help="run 'git remote -v' in ZK repo"
+        'remote', help="run 'git remote get-url' in ZK repo"
+    )
+    remote_parser.add_argument(
+        '--origin',
+        default=C.DEFAULT_REMOTE_NAME,
+        help='name of git repo remote (default: %(default)s)',
     )
     _add_git_cmd_options(remote_parser, 'remote')
 
@@ -332,7 +337,7 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
         return call_git(config, args.command, args.options)
 
     if args.command == 'remote':
-        return call_git(config, 'remote', ('-v', *args.options))
+        return _get_remote_url(args, config)
 
     if args.command == 'pull':
         # --rebase is used to maintain a linear history without merges,
@@ -346,6 +351,26 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
         )
 
     raise NotImplementedError
+
+
+def _get_remote_url(args: Namespace, config: Config) -> int:
+    remote = (
+        get_git_output(
+            config, 'remote', ('get-url', args.origin, *args.options)
+        )
+        .decode()
+        .strip()
+    )
+    if remote.startswith('git@'):  # This breaks if someone uses 'ssh://' URL
+        print(_convert_ssh_to_https(remote))
+    else:
+        print(remote)
+    return 0
+
+
+def _convert_ssh_to_https(remote: str) -> str:
+    """Converts Git SSH url into HTTPS url."""
+    return 'https://' + remote.partition('git@')[-1].replace(':', '/')
 
 
 def _validate_id(id_: str, command: str, config: Config) -> None:
