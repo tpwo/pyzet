@@ -10,6 +10,7 @@ from argparse import Namespace
 from collections import Counter
 from datetime import datetime
 from pathlib import Path
+from typing import Iterable
 
 import yaml
 
@@ -244,7 +245,7 @@ def _get_config(args: Namespace) -> Config:
 
 
 def process_yaml(
-    yaml_cfg: dict[str, str], config_file: str, repo_path: str | None = None
+    yaml_cfg: dict[str, object], config_file: str, repo_path: str | None = None
 ) -> Config:
     """Processes YAML config file.
 
@@ -255,15 +256,25 @@ def process_yaml(
         repo = Path(repo_path)
     else:
         try:
-            repo = Path(yaml_cfg['repo']).expanduser()
+            repo_raw = yaml_cfg['repo']
+            assert isinstance(repo_raw, str)
+            repo = Path(repo_raw).expanduser()
         except KeyError:
             raise SystemExit(
                 "ERROR: field 'repo' missing from"
                 f" '{Path(config_file).as_posix()}'."
             )
+
+    editor = yaml_cfg.get('editor', C.VIM_PATH)
+    assert isinstance(editor, str)
+
+    editor_args = yaml_cfg.get('editor_args', [])
+    assert isinstance(editor_args, Iterable)
+
     return Config(
         repo=repo,
-        editor=yaml_cfg.get('editor', C.VIM_PATH),
+        editor=editor,
+        editor_args=tuple(editor_args),
     )
 
 
@@ -475,7 +486,7 @@ def add_zettel(config: Config) -> int:
     with open(zettel_path, 'w+') as file:
         file.write('')
 
-    _open_file(zettel_path, config.editor)
+    _open_file(zettel_path, config)
 
     try:
         zettel = get_zettel(zettel_path.parent)
@@ -496,7 +507,7 @@ def add_zettel(config: Config) -> int:
 def edit_zettel(id_: str, config: Config, editor: str) -> int:
     """Edits zettel and commits changes with 'ED:' in the message."""
     zettel_path = Path(config.repo, C.ZETDIR, id_, C.ZETTEL_FILENAME)
-    _open_file(zettel_path, editor)
+    _open_file(zettel_path, config)
 
     try:
         zettel = get_zettel(zettel_path.parent)
@@ -564,13 +575,13 @@ def _file_was_modified(filepath: Path, config: Config) -> bool:
     return git_diff_out != b''
 
 
-def _open_file(filename: Path, editor: str) -> None:
-    # expanduser() converts ~ into home directory
-    editor_path = Path(editor).expanduser().as_posix()
+def _open_file(filename: Path, config: Config) -> None:
+    editor_path = Path(config.editor).expanduser().as_posix()
     if shutil.which(editor_path) is None:
         raise SystemExit(f"ERROR: editor '{editor_path}' cannot be found.")
     try:
-        subprocess.run([editor_path, filename.as_posix()])
+        cmd = (config.editor, *config.editor_args, filename.as_posix())
+        subprocess.run(cmd)
     except FileNotFoundError:
         raise SystemExit(
             f'ERROR: cannot open {filename.as_posix()} with {editor_path}.'

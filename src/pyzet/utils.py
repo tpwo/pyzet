@@ -13,6 +13,7 @@ from typing import NamedTuple
 class Config(NamedTuple):
     repo: Path
     editor: str
+    editor_args: tuple[str, ...]
 
 
 def call_git(

@@ -24,6 +24,7 @@ def test_sample_config_unix(capsys):
 # to use program name directly if it's on your PATH.
 repo: ~/zet
 editor: /usr/bin/vim
+editor_args: []
 """
     )
     assert err == ''
@@ -42,6 +43,7 @@ def test_sample_config_windows(capsys):
 # to use program name directly if it's on your PATH.
 repo: ~/zet
 editor: C:/Program Files/Git/usr/bin/vim.exe
+editor_args: []
 """
     )
     assert err == ''

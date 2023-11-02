@@ -26,12 +26,14 @@ SAMPLE_CONFIG_UNIX = f"""\
 {_header}
 repo: ~/zet
 editor: {C.vim_unix_path}
+editor_args: []
 """
 
 SAMPLE_CONFIG_WINDOWS = f"""\
 {_header}
 repo: ~/zet
 editor: {C.vim_win_path}
+editor_args: []
 """
 
 
