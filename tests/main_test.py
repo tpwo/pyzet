@@ -16,6 +16,13 @@ def set_info_lvl(caplog):
     caplog.set_level(logging.INFO)
 
 
+@pytest.fixture
+def pyzet_init(tmp_path):
+    init_dir = tmp_path.as_posix()
+    main([*TEST_CFG, 'init', init_dir])
+    yield init_dir
+
+
 def test_no_argv(capsys):
     # It should just print the usage help
     main([])
@@ -351,16 +358,11 @@ def test_clean_dry_run_and_force(tmp_path, capsys):
     assert Path(tmp_path, C.ZETDIR, id_).exists()
 
 
-@pytest.fixture
-def pyzet_init(tmp_path):
-    init_dir = tmp_path.as_posix()
-    main([*TEST_CFG, 'init', init_dir])
-    yield init_dir
-
-
 remotes = (
+    ('https://github.com/tpwo/pyzet', 'https://github.com/tpwo/pyzet'),
     ('https://github.com/tpwo/pyzet.git', 'https://github.com/tpwo/pyzet.git'),
     ('git@github.com:tpwo/pyzet.git', 'https://github.com/tpwo/pyzet.git'),
+    ('git@github.com:tpwo/pyzet', 'https://github.com/tpwo/pyzet'),
     ('git@gitlab.com:user/repo.git', 'https://gitlab.com/user/repo.git'),
     ('git@bitbucket.org:user/repo.git', 'https://bitbucket.org/user/repo.git'),
 )
