@@ -4,7 +4,7 @@ import pytest
 
 from pyzet.main import main
 from pyzet.sample_config import sample_config
-from testing.constants import TEST_CFG
+from tests.conftest import TEST_CFG
 
 _header = """\
 # See https://github.com/tpwo/pyzet for more information.

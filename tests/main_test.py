@@ -8,7 +8,7 @@ import pytest
 
 import pyzet.constants as C
 from pyzet.main import main
-from testing.constants import TEST_CFG
+from tests.conftest import TEST_CFG
 
 
 @pytest.fixture
