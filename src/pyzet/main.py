@@ -32,20 +32,24 @@ from pyzet.zettel import Zettel
 def main(argv: list[str] | None = None) -> int:
     utils.configure_console_print_utf8()
 
-    parser = _get_parser()
+    parser, subparsers = _get_parser()
     args = parser.parse_args(argv)
     utils.setup_logger(utils.compute_log_level(args.verbose))
 
+    if args.command == 'show' and args.show_cmd is None:
+        subparsers['show'].print_usage()
+        return 0
     if args.command is None:
         parser.print_usage()
         return 0
     return _parse_args(args)
 
 
-def _get_parser() -> ArgumentParser:
+def _get_parser() -> tuple[ArgumentParser, dict[str, ArgumentParser]]:
     parser = argparse.ArgumentParser(
         prog='pyzet', formatter_class=argparse.RawTextHelpFormatter
     )
+    subparsers_dict = {}
 
     parser.add_argument('-r', '--repo', help='point to a custom ZK repo')
     parser.add_argument(
@@ -82,8 +86,7 @@ def _get_parser() -> ArgumentParser:
     init_parser.add_argument(
         '-b',
         '--initial-branch',
-        nargs='?',
-        default='main',
+        default=C.DEFAULT_BRANCH,
         help='initial branch name (default: %(default)s)',
     )
 
@@ -100,17 +103,45 @@ def _get_parser() -> ArgumentParser:
     remove_parser.add_argument('id', nargs=1, help='zettel id (timestamp)')
 
     show_parser = subparsers.add_parser('show', help='print zettel contents')
-    show_parser.add_argument(
+    show_subparsers = show_parser.add_subparsers(dest='show_cmd')
+    subparsers_dict['show'] = show_parser
+
+    text_parser = show_subparsers.add_parser(
+        'text', help='show zettel as plain text'
+    )
+    text_parser.add_argument(
         'id',
         nargs='?',
         help='zettel id, defaults to zettel with the newest timestamp',
     )
-    show_parser.add_argument(
-        '-l',
-        '--link',
-        action='store_true',
-        help='show zettel as a relative Markdown'
-        ' link for pasting in other zettels',
+
+    link_parser = show_subparsers.add_parser(
+        'mdlink', help='show zettel as a Markdown link'
+    )
+    link_parser.add_argument(
+        'id',
+        nargs='?',
+        help='zettel id, defaults to zettel with the newest timestamp',
+    )
+
+    url_parser = show_subparsers.add_parser(
+        'url', help='show zettel as an URL'
+    )
+    url_parser.add_argument(
+        'id',
+        nargs='?',
+        help='zettel id, defaults to zettel with the newest timestamp',
+    )
+    url_parser.add_argument(
+        '--origin',
+        default=C.DEFAULT_REMOTE_NAME,
+        help='name of git repo remote (default: %(default)s)',
+    )
+    url_parser.add_argument(
+        '-b',
+        '--branch',
+        default=C.DEFAULT_BRANCH,
+        help='initial branch name (default: %(default)s)',
     )
 
     list_parser = subparsers.add_parser('list', help='list all zettels')
@@ -191,7 +222,7 @@ def _get_parser() -> ArgumentParser:
 
     define_sample_config_cli(subparsers)
 
-    return parser
+    return parser, subparsers_dict
 
 
 def _add_git_cmd_options(parser: ArgumentParser, cmd_name: str) -> None:
@@ -293,9 +324,12 @@ def _parse_args_with_id(
     _validate_id(id_, command, config)
 
     if command == 'show':
-        if args.link:
+        if args.show_cmd == 'text':
+            return show_zettel(id_, config.repo)
+        if args.show_cmd == 'mdlink':
             return show_zettel_as_md_link(id_, config.repo)
-        return show_zettel(id_, config.repo)
+        if args.show_cmd == 'url':
+            return show_zettel_as_url(id_, args, config)
 
     if command == 'edit':
         return edit_zettel(id_, config, config.editor)
@@ -337,7 +371,7 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
         return call_git(config, args.command, args.options)
 
     if args.command == 'remote':
-        return _get_remote_url(args, config)
+        return get_remote_url(args, config)
 
     if args.command == 'pull':
         # --rebase is used to maintain a linear history without merges,
@@ -353,18 +387,8 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
     raise NotImplementedError
 
 
-def _get_remote_url(args: Namespace, config: Config) -> int:
-    remote = (
-        get_git_output(
-            config, 'remote', ('get-url', args.origin, *args.options)
-        )
-        .decode()
-        .strip()
-    )
-    if remote.startswith('git@'):  # This breaks if someone uses 'ssh://' URL
-        print(_convert_ssh_to_https(remote))
-    else:
-        print(remote)
+def get_remote_url(args: Namespace, config: Config) -> int:
+    print(_get_remote(args, config))
     return 0
 
 
@@ -450,6 +474,42 @@ def _get_md_relative_link(id_: str, title: str) -> str:
     zettel.
     """
     return f'* [{id_}](../{id_}) {title}'
+
+
+def show_zettel_as_url(id_: str, args: Namespace, config: Config) -> int:
+    remote = _remote_dot_git(_get_remote(args, config))
+    print(_get_zettel_url(remote, args.branch, id_))
+    return 0
+
+
+def _remote_dot_git(remote: str) -> str:
+    """Remove '.git' suffix from remote URL."""
+    return remote.partition('.git')[0]
+
+
+def _get_remote(args: Namespace, config: Config) -> str:
+    try:
+        opts = ('get-url', args.origin, *args.options)
+    except AttributeError:
+        opts = ('get-url', args.origin)
+
+    remote = get_git_output(config, 'remote', opts).decode().strip()
+
+    if remote.startswith('git@'):  # This breaks if someone uses 'ssh://' URL
+        return _convert_ssh_to_https(remote)
+    else:
+        return remote
+
+
+def _get_zettel_url(repo_url: str, branch: str, id_: str) -> str:
+    """Returns zettel URL for the most popular Git online hostings."""
+    if 'github.com' in repo_url:
+        return f'{repo_url}/tree/{branch}/{C.ZETDIR}/{id_}'
+    if 'gitlab.com' in repo_url:
+        return f'{repo_url}/-/tree/{branch}/{C.ZETDIR}/{id_}'
+    if 'bitbucket.org' in repo_url:
+        return f'{repo_url}/src/{branch}/{C.ZETDIR}/{id_}'
+    raise NotImplementedError
 
 
 def clean_zet_repo(repo_path: Path, is_dry_run: bool, is_force: bool) -> int:

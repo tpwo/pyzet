@@ -8,6 +8,8 @@ VERSION = metadata.version('pyzet')
 
 CONFIG_FILE = 'pyzet.yaml'
 DEFAULT_CFG_LOCATION = Path(Path.home(), '.config', 'pyzet', CONFIG_FILE)
+
+DEFAULT_BRANCH = 'main'
 DEFAULT_REMOTE_NAME = 'origin'
 
 ZETDIR = 'zettels'

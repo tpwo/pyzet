@@ -101,9 +101,9 @@ output:
     1 file changed, 14 insertions(+)
     create mode 100644 zettels/20220126232605/README.md
 
-Now, you can run `pyzet show` to see your zettel:
+Now, you can run `pyzet show text` to see your zettel:
 
-    $ pyzet show
+    $ pyzet show text
     ============================ 20220126232605 ============================
     # This is my first zettel created with pyzet
 
@@ -120,6 +120,9 @@ Now, you can run `pyzet show` to see your zettel:
 
         #tutorial
 
+Also, in `pyzet show` you can output other information like URLs or
+Markdown relative links. See more with `pyzet show -h`.
+
 If you made a typo, you can edit your zettel with `pyzet edit` command.
 
 Now, let's make a second zettel with `pyzet add`:
@@ -134,9 +137,9 @@ Tags:
     #tutorial #example-tag
 ```
 
-Again, you can show it with `pyzet show`:
+Again, you can show it with `pyzet show text`:
 
-    $ pyzet show
+    $ pyzet show text
     ============================ 20220123233028 ============================
     # This is my second zettel
 
@@ -169,9 +172,9 @@ UTC+0 to make sure that each ID is unique (at least, as long as you
 don't try to create multiple zettels at the same second :p)
 
 You can see that my ID of the first zettel was `20220126232605`. We can
-now paste it to the `show` command:
+now paste it to the `show text` command:
 
-    $ pyzet show 20220126232605
+    $ pyzet show text 20220126232605
     ============================ 20220126232605 ============================
     # This is my first zettel created with pyzet
     <snip>

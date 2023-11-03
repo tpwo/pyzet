@@ -8,9 +8,18 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+* Display direct URL to zettels with `pyzet remote url <ID>` (#20)
+
 ### Changed
 
 * Convert SSH urls into HTTPS urls in 'remote' command (#55)
+* BREAKING CHANGE: add command subparser for `pyzet show <ID>` to
+  support multiple types of output. The old behavior of showing zettel
+  in plain text now requires `pyzet show text <ID>` (#20)
+* BREAKING CHANGE: `pyzet show --link <ID>` is now `pyzet show link <ID>`
+  (#20)
 
 ## [0.8.0] - 2023-11-02
 
