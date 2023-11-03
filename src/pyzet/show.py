@@ -6,6 +6,7 @@ from argparse import Namespace
 from pathlib import Path
 
 import pyzet.constants as C
+from pyzet.utils import add_id_arg
 from pyzet.utils import Config
 from pyzet.utils import get_git_remote_url
 from pyzet.utils import get_md_relative_link
@@ -21,29 +22,17 @@ def get_parser(
     text_parser = show_subparsers.add_parser(
         'text', help='show zettel as plain text'
     )
-    text_parser.add_argument(
-        'id',
-        nargs='?',
-        help='zettel id, defaults to zettel with the newest timestamp',
-    )
+    add_id_arg(text_parser)
 
     link_parser = show_subparsers.add_parser(
         'mdlink', help='show zettel as a Markdown link'
     )
-    link_parser.add_argument(
-        'id',
-        nargs='?',
-        help='zettel id, defaults to zettel with the newest timestamp',
-    )
+    add_id_arg(link_parser)
 
     url_parser = show_subparsers.add_parser(
         'url', help='show zettel as an URL'
     )
-    url_parser.add_argument(
-        'id',
-        nargs='?',
-        help='zettel id, defaults to zettel with the newest timestamp',
-    )
+    add_id_arg(url_parser)
     url_parser.add_argument(
         '--origin',
         default=C.DEFAULT_REMOTE_NAME,

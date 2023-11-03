@@ -6,6 +6,7 @@ import logging
 import shutil
 import subprocess
 import sys
+from argparse import ArgumentParser
 from pathlib import Path
 from typing import NamedTuple
 
@@ -117,3 +118,9 @@ def compute_log_level(verbosity: int) -> int:
     min_log_level = 10  # match DEBUG level
     verbosity_step = 10
     return max(default_log_level - verbosity_step * verbosity, min_log_level)
+
+
+def add_id_arg(parser: ArgumentParser) -> None:
+    parser.add_argument(
+        'id', nargs='?', help='zettel id (default: newest zettel)'
+    )

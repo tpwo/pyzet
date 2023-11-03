@@ -21,6 +21,7 @@ from pyzet.grep import define_grep_cli
 from pyzet.grep import grep
 from pyzet.sample_config import define_sample_config_cli
 from pyzet.sample_config import sample_config
+from pyzet.utils import add_id_arg
 from pyzet.utils import call_git
 from pyzet.utils import Config
 from pyzet.utils import get_git_output
@@ -96,11 +97,7 @@ def _get_parser() -> tuple[ArgumentParser, dict[str, ArgumentParser]]:
     subparsers.add_parser('add', help='add a new zettel')
 
     edit_parser = subparsers.add_parser('edit', help='edit an existing zettel')
-    edit_parser.add_argument(
-        'id',
-        nargs='?',
-        help='zettel id, defaults to zettel with the newest timestamp',
-    )
+    add_id_arg(edit_parser)
 
     remove_parser = subparsers.add_parser('rm', help='remove a zettel')
     remove_parser.add_argument('id', nargs=1, help='zettel id (timestamp)')
