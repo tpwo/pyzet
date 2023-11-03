@@ -15,6 +15,7 @@ from typing import Iterable
 import yaml
 
 import pyzet.constants as C
+from pyzet import show
 from pyzet import utils
 from pyzet.grep import define_grep_cli
 from pyzet.grep import grep
@@ -23,6 +24,8 @@ from pyzet.sample_config import sample_config
 from pyzet.utils import call_git
 from pyzet.utils import Config
 from pyzet.utils import get_git_output
+from pyzet.utils import get_git_remote_url
+from pyzet.utils import get_md_relative_link
 from pyzet.zettel import get_timestamp
 from pyzet.zettel import get_zettel
 from pyzet.zettel import get_zettels
@@ -102,47 +105,7 @@ def _get_parser() -> tuple[ArgumentParser, dict[str, ArgumentParser]]:
     remove_parser = subparsers.add_parser('rm', help='remove a zettel')
     remove_parser.add_argument('id', nargs=1, help='zettel id (timestamp)')
 
-    show_parser = subparsers.add_parser('show', help='print zettel contents')
-    show_subparsers = show_parser.add_subparsers(dest='show_cmd')
-    subparsers_dict['show'] = show_parser
-
-    text_parser = show_subparsers.add_parser(
-        'text', help='show zettel as plain text'
-    )
-    text_parser.add_argument(
-        'id',
-        nargs='?',
-        help='zettel id, defaults to zettel with the newest timestamp',
-    )
-
-    link_parser = show_subparsers.add_parser(
-        'mdlink', help='show zettel as a Markdown link'
-    )
-    link_parser.add_argument(
-        'id',
-        nargs='?',
-        help='zettel id, defaults to zettel with the newest timestamp',
-    )
-
-    url_parser = show_subparsers.add_parser(
-        'url', help='show zettel as an URL'
-    )
-    url_parser.add_argument(
-        'id',
-        nargs='?',
-        help='zettel id, defaults to zettel with the newest timestamp',
-    )
-    url_parser.add_argument(
-        '--origin',
-        default=C.DEFAULT_REMOTE_NAME,
-        help='name of git repo remote (default: %(default)s)',
-    )
-    url_parser.add_argument(
-        '-b',
-        '--branch',
-        default=C.DEFAULT_BRANCH,
-        help='initial branch name (default: %(default)s)',
-    )
+    subparsers_dict['show'] = show.get_parser(subparsers)
 
     list_parser = subparsers.add_parser('list', help='list all zettels')
     list_parser.add_argument(
@@ -324,12 +287,7 @@ def _parse_args_with_id(
     _validate_id(id_, command, config)
 
     if command == 'show':
-        if args.show_cmd == 'text':
-            return show_zettel(id_, config.repo)
-        if args.show_cmd == 'mdlink':
-            return show_zettel_as_md_link(id_, config.repo)
-        if args.show_cmd == 'url':
-            return show_zettel_as_url(id_, args, config)
+        return show.command(args, config, id_)
 
     if command == 'edit':
         return edit_zettel(id_, config, config.editor)
@@ -388,13 +346,8 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
 
 
 def get_remote_url(args: Namespace, config: Config) -> int:
-    print(_get_remote(args, config))
+    print(get_git_remote_url(config, args.origin, args.options))
     return 0
-
-
-def _convert_ssh_to_https(remote: str) -> str:
-    """Converts Git SSH url into HTTPS url."""
-    return 'https://' + remote.partition('git@')[-1].replace(':', '/')
 
 
 def _validate_id(id_: str, command: str, config: Config) -> None:
@@ -422,7 +375,7 @@ def _get_zettel_repr(zettel: Zettel, is_pretty: bool, is_link: bool) -> str:
     if is_pretty:
         return f'{get_timestamp(zettel.id_)} -- {zettel.title}'
     if is_link:
-        return _get_md_relative_link(zettel.id_, zettel.title)
+        return get_md_relative_link(zettel.id_, zettel.title)
     return f'{zettel.id_} -- {zettel.title}'
 
 
@@ -448,68 +401,6 @@ def count_tags(path: Path) -> int:
         sum(len(zettel.tags) for zettel in get_zettels(Path(path, C.ZETDIR)))
     )
     return 0
-
-
-def show_zettel(id_: str, repo_path: Path) -> int:
-    """Prints zettel text prepended with centered ID as a header."""
-    print(f' {id_} '.center(C.ZETTEL_WIDTH, '='))
-    zettel_path = Path(repo_path, C.ZETDIR, id_, C.ZETTEL_FILENAME)
-    with open(zettel_path, encoding='utf-8') as file:
-        print(file.read(), end='')
-    return 0
-
-
-def show_zettel_as_md_link(id_: str, repo_path: Path) -> int:
-    zettel_path = Path(repo_path, C.ZETDIR, id_)
-    zettel = get_zettel(zettel_path)
-    print(_get_md_relative_link(zettel.id_, zettel.title))
-    return 0
-
-
-def _get_md_relative_link(id_: str, title: str) -> str:
-    """Returns a representation of a zettel that is a relative Markdown link.
-
-    Asterisk at the beginning is a Markdown syntax for an unordered list,
-    as links to zettels are usually just used in references section of a
-    zettel.
-    """
-    return f'* [{id_}](../{id_}) {title}'
-
-
-def show_zettel_as_url(id_: str, args: Namespace, config: Config) -> int:
-    remote = _remote_dot_git(_get_remote(args, config))
-    print(_get_zettel_url(remote, args.branch, id_))
-    return 0
-
-
-def _remote_dot_git(remote: str) -> str:
-    """Remove '.git' suffix from remote URL."""
-    return remote.partition('.git')[0]
-
-
-def _get_remote(args: Namespace, config: Config) -> str:
-    try:
-        opts = ('get-url', args.origin, *args.options)
-    except AttributeError:
-        opts = ('get-url', args.origin)
-
-    remote = get_git_output(config, 'remote', opts).decode().strip()
-
-    if remote.startswith('git@'):  # This breaks if someone uses 'ssh://' URL
-        return _convert_ssh_to_https(remote)
-    else:
-        return remote
-
-
-def _get_zettel_url(repo_url: str, branch: str, id_: str) -> str:
-    """Returns zettel URL for the most popular Git online hostings."""
-    if 'github.com' in repo_url:
-        return f'{repo_url}/tree/{branch}/{C.ZETDIR}/{id_}'
-    if 'gitlab.com' in repo_url:
-        return f'{repo_url}/-/tree/{branch}/{C.ZETDIR}/{id_}'
-    if 'bitbucket.org' in repo_url:
-        return f'{repo_url}/src/{branch}/{C.ZETDIR}/{id_}'
-    raise NotImplementedError
 
 
 def clean_zet_repo(repo_path: Path, is_dry_run: bool, is_force: bool) -> int:

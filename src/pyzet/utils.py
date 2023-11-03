@@ -30,6 +30,20 @@ def call_git(
     return 0
 
 
+def get_git_remote_url(
+    config: Config,
+    origin: str,
+    options: tuple[str, ...] = (),
+) -> str:
+    opts = ('get-url', origin, *options)
+    remote = get_git_output(config, 'remote', opts).decode().strip()
+
+    if remote.startswith('git@'):  # This breaks if someone uses 'ssh://' URL
+        return _convert_ssh_to_https(remote)
+    else:
+        return remote
+
+
 def get_git_output(
     config: Config, command: str, options: tuple[str, ...]
 ) -> bytes:
@@ -42,6 +56,21 @@ def get_git_output(
         git_err_prefix = 'error: '
         errmsg = err.stderr.decode().strip().partition(git_err_prefix)[-1]
         raise SystemExit(f'GIT ERROR: {errmsg}') from err
+
+
+def _convert_ssh_to_https(remote: str) -> str:
+    """Converts Git SSH url into HTTPS url."""
+    return 'https://' + remote.partition('git@')[-1].replace(':', '/')
+
+
+def get_md_relative_link(id_: str, title: str) -> str:
+    """Returns a representation of a zettel that is a relative Markdown link.
+
+    Asterisk at the beginning is a Markdown syntax for an unordered list,
+    as links to zettels are usually just used in references section of a
+    zettel.
+    """
+    return f'* [{id_}](../{id_}) {title}'
 
 
 @functools.lru_cache(maxsize=1)
