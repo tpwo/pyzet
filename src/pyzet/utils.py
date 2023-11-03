@@ -36,7 +36,12 @@ def get_git_output(
     repo = config.repo.as_posix()
     cmd = (_get_git_bin(), '-C', repo, command, *options)
     logging.debug(f'get_git_output: subprocess.run({cmd})')
-    return subprocess.run(cmd, capture_output=True, check=True).stdout
+    try:
+        return subprocess.run(cmd, capture_output=True, check=True).stdout
+    except subprocess.CalledProcessError as err:
+        git_err_prefix = 'error: '
+        errmsg = err.stderr.decode().strip().partition(git_err_prefix)[-1]
+        raise SystemExit(f'GIT ERROR: {errmsg}') from err
 
 
 @functools.lru_cache(maxsize=1)
