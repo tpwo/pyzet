@@ -22,7 +22,7 @@ class Zettel(NamedTuple):
     path: Path
 
 
-def get_zettels(path: Path, is_reversed: bool = False) -> list[Zettel]:
+def get_all(path: Path, is_reversed: bool = False) -> list[Zettel]:
     """Gets all zettels from a given repo."""
     if not path.is_dir():
         raise SystemExit(f"ERROR: folder {path} doesn't exist.")
@@ -55,7 +55,7 @@ def get_from_id(id_: str, repo: Path) -> Zettel:
 
 def get_last(repo: Path) -> Zettel:
     """Gets the last zettel from a given repo."""
-    return get_zettels(Path(repo, C.ZETDIR), is_reversed=True)[0]
+    return get_all(Path(repo, C.ZETDIR), is_reversed=True)[0]
 
 
 def get_from_dir(dirpath: Path) -> Zettel:

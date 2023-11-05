@@ -7,13 +7,13 @@ import pytest
 
 import pyzet.constants as C
 from pyzet import zettel
+from pyzet.zettel import get_all
 from pyzet.zettel import get_markdown_title
-from pyzet.zettel import get_zettels
 from pyzet.zettel import Zettel
 
 
-def test_get_zettels():
-    actual = get_zettels(path=Path('testing/zet', C.ZETDIR))
+def test_get_all():
+    actual = get_all(path=Path('testing/zet', C.ZETDIR))
     expected = [
         Zettel(
             title='Zet test entry',
@@ -37,8 +37,8 @@ def test_get_zettels():
     assert actual == expected
 
 
-def test_get_zettels_reverse():
-    actual = get_zettels(path=Path('testing/zet', C.ZETDIR), is_reversed=True)
+def test_get_all_reverse():
+    actual = get_all(path=Path('testing/zet', C.ZETDIR), is_reversed=True)
     expected = [
         Zettel(
             title='Zettel with UTF-8',
@@ -62,7 +62,7 @@ def test_get_zettels_reverse():
     assert actual == expected
 
 
-def test_get_zettels_skip_file(tmp_path):
+def test_get_all_skip_file(tmp_path):
     zettel = 'testing/zet/zettels/20220101220852'
     zet_repo = Path(tmp_path, C.ZETDIR)
     zet_repo.mkdir()
@@ -71,7 +71,7 @@ def test_get_zettels_skip_file(tmp_path):
     # Create a file, to see if it will be correctly skipped
     Path(zet_repo, 'foo').touch()
 
-    actual = get_zettels(zet_repo)
+    actual = get_all(zet_repo)
     expected = [
         Zettel(
             title='Zettel with UTF-8',
@@ -83,9 +83,9 @@ def test_get_zettels_skip_file(tmp_path):
     assert actual == expected
 
 
-def test_get_zettels_dir_not_found():
+def test_get_all_dir_not_found():
     with pytest.raises(SystemExit) as excinfo:
-        get_zettels(Path('fooBarNonexistent'))
+        get_all(Path('fooBarNonexistent'))
     (msg,) = excinfo.value.args
     assert msg == "ERROR: folder fooBarNonexistent doesn't exist."
 

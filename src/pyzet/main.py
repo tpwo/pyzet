@@ -30,9 +30,9 @@ from pyzet.utils import get_git_remote_url
 from pyzet.utils import get_md_relative_link
 from pyzet.utils import valid_id
 from pyzet.zettel import get
+from pyzet.zettel import get_all
 from pyzet.zettel import get_printable_tags
 from pyzet.zettel import get_timestamp
-from pyzet.zettel import get_zettels
 from pyzet.zettel import Zettel
 
 
@@ -338,7 +338,7 @@ def get_remote_url(args: Namespace, config: Config) -> int:
 
 
 def list_zettels(args: Namespace, path: Path) -> int:
-    for zet in get_zettels(Path(path, C.ZETDIR), args.reverse):
+    for zet in get_all(Path(path, C.ZETDIR), args.reverse):
         print(_get_zettel_repr(zet, args))
     return 0
 
@@ -361,7 +361,7 @@ def _get_zettel_repr(zet: Zettel, args: Namespace) -> str:
 
 
 def list_tags(path: Path, is_reversed: bool) -> int:
-    zettels = get_zettels(Path(path, C.ZETDIR))
+    zettels = get_all(Path(path, C.ZETDIR))
     all_tags = itertools.chain.from_iterable(
         t for t in (z.tags for z in zettels)
     )
@@ -378,9 +378,7 @@ def list_tags(path: Path, is_reversed: bool) -> int:
 
 
 def count_tags(path: Path) -> int:
-    print(
-        sum(len(zettel.tags) for zettel in get_zettels(Path(path, C.ZETDIR)))
-    )
+    print(sum(len(zettel.tags) for zettel in get_all(Path(path, C.ZETDIR))))
     return 0
 
 
