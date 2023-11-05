@@ -100,3 +100,10 @@ def get_tags(line: str) -> tuple[str, ...]:
     tags = tuple(sorted(tag.lstrip('#') for tag in line.split()))
     logging.debug(f'get_tags: extracted {tags}')
     return tags
+
+
+def get_printable_tags(zettel: Zettel) -> str:
+    if zettel.tags == tuple():
+        raise ValueError
+    else:
+        return '#' + ' #'.join(zettel.tags)

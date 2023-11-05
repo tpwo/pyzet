@@ -27,6 +27,7 @@ from pyzet.utils import Config
 from pyzet.utils import get_git_output
 from pyzet.utils import get_git_remote_url
 from pyzet.utils import get_md_relative_link
+from pyzet.zettel import get_printable_tags
 from pyzet.zettel import get_timestamp
 from pyzet.zettel import get_zettel
 from pyzet.zettel import get_zettels
@@ -110,6 +111,11 @@ def _get_parser() -> tuple[ArgumentParser, dict[str, ArgumentParser]]:
         '--pretty',
         action='store_true',
         help='use prettier format for printing date and time',
+    )
+    list_parser.add_argument(
+        '--tags',
+        action='store_true',
+        help='show tags for each zettel',
     )
     list_parser.add_argument(
         '-l',
@@ -362,11 +368,17 @@ def list_zettels(args: Namespace, path: Path) -> int:
 
 
 def _get_zettel_repr(zettel: Zettel, args: Namespace) -> str:
+    tags = ''
+    if args.tags:
+        try:
+            tags = f'  [{get_printable_tags(zettel)}]'
+        except ValueError:
+            pass
     if args.pretty:
-        return f'{get_timestamp(zettel.id_)} -- {zettel.title}'
+        return f'{get_timestamp(zettel.id_)} -- {zettel.title}{tags}'
     if args.link:
         return get_md_relative_link(zettel.id_, zettel.title)
-    return f'{zettel.id_} -- {zettel.title}'
+    return f'{zettel.id_} -- {zettel.title}{tags}'
 
 
 def list_tags(path: Path, is_reversed: bool) -> int:
