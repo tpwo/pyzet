@@ -19,9 +19,9 @@ from pyzet import show
 from pyzet import utils
 from pyzet.grep import define_grep_cli
 from pyzet.grep import grep
+from pyzet.grep import parse_grep_patterns
 from pyzet.sample_config import define_sample_config_cli
 from pyzet.sample_config import sample_config
-from pyzet.utils import add_id_arg
 from pyzet.utils import call_git
 from pyzet.utils import Config
 from pyzet.utils import get_git_output
@@ -98,7 +98,24 @@ def _get_parser() -> tuple[ArgumentParser, dict[str, ArgumentParser]]:
     subparsers.add_parser('add', help='add a new zettel')
 
     edit_parser = subparsers.add_parser('edit', help='edit an existing zettel')
-    add_id_arg(edit_parser)
+    edit_parser.add_argument(
+        '-i',
+        '--ignore-case',
+        action='store_true',
+        help='case insensitive matching',
+    )
+    edit_parser.add_argument(
+        '-p',
+        '--pretty',
+        action='store_true',
+        help='use prettier format for printing date and time',
+    )
+    edit_parser.add_argument(
+        '--tags',
+        action='store_true',
+        help='show tags for each zettel',
+    )
+    edit_parser.add_argument('patterns', nargs='*', help='grep patterns')
 
     remove_parser = subparsers.add_parser('rm', help='remove a zettel')
     remove_parser.add_argument('id', nargs=1, help='zettel id (timestamp)')
@@ -210,7 +227,7 @@ def _parse_args(args: Namespace) -> int:
     try:
         # show & edit commands use nargs="?" which makes
         # args.command str rather than single element list.
-        if args.command in {'show', 'edit'}:
+        if args.command in {'show'}:
             id_ = args.id
         else:
             id_ = args.id[0]
@@ -292,9 +309,6 @@ def _parse_args_with_id(
     if command == 'show':
         return show.command(args, config, id_)
 
-    if command == 'edit':
-        return edit_zettel(id_, config, config.editor)
-
     if command == 'rm':
         return remove_zettel(id_, config)
 
@@ -311,6 +325,9 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
 
     if args.command == 'add':
         return add_zettel(config)
+
+    if args.command == 'edit':
+        return edit_zettel(args, config)
 
     if args.command == 'list':
         return list_zettels(args, config.repo)
@@ -376,8 +393,11 @@ def _get_zettel_repr(zettel: Zettel, args: Namespace) -> str:
             pass
     if args.pretty:
         return f'{get_timestamp(zettel.id_)} -- {zettel.title}{tags}'
-    if args.link:
-        return get_md_relative_link(zettel.id_, zettel.title)
+    try:
+        if args.link:
+            return get_md_relative_link(zettel.id_, zettel.title)
+    except AttributeError:  # 'Namespace' object has no attribute 'link'
+        pass
     return f'{zettel.id_} -- {zettel.title}{tags}'
 
 
@@ -482,41 +502,72 @@ def add_zettel(config: Config) -> int:
     return 0
 
 
-def edit_zettel(id_: str, config: Config, editor: str) -> int:
+def edit_zettel(args: Namespace, config: Config) -> int:
     """Edits zettel and commits changes with 'ED:' in the message."""
-    zettel_path = Path(config.repo, C.ZETDIR, id_, C.ZETTEL_FILENAME)
-    _open_file(zettel_path, config)
+    opts = ['-I', '--all-match', '--name-only']
+    if args.ignore_case:
+        opts.append('--ignore-case')
+    opts.extend(
+        [*parse_grep_patterns(args.patterns), '--', f'*/{C.ZETTEL_FILENAME}']
+    )
+    try:
+        out = get_git_output(config, 'grep', opts).decode()
+    except subprocess.CalledProcessError:
+        raise SystemExit('ERROR: no zettels found')
+
+    matches = {}
+    for idx, filename in enumerate(out.splitlines(), start=1):
+        path = Path(config.repo, filename)
+        matches[idx] = get_zettel(path)
+
+    print(f'Found {len(matches)} matches:')
+    for idx, zettel in matches.items():
+        print(f'[{idx}] {_get_zettel_repr(zettel, args)}')
 
     try:
-        zettel = get_zettel(zettel_path.parent)
+        user_input = input('Open (press enter to cancel): ')
+    except KeyboardInterrupt:
+        raise SystemExit('\naborting')
+
+    if user_input == '':
+        raise SystemExit('aborting')
+    try:
+        zettel = matches[int(user_input)]
+    except KeyError:
+        raise SystemExit('ERROR: wrong zettel ID')
+
+    _open_file(zettel.path, config)
+
+    try:
+        zettel = get_zettel(zettel.path)
     except ValueError:
         logging.info(
-            f"edit: zettel modification aborted '{zettel_path.absolute()}'"
+            f"edit: zettel modification aborted '{zettel.path.absolute()}'"
         )
         print('Editing zettel aborted, restoring the version from git...')
-        call_git(config, 'restore', (zettel_path.as_posix(),))
+        call_git(config, 'restore', (zettel.path.as_posix(),))
     else:
-        if _file_was_modified(zettel_path, config):
+        if _file_was_modified(zettel.path, config):
             output = _get_files_touched_last_commit(config).decode('utf-8')
-            if output == f'{C.ZETDIR}/{id_}/{C.ZETTEL_FILENAME}\n':
+            if output == f'{C.ZETDIR}/{zettel.id_}/{C.ZETTEL_FILENAME}\n':
                 # If we touch the same zettel as in the last commit,
                 # than we automatically squash the new changes with the
                 # last commit, so the Git history can be simplified.
-                call_git(config, 'add', (zettel_path.as_posix(),))
+                call_git(config, 'add', (zettel.path.as_posix(),))
                 call_git(config, 'commit', ('--amend', '--no-edit'))
                 print(
-                    f'{id_} was edited and auto-squashed with the last commit'
-                    '\nForce push might be required'
+                    f'{zettel.id_} was edited and auto-squashed with the last'
+                    ' commit\nForce push might be required'
                 )
             else:
                 _commit_zettel(
                     config,
-                    zettel_path,
-                    _get_edit_commit_msg(zettel_path, zettel.title, config),
+                    zettel.path,
+                    _get_edit_commit_msg(zettel.path, zettel.title, config),
                 )
-                print(f'{id_} was edited')
+                print(f'{zettel.id_} was edited')
         else:
-            print(f"{id_} wasn't modified")
+            print(f"{zettel.id_} wasn't modified")
     return 0
 
 

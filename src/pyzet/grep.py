@@ -43,7 +43,7 @@ def grep(args: Namespace, config: Config) -> int:
     grep_opts = _build_grep_options(
         args.ignore_case, args.line_number, args.title
     )
-    patterns = _parse_grep_patterns(args.patterns)
+    patterns = parse_grep_patterns(args.patterns)
     grep_opts.extend(patterns)
     return call_git(
         config,
@@ -67,7 +67,7 @@ def _build_grep_options(
     return opts
 
 
-def _parse_grep_patterns(patterns: list[str]) -> list[str]:
+def parse_grep_patterns(patterns: list[str]) -> list[str]:
     opts = []
     for idx, pat in enumerate(patterns):
         if pat.startswith('-'):

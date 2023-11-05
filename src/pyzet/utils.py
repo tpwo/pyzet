@@ -8,6 +8,7 @@ import subprocess
 import sys
 from argparse import ArgumentParser
 from pathlib import Path
+from typing import Iterable
 from typing import NamedTuple
 
 
@@ -20,7 +21,7 @@ class Config(NamedTuple):
 def call_git(
     config: Config,
     command: str,
-    options: tuple[str, ...] = (),
+    options: Iterable[str] = (),
     path: Path | None = None,
 ) -> int:
     if path is None:
@@ -34,7 +35,7 @@ def call_git(
 def get_git_remote_url(
     config: Config,
     origin: str,
-    options: tuple[str, ...] = (),
+    options: Iterable[str] = (),
 ) -> str:
     opts = ('get-url', origin, *options)
     remote = get_git_output(config, 'remote', opts).decode().strip()
@@ -46,7 +47,7 @@ def get_git_remote_url(
 
 
 def get_git_output(
-    config: Config, command: str, options: tuple[str, ...]
+    config: Config, command: str, options: Iterable[str]
 ) -> bytes:
     repo = config.repo.as_posix()
     cmd = (_get_git_bin(), '-C', repo, command, *options)
@@ -54,6 +55,10 @@ def get_git_output(
     try:
         return subprocess.run(cmd, capture_output=True, check=True).stdout
     except subprocess.CalledProcessError as err:
+        if command == 'grep':
+            # Grep returns non-zero exit code if no match,
+            # but without any error msg
+            raise
         git_err_prefix = 'error: '
         errmsg = err.stderr.decode().strip().partition(git_err_prefix)[-1]
         raise SystemExit(f'GIT ERROR: {errmsg}') from err

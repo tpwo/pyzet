@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 import subprocess
 from pathlib import Path
+from unittest import mock
 
 import pytest
 
@@ -124,14 +125,15 @@ def test_init_error_config_file_missing():
 
 def test_edit_error_editor_not_found():
     with pytest.raises(SystemExit) as excinfo:
-        main(['-c', 'testing/pyzet-wrong.yaml', 'edit'])
+        with mock.patch('builtins.input', return_value='1'):
+            main(['-c', 'testing/pyzet-wrong.yaml', 'edit', 'zet test entry'])
     (msg,) = excinfo.value.args
     assert msg == "ERROR: editor 'not-vim' cannot be found."
 
 
 def test_edit_error_missing_repo_in_yaml():
     with pytest.raises(SystemExit) as excinfo:
-        main(['-c', 'testing/pyzet-missing-repo.yaml', 'edit'])
+        main(['-c', 'testing/pyzet-missing-repo.yaml', 'edit', 'foo-pattern'])
     (msg,) = excinfo.value.args
     assert (
         msg == "ERROR: field 'repo' missing from"
