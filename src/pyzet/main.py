@@ -31,7 +31,7 @@ from pyzet.utils import get_md_relative_link
 from pyzet.utils import valid_id
 from pyzet.zettel import get
 from pyzet.zettel import get_all
-from pyzet.zettel import get_printable_tags
+from pyzet.zettel import get_tags_str
 from pyzet.zettel import get_timestamp
 from pyzet.zettel import Zettel
 
@@ -347,7 +347,7 @@ def _get_zettel_repr(zet: Zettel, args: Namespace) -> str:
     tags = ''
     if args.tags:
         try:
-            tags = f'  [{get_printable_tags(zet)}]'
+            tags = f'  [{get_tags_str(zet)}]'
         except ValueError:
             pass
     if args.pretty:

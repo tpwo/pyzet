@@ -119,7 +119,7 @@ def get_tags(line: str) -> tuple[str, ...]:
     return tags
 
 
-def get_printable_tags(zettel: Zettel) -> str:
+def get_tags_str(zettel: Zettel) -> str:
     """Parses zettel tags into a printable repr."""
     if zettel.tags == tuple():
         raise ValueError
