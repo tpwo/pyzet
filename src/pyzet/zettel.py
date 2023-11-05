@@ -11,6 +11,11 @@ import pyzet.constants as C
 
 
 class Zettel(NamedTuple):
+    """Represents a single zettel.
+
+    Zettel contents are skipped for performance reasons.
+    """
+
     title: str
     id: str
     tags: tuple[str, ...]
@@ -18,6 +23,7 @@ class Zettel(NamedTuple):
 
 
 def get_zettels(path: Path, is_reversed: bool = False) -> list[Zettel]:
+    """Gets all zettels from a given repo."""
     if not path.is_dir():
         raise SystemExit(f"ERROR: folder {path} doesn't exist.")
     items = []
@@ -43,18 +49,22 @@ def get_zettels(path: Path, is_reversed: bool = False) -> list[Zettel]:
 
 
 def get_from_id(id_: str, repo: Path) -> Zettel:
+    """Gets zettel from its ID given repo path."""
     return get_from_dir(Path(repo, C.ZETDIR, id_))
 
 
 def get_last(repo: Path) -> Zettel:
+    """Gets the last zettel from a given repo."""
     return get_zettels(Path(repo, C.ZETDIR), is_reversed=True)[0]
 
 
 def get_from_dir(dirpath: Path) -> Zettel:
+    """Gets zettel from a directory named after its ID."""
     return get(Path(dirpath, C.ZETTEL_FILENAME))
 
 
 def get(path: Path) -> Zettel:
+    """Gets zettel from a full path."""
     if path.is_dir():
         raise ValueError
 
@@ -78,6 +88,7 @@ def get(path: Path) -> Zettel:
 
 
 def get_timestamp(id_: str) -> datetime:
+    """Parses zettel ID into a datetime object."""
     return datetime.strptime(id_, C.ZULU_DATETIME_FORMAT)
 
 
@@ -102,12 +113,14 @@ def get_markdown_title(title_line: str, id_: str) -> str:
 
 
 def get_tags(line: str) -> tuple[str, ...]:
+    """Parses tags from a line of text."""
     tags = tuple(sorted(tag.lstrip('#') for tag in line.split()))
     logging.debug(f'get_tags: extracted {tags}')
     return tags
 
 
 def get_printable_tags(zettel: Zettel) -> str:
+    """Parses zettel tags into a printable repr."""
     if zettel.tags == tuple():
         raise ValueError
     else:
