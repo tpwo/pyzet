@@ -307,12 +307,7 @@ def _parse_args_without_id(args: Namespace, config: Config) -> int:
         return add_zettel(config)
 
     if args.command == 'list':
-        return list_zettels(
-            config.repo,
-            is_pretty=args.pretty,
-            is_link=args.link,
-            is_reverse=args.reverse,
-        )
+        return list_zettels(args, config.repo)
 
     if args.command == 'tags':
         if args.count:
@@ -360,18 +355,16 @@ def _validate_id(id_: str, command: str, config: Config) -> None:
         raise SystemExit(f"ERROR: {C.ZETTEL_FILENAME} in {id_} doesn't exist")
 
 
-def list_zettels(
-    path: Path, is_pretty: bool, is_link: bool, is_reverse: bool
-) -> int:
-    for zettel in get_zettels(Path(path, C.ZETDIR), is_reverse):
-        print(_get_zettel_repr(zettel, is_pretty, is_link))
+def list_zettels(args: Namespace, path: Path) -> int:
+    for zettel in get_zettels(Path(path, C.ZETDIR), args.reverse):
+        print(_get_zettel_repr(zettel, args))
     return 0
 
 
-def _get_zettel_repr(zettel: Zettel, is_pretty: bool, is_link: bool) -> str:
-    if is_pretty:
+def _get_zettel_repr(zettel: Zettel, args: Namespace) -> str:
+    if args.pretty:
         return f'{get_timestamp(zettel.id_)} -- {zettel.title}'
-    if is_link:
+    if args.link:
         return get_md_relative_link(zettel.id_, zettel.title)
     return f'{zettel.id_} -- {zettel.title}'
 
