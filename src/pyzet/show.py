@@ -3,14 +3,14 @@ from __future__ import annotations
 from argparse import _SubParsersAction
 from argparse import ArgumentParser
 from argparse import Namespace
-from pathlib import Path
 
 import pyzet.constants as C
+from pyzet import zettel
 from pyzet.utils import add_id_arg
 from pyzet.utils import Config
 from pyzet.utils import get_git_remote_url
 from pyzet.utils import get_md_relative_link
-from pyzet.zettel import get_zettel
+from pyzet.zettel import Zettel
 
 
 def get_parser(
@@ -48,35 +48,32 @@ def get_parser(
     return show_parser
 
 
-def command(args: Namespace, config: Config, id_: str) -> int:
+def command(args: Namespace, config: Config) -> int:
+    if args.id is None:
+        zet = zettel.get_last(config.repo)
+    else:
+        zet = zettel.get_from_id(args.id, config.repo)
+
     if args.show_cmd == 'text':
-        return show_zettel(id_, config.repo)
+        return show_zettel(zet)
+
     if args.show_cmd == 'mdlink':
-        return show_zettel_as_md_link(id_, config.repo)
+        print(get_md_relative_link(zet))
+        return 0
+
     if args.show_cmd == 'url':
-        return show_zettel_as_url(id_, args, config)
+        remote = _remote_dot_git(get_git_remote_url(config, args.origin))
+        print(_get_zettel_url(remote, args.branch, zet.id))
+        return 0
+
     raise NotImplementedError
 
 
-def show_zettel(id_: str, repo_path: Path) -> int:
+def show_zettel(zet: Zettel) -> int:
     """Prints zettel text prepended with centered ID as a header."""
-    print(f' {id_} '.center(C.ZETTEL_WIDTH, '='))
-    zettel_path = Path(repo_path, C.ZETDIR, id_, C.ZETTEL_FILENAME)
-    with open(zettel_path, encoding='utf-8') as file:
+    print(f' {zet.id} '.center(C.ZETTEL_WIDTH, '='))
+    with open(zet.path, encoding='utf-8') as file:
         print(file.read(), end='')
-    return 0
-
-
-def show_zettel_as_md_link(id_: str, repo_path: Path) -> int:
-    zettel_path = Path(repo_path, C.ZETDIR, id_)
-    zettel = get_zettel(zettel_path)
-    print(get_md_relative_link(zettel.id_, zettel.title))
-    return 0
-
-
-def show_zettel_as_url(id_: str, args: Namespace, config: Config) -> int:
-    remote = _remote_dot_git(get_git_remote_url(config, args.origin))
-    print(_get_zettel_url(remote, args.branch, id_))
     return 0
 
 

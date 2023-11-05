@@ -6,8 +6,8 @@ from pathlib import Path
 import pytest
 
 import pyzet.constants as C
+from pyzet import zettel
 from pyzet.zettel import get_markdown_title
-from pyzet.zettel import get_zettel
 from pyzet.zettel import get_zettels
 from pyzet.zettel import Zettel
 
@@ -17,19 +17,19 @@ def test_get_zettels():
     expected = [
         Zettel(
             title='Zet test entry',
-            id_='20211016205158',
+            id='20211016205158',
             tags=('another-tag', 'tag-after-two-spaces', 'test-tag'),
             path=Path('testing/zet/zettels/20211016205158/README.md'),
         ),
         Zettel(
             title='Another zet test entry',
-            id_='20211016223643',
+            id='20211016223643',
             tags=('test-tag',),
             path=Path('testing/zet/zettels/20211016223643/README.md'),
         ),
         Zettel(
             title='Zettel with UTF-8',
-            id_='20220101220852',
+            id='20220101220852',
             tags=(),
             path=Path('testing/zet/zettels/20220101220852/README.md'),
         ),
@@ -42,19 +42,19 @@ def test_get_zettels_reverse():
     expected = [
         Zettel(
             title='Zettel with UTF-8',
-            id_='20220101220852',
+            id='20220101220852',
             tags=(),
             path=Path('testing/zet/zettels/20220101220852/README.md'),
         ),
         Zettel(
             title='Another zet test entry',
-            id_='20211016223643',
+            id='20211016223643',
             tags=('test-tag',),
             path=Path('testing/zet/zettels/20211016223643/README.md'),
         ),
         Zettel(
             title='Zet test entry',
-            id_='20211016205158',
+            id='20211016205158',
             tags=('another-tag', 'tag-after-two-spaces', 'test-tag'),
             path=Path('testing/zet/zettels/20211016205158/README.md'),
         ),
@@ -75,7 +75,7 @@ def test_get_zettels_skip_file(tmp_path):
     expected = [
         Zettel(
             title='Zettel with UTF-8',
-            id_='20220101220852',
+            id='20220101220852',
             tags=(),
             path=Path(tmp_path, 'zettels/20220101220852/README.md'),
         )
@@ -90,14 +90,49 @@ def test_get_zettels_dir_not_found():
     assert msg == "ERROR: folder fooBarNonexistent doesn't exist."
 
 
-def test_open_zettel():
+def test_get():
     expected = Zettel(
         title='Zet test entry',
-        id_='20211016205158',
+        id='20211016205158',
         tags=('another-tag', 'tag-after-two-spaces', 'test-tag'),
         path=Path('testing/zet/zettels/20211016205158/README.md'),
     )
-    actual = get_zettel(Path(f'testing/zet/{C.ZETDIR}/20211016205158'))
+    dir = Path(f'testing/zet/{C.ZETDIR}/20211016205158/{C.ZETTEL_FILENAME}')
+    actual = zettel.get(dir)
+    assert actual == expected
+
+
+def test_get_from_dir():
+    expected = Zettel(
+        title='Zet test entry',
+        id='20211016205158',
+        tags=('another-tag', 'tag-after-two-spaces', 'test-tag'),
+        path=Path('testing/zet/zettels/20211016205158/README.md'),
+    )
+    dir = Path(f'testing/zet/{C.ZETDIR}/20211016205158')
+    actual = zettel.get_from_dir(dir)
+    assert actual == expected
+
+
+def test_get_from_id():
+    expected = Zettel(
+        title='Zet test entry',
+        id='20211016205158',
+        tags=('another-tag', 'tag-after-two-spaces', 'test-tag'),
+        path=Path('testing/zet/zettels/20211016205158/README.md'),
+    )
+    actual = zettel.get_from_id('20211016205158', repo=Path('testing/zet'))
+    assert actual == expected
+
+
+def test_get_last():
+    expected = Zettel(
+        title='Zettel with UTF-8',
+        id='20220101220852',
+        tags=(),
+        path=Path('testing/zet/zettels/20220101220852/README.md'),
+    )
+    actual = zettel.get_last(Path('testing/zet'))
     assert actual == expected
 
 

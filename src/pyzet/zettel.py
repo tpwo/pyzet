@@ -12,7 +12,7 @@ import pyzet.constants as C
 
 class Zettel(NamedTuple):
     title: str
-    id_: str
+    id: str
     tags: tuple[str, ...]
     path: Path
 
@@ -24,7 +24,7 @@ def get_zettels(path: Path, is_reversed: bool = False) -> list[Zettel]:
     for item in sorted(path.iterdir(), reverse=is_reversed):
         if item.is_dir():
             try:
-                items.append(get_zettel(item))
+                items.append(get_from_dir(item))
                 logging.debug(
                     f"get_zettels: zettel appended '{item.absolute()}'"
                 )
@@ -42,40 +42,39 @@ def get_zettels(path: Path, is_reversed: bool = False) -> list[Zettel]:
     return items
 
 
-def get_zettel(path: Path) -> Zettel:
-    if path.name == C.ZETTEL_FILENAME:
-        md_path = path
-        id_ = path.parent.name
+def get_from_id(id_: str, repo: Path) -> Zettel:
+    return get_from_dir(Path(repo, C.ZETDIR, id_))
+
+
+def get_last(repo: Path) -> Zettel:
+    return get_zettels(Path(repo, C.ZETDIR), is_reversed=True)[0]
+
+
+def get_from_dir(dirpath: Path) -> Zettel:
+    return get(Path(dirpath, C.ZETTEL_FILENAME))
+
+
+def get(path: Path) -> Zettel:
+    if path.is_dir():
+        raise ValueError
+
+    title_line, tags_line = _get_first_and_last_line(path)
+    if title_line == '':
+        raise ValueError
+
+    if tags_line.startswith(4 * ' '):
+        tags = get_tags(tags_line.strip())
     else:
-        md_path = Path(path, C.ZETTEL_FILENAME)
-        id_ = path.name
+        tags = tuple()
 
-    title_line, tags_line = _get_first_and_last_line(md_path)
-    title = get_markdown_title(title_line.strip(), md_path.name)
-    tags = get_tags(tags_line.strip()) if tags_line.startswith(4 * ' ') else ()
-    logging.debug(f"get_zettel: '{md_path.name}' with title '{title}'")
-    return Zettel(title=title, id_=id_, tags=tags, path=md_path)
+    id_ = path.parent.name
 
-
-def _get_first_and_last_line(path: Path) -> tuple[str, str]:
-    """Gets the first and the last line from a given file.
-
-    It uses file.seek() to look from the end of the file. It's fast but
-    requires the file to be opened in binary mode.
-
-    Reference:
-    https://stackoverflow.com/a/54278929/14458327
-    """
-    with open(path, 'rb') as file:
-        title_line = file.readline().decode('utf-8')
-        try:
-            file.seek(-2, os.SEEK_END)
-            while file.read(1) != b'\n':
-                file.seek(-2, os.SEEK_CUR)
-        except OSError:  # file has only a single line
-            file.seek(0)
-        tags_line = file.readline().decode('utf-8')
-    return title_line, tags_line
+    return Zettel(
+        id=id_,
+        title=get_markdown_title(title_line, id_),
+        path=path,
+        tags=tags,
+    )
 
 
 def get_timestamp(id_: str) -> datetime:
@@ -113,3 +112,24 @@ def get_printable_tags(zettel: Zettel) -> str:
         raise ValueError
     else:
         return '#' + ' #'.join(zettel.tags)
+
+
+def _get_first_and_last_line(path: Path) -> tuple[str, str]:
+    """Gets the first and the last line from a given file.
+
+    It uses file.seek() to look from the end of the file. It's fast but
+    requires the file to be opened in binary mode.
+
+    Reference:
+    https://stackoverflow.com/a/54278929/14458327
+    """
+    with open(path, 'rb') as file:
+        title_line = file.readline().decode('utf-8')
+        try:
+            file.seek(-2, os.SEEK_END)
+            while file.read(1) != b'\n':
+                file.seek(-2, os.SEEK_CUR)
+        except OSError:  # file has only a single line
+            file.seek(0)
+        tags_line = file.readline().decode('utf-8')
+    return title_line, tags_line

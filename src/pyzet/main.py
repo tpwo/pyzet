@@ -17,6 +17,7 @@ import yaml
 import pyzet.constants as C
 from pyzet import show
 from pyzet import utils
+from pyzet import zettel
 from pyzet.grep import define_grep_cli
 from pyzet.grep import grep
 from pyzet.grep import parse_grep_patterns
@@ -27,9 +28,10 @@ from pyzet.utils import Config
 from pyzet.utils import get_git_output
 from pyzet.utils import get_git_remote_url
 from pyzet.utils import get_md_relative_link
+from pyzet.utils import valid_id
+from pyzet.zettel import get
 from pyzet.zettel import get_printable_tags
 from pyzet.zettel import get_timestamp
-from pyzet.zettel import get_zettel
 from pyzet.zettel import get_zettels
 from pyzet.zettel import Zettel
 
@@ -116,6 +118,7 @@ def _get_parser() -> tuple[ArgumentParser, dict[str, ArgumentParser]]:
         help='show tags for each zettel',
     )
     edit_parser.add_argument('patterns', nargs='*', help='grep patterns')
+    edit_parser.add_argument('--id', type=valid_id, help='zettel ID')
 
     remove_parser = subparsers.add_parser('rm', help='remove a zettel')
     remove_parser.add_argument('id', nargs=1, help='zettel id (timestamp)')
@@ -222,20 +225,52 @@ def _add_git_cmd_options(parser: ArgumentParser, cmd_name: str) -> None:
 def _parse_args(args: Namespace) -> int:
     if args.command == 'sample-config':
         return sample_config(args.kind)
+
     config = _get_config(args)
-    id_: str | None
-    try:
-        # show & edit commands use nargs="?" which makes
-        # args.command str rather than single element list.
-        if args.command in {'show'}:
-            id_ = args.id
-        else:
-            id_ = args.id[0]
-    except AttributeError:
-        pass  # command that doesn't use 'id' was executed
-    else:
-        return _parse_args_with_id(id_, args, config)
-    return _parse_args_without_id(args, config)
+
+    if args.command == 'show':
+        return show.command(args, config)
+
+    if args.command == 'rm':
+        return remove_zettel(args, config)
+
+    if args.command == 'init':
+        return init_repo(config, args.initial_branch)
+
+    if args.command == 'add':
+        return add_zettel(config)
+
+    if args.command == 'edit':
+        return edit_zettel(args, config)
+
+    if args.command == 'list':
+        return list_zettels(args, config.repo)
+
+    if args.command == 'tags':
+        if args.count:
+            return count_tags(config.repo)
+        return list_tags(config.repo, is_reversed=args.reverse)
+
+    if args.command == 'grep':
+        return grep(args, config)
+
+    if args.command in {'status', 'push'}:
+        return call_git(config, args.command, args.options)
+
+    if args.command == 'remote':
+        return get_remote_url(args, config)
+
+    if args.command == 'pull':
+        # --rebase is used to maintain a linear history without merges,
+        # as this seems to be a reasonable approach in ZK repo that is
+        # usually personal.
+        return call_git(config, 'pull', ('--rebase',))
+
+    if args.command == 'clean':
+        return clean_zet_repo(
+            config.repo, is_dry_run=args.dry_run, is_force=args.force
+        )
+    raise NotImplementedError
 
 
 def _get_config(args: Namespace) -> Config:
@@ -297,108 +332,32 @@ def process_yaml(
     )
 
 
-def _parse_args_with_id(
-    id_: str | None, args: Namespace, config: Config
-) -> int:
-    if id_ is None:
-        id_ = _get_last_zettel_id(config.repo)
-
-    command = args.command
-    _validate_id(id_, command, config)
-
-    if command == 'show':
-        return show.command(args, config, id_)
-
-    if command == 'rm':
-        return remove_zettel(id_, config)
-
-    raise NotImplementedError
-
-
-def _get_last_zettel_id(repo_path: Path) -> str:
-    return get_zettels(Path(repo_path, C.ZETDIR), is_reversed=True)[0].id_
-
-
-def _parse_args_without_id(args: Namespace, config: Config) -> int:
-    if args.command == 'init':
-        return init_repo(config, args.initial_branch)
-
-    if args.command == 'add':
-        return add_zettel(config)
-
-    if args.command == 'edit':
-        return edit_zettel(args, config)
-
-    if args.command == 'list':
-        return list_zettels(args, config.repo)
-
-    if args.command == 'tags':
-        if args.count:
-            return count_tags(config.repo)
-        return list_tags(config.repo, is_reversed=args.reverse)
-
-    if args.command == 'grep':
-        return grep(args, config)
-
-    if args.command in {'status', 'push'}:
-        return call_git(config, args.command, args.options)
-
-    if args.command == 'remote':
-        return get_remote_url(args, config)
-
-    if args.command == 'pull':
-        # --rebase is used to maintain a linear history without merges,
-        # as this seems to be a reasonable approach in ZK repo that is
-        # usually personal.
-        return call_git(config, 'pull', ('--rebase',))
-
-    if args.command == 'clean':
-        return clean_zet_repo(
-            config.repo, is_dry_run=args.dry_run, is_force=args.force
-        )
-
-    raise NotImplementedError
-
-
 def get_remote_url(args: Namespace, config: Config) -> int:
     print(get_git_remote_url(config, args.origin, args.options))
     return 0
 
 
-def _validate_id(id_: str, command: str, config: Config) -> None:
-    zettel_dir = Path(config.repo, C.ZETDIR, id_)
-    if not zettel_dir.is_dir():
-        raise SystemExit(f"ERROR: folder {id_} doesn't exist")
-    if not Path(zettel_dir, C.ZETTEL_FILENAME).is_file():
-        if command == 'rm':
-            raise SystemExit(
-                f"ERROR: {C.ZETTEL_FILENAME} in {id_} doesn't exist. "
-                "Use 'pyzet clean' to remove empty folder"
-            )
-        raise SystemExit(f"ERROR: {C.ZETTEL_FILENAME} in {id_} doesn't exist")
-
-
 def list_zettels(args: Namespace, path: Path) -> int:
-    for zettel in get_zettels(Path(path, C.ZETDIR), args.reverse):
-        print(_get_zettel_repr(zettel, args))
+    for zet in get_zettels(Path(path, C.ZETDIR), args.reverse):
+        print(_get_zettel_repr(zet, args))
     return 0
 
 
-def _get_zettel_repr(zettel: Zettel, args: Namespace) -> str:
+def _get_zettel_repr(zet: Zettel, args: Namespace) -> str:
     tags = ''
     if args.tags:
         try:
-            tags = f'  [{get_printable_tags(zettel)}]'
+            tags = f'  [{get_printable_tags(zet)}]'
         except ValueError:
             pass
     if args.pretty:
-        return f'{get_timestamp(zettel.id_)} -- {zettel.title}{tags}'
+        return f'{get_timestamp(zet.id)} -- {zet.title}{tags}'
     try:
         if args.link:
-            return get_md_relative_link(zettel.id_, zettel.title)
+            return get_md_relative_link(zet)
     except AttributeError:  # 'Namespace' object has no attribute 'link'
         pass
-    return f'{zettel.id_} -- {zettel.title}{tags}'
+    return f'{zet.id} -- {zet.title}{tags}'
 
 
 def list_tags(path: Path, is_reversed: bool) -> int:
@@ -487,7 +446,7 @@ def add_zettel(config: Config) -> int:
     _open_file(zettel_path, config)
 
     try:
-        zettel = get_zettel(zettel_path.parent)
+        zet = zettel.get(zettel_path)
     except ValueError:
         logging.info(
             f"add: zettel creation aborted '{zettel_path.absolute()}'"
@@ -496,7 +455,7 @@ def add_zettel(config: Config) -> int:
         zettel_path.unlink()
         zettel_dir.rmdir()
     else:
-        _commit_zettel(config, zettel_path, zettel.title)
+        _commit_zettel(config, zettel_path, zet.title)
         logging.info(f"add: zettel created '{zettel_path.absolute()}'")
         print(f'{id_} was created')
     return 0
@@ -504,6 +463,49 @@ def add_zettel(config: Config) -> int:
 
 def edit_zettel(args: Namespace, config: Config) -> int:
     """Edits zettel and commits changes with 'ED:' in the message."""
+    if args.patterns:
+        zet = _get_zet_from_patterns(args, config)
+    elif args.id is not None:
+        zet = zettel.get_from_id(args.id, config.repo)
+    else:
+        zet = zettel.get_last(config.repo)
+
+    _open_file(zet.path, config)
+
+    try:
+        zet = get(zet.path)
+    except ValueError:
+        logging.info(
+            f"edit: zettel modification aborted '{zet.path.absolute()}'"
+        )
+        print('Editing zettel aborted, restoring the version from git...')
+        call_git(config, 'restore', (zet.path.as_posix(),))
+    else:
+        if _file_was_modified(zet.path, config):
+            output = _get_files_touched_last_commit(config).decode('utf-8')
+            if output == f'{C.ZETDIR}/{zet.id}/{C.ZETTEL_FILENAME}\n':
+                # If we touch the same zettel as in the last commit,
+                # than we automatically squash the new changes with the
+                # last commit, so the Git history can be simplified.
+                call_git(config, 'add', (zet.path.as_posix(),))
+                call_git(config, 'commit', ('--amend', '--no-edit'))
+                print(
+                    f'{zet.id} was edited and auto-squashed with the last'
+                    ' commit\nForce push might be required'
+                )
+            else:
+                _commit_zettel(
+                    config,
+                    zet.path,
+                    _get_edit_commit_msg(zet.path, zet.title, config),
+                )
+                print(f'{zet.id} was edited')
+        else:
+            print(f"{zet.id} wasn't modified")
+    return 0
+
+
+def _get_zet_from_patterns(args: Namespace, config: Config) -> Zettel:
     opts = ['-I', '--all-match', '--name-only']
     if args.ignore_case:
         opts.append('--ignore-case')
@@ -515,14 +517,13 @@ def edit_zettel(args: Namespace, config: Config) -> int:
     except subprocess.CalledProcessError:
         raise SystemExit('ERROR: no zettels found')
 
-    matches = {}
+    matches: dict[int, Zettel] = {}
     for idx, filename in enumerate(out.splitlines(), start=1):
-        path = Path(config.repo, filename)
-        matches[idx] = get_zettel(path)
+        matches[idx] = zettel.get(Path(config.repo, filename))
 
     print(f'Found {len(matches)} matches:')
-    for idx, zettel in matches.items():
-        print(f'[{idx}] {_get_zettel_repr(zettel, args)}')
+    for idx, zet in matches.items():
+        print(f'[{idx}] {_get_zettel_repr(zet, args)}')
 
     try:
         user_input = input('Open (press enter to cancel): ')
@@ -531,44 +532,11 @@ def edit_zettel(args: Namespace, config: Config) -> int:
 
     if user_input == '':
         raise SystemExit('aborting')
+
     try:
-        zettel = matches[int(user_input)]
+        return matches[int(user_input)]
     except KeyError:
         raise SystemExit('ERROR: wrong zettel ID')
-
-    _open_file(zettel.path, config)
-
-    try:
-        zettel = get_zettel(zettel.path)
-    except ValueError:
-        logging.info(
-            f"edit: zettel modification aborted '{zettel.path.absolute()}'"
-        )
-        print('Editing zettel aborted, restoring the version from git...')
-        call_git(config, 'restore', (zettel.path.as_posix(),))
-    else:
-        if _file_was_modified(zettel.path, config):
-            output = _get_files_touched_last_commit(config).decode('utf-8')
-            if output == f'{C.ZETDIR}/{zettel.id_}/{C.ZETTEL_FILENAME}\n':
-                # If we touch the same zettel as in the last commit,
-                # than we automatically squash the new changes with the
-                # last commit, so the Git history can be simplified.
-                call_git(config, 'add', (zettel.path.as_posix(),))
-                call_git(config, 'commit', ('--amend', '--no-edit'))
-                print(
-                    f'{zettel.id_} was edited and auto-squashed with the last'
-                    ' commit\nForce push might be required'
-                )
-            else:
-                _commit_zettel(
-                    config,
-                    zettel.path,
-                    _get_edit_commit_msg(zettel.path, zettel.title, config),
-                )
-                print(f'{zettel.id_} was edited')
-        else:
-            print(f"{zettel.id_} wasn't modified")
-    return 0
 
 
 def _get_files_touched_last_commit(config: Config) -> bytes:
@@ -617,32 +585,31 @@ def _open_file(filename: Path, config: Config) -> None:
         )
 
 
-def remove_zettel(id_: str, config: Config) -> int:
+def remove_zettel(args: Namespace, config: Config) -> int:
     """Removes zettel and commits changes with 'RM:' in the message."""
+    zet = zettel.get_from_id(args.id, config.repo)
     prompt = (
-        f'{id_} will be deleted including all files '
+        f'{args.id} will be deleted including all files '
         'that might be inside. Are you sure? (y/N): '
     )
     if input(prompt) != 'y':
         raise SystemExit('aborting')
-    zettel_path = Path(config.repo, C.ZETDIR, id_, C.ZETTEL_FILENAME)
-    zettel = get_zettel(zettel_path.parent)
 
     # All files in given zettel folder are removed one by one. This
     # might be slower than shutil.rmtree() but gives nice log entry for
     # each file.
-    for file in zettel_path.parent.iterdir():
+    for file in zet.path.parent.iterdir():
         file.unlink()
         logging.info(f"remove: delete '{file}'")
         print(f'{file} was removed')
 
-    _commit_zettel(config, zettel_path, f'RM: {zettel.title}')
+    _commit_zettel(config, zet.path, f'RM: {zet.title}')
 
     # If dir is removed before committing, git raises a warning that dir
     # doesn't exist.
-    zettel_path.parent.rmdir()
-    logging.info(f"remove: delete folder '{zettel_path.parent}'")
-    print(f'{zettel_path.parent} was removed')
+    zet.path.parent.rmdir()
+    logging.info(f"remove: delete folder '{zet.path.parent}'")
+    print(f'{zet.id} was removed')
 
     return 0
 

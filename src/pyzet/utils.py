@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import functools
 import io
 import logging
@@ -7,9 +8,13 @@ import shutil
 import subprocess
 import sys
 from argparse import ArgumentParser
+from datetime import datetime
 from pathlib import Path
 from typing import Iterable
 from typing import NamedTuple
+
+import pyzet.constants as C
+from pyzet.zettel import Zettel
 
 
 class Config(NamedTuple):
@@ -69,14 +74,14 @@ def _convert_ssh_to_https(remote: str) -> str:
     return 'https://' + remote.partition('git@')[-1].replace(':', '/')
 
 
-def get_md_relative_link(id_: str, title: str) -> str:
+def get_md_relative_link(zet: Zettel) -> str:
     """Returns a representation of a zettel that is a relative Markdown link.
 
     Asterisk at the beginning is a Markdown syntax for an unordered list,
     as links to zettels are usually just used in references section of a
     zettel.
     """
-    return f'* [{id_}](../{id_}) {title}'
+    return f'* [{zet.id}](../{zet.id}) {zet.title}'
 
 
 @functools.lru_cache(maxsize=1)
@@ -127,5 +132,17 @@ def compute_log_level(verbosity: int) -> int:
 
 def add_id_arg(parser: ArgumentParser) -> None:
     parser.add_argument(
-        'id', nargs='?', help='zettel id (default: newest zettel)'
+        'id',
+        nargs='?',
+        type=valid_id,
+        help='zettel id (default: newest zettel)',
     )
+
+
+def valid_id(id_: str) -> str:
+    try:
+        datetime.strptime(id_, C.ZULU_DATETIME_FORMAT)
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"'{id_}' is not a valid zettel id")
+    else:
+        return id_
