@@ -14,6 +14,7 @@ class Zettel(NamedTuple):
     title: str
     id_: str
     tags: tuple[str, ...]
+    path: Path
 
 
 def get_zettels(path: Path, is_reversed: bool = False) -> list[Zettel]:
@@ -42,13 +43,18 @@ def get_zettels(path: Path, is_reversed: bool = False) -> list[Zettel]:
 
 
 def get_zettel(path: Path) -> Zettel:
-    title_line, tags_line = _get_first_and_last_line(
-        Path(path, C.ZETTEL_FILENAME)
-    )
-    title = get_markdown_title(title_line.strip(), path.name)
+    if path.name == C.ZETTEL_FILENAME:
+        md_path = path
+        id_ = path.parent.name
+    else:
+        md_path = Path(path, C.ZETTEL_FILENAME)
+        id_ = path.name
+
+    title_line, tags_line = _get_first_and_last_line(md_path)
+    title = get_markdown_title(title_line.strip(), md_path.name)
     tags = get_tags(tags_line.strip()) if tags_line.startswith(4 * ' ') else ()
-    logging.debug(f"get_zettel: '{path.name}' with title '{title}'")
-    return Zettel(title=title, id_=path.name, tags=tags)
+    logging.debug(f"get_zettel: '{md_path.name}' with title '{title}'")
+    return Zettel(title=title, id_=id_, tags=tags, path=md_path)
 
 
 def _get_first_and_last_line(path: Path) -> tuple[str, str]:

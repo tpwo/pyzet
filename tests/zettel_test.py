@@ -19,16 +19,19 @@ def test_get_zettels():
             title='Zet test entry',
             id_='20211016205158',
             tags=('another-tag', 'tag-after-two-spaces', 'test-tag'),
+            path=Path('testing/zet/zettels/20211016205158/README.md'),
         ),
         Zettel(
             title='Another zet test entry',
             id_='20211016223643',
             tags=('test-tag',),
+            path=Path('testing/zet/zettels/20211016223643/README.md'),
         ),
         Zettel(
             title='Zettel with UTF-8',
             id_='20220101220852',
             tags=(),
+            path=Path('testing/zet/zettels/20220101220852/README.md'),
         ),
     ]
     assert actual == expected
@@ -41,16 +44,19 @@ def test_get_zettels_reverse():
             title='Zettel with UTF-8',
             id_='20220101220852',
             tags=(),
+            path=Path('testing/zet/zettels/20220101220852/README.md'),
         ),
         Zettel(
             title='Another zet test entry',
             id_='20211016223643',
             tags=('test-tag',),
+            path=Path('testing/zet/zettels/20211016223643/README.md'),
         ),
         Zettel(
             title='Zet test entry',
             id_='20211016205158',
             tags=('another-tag', 'tag-after-two-spaces', 'test-tag'),
+            path=Path('testing/zet/zettels/20211016205158/README.md'),
         ),
     ]
     assert actual == expected
@@ -67,7 +73,12 @@ def test_get_zettels_skip_file(tmp_path):
 
     actual = get_zettels(zet_repo)
     expected = [
-        Zettel(title='Zettel with UTF-8', id_='20220101220852', tags=())
+        Zettel(
+            title='Zettel with UTF-8',
+            id_='20220101220852',
+            tags=(),
+            path=Path(tmp_path, 'zettels/20220101220852/README.md'),
+        )
     ]
     assert actual == expected
 
@@ -84,6 +95,7 @@ def test_open_zettel():
         title='Zet test entry',
         id_='20211016205158',
         tags=('another-tag', 'tag-after-two-spaces', 'test-tag'),
+        path=Path('testing/zet/zettels/20211016205158/README.md'),
     )
     actual = get_zettel(Path(f'testing/zet/{C.ZETDIR}/20211016205158'))
     assert actual == expected
