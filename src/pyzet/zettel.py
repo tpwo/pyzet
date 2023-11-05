@@ -97,6 +97,6 @@ def get_markdown_title(title_line: str, id_: str) -> str:
 
 
 def get_tags(line: str) -> tuple[str, ...]:
-    tags = tuple(tag.lstrip('#') for tag in line.split())
+    tags = tuple(sorted(tag.lstrip('#') for tag in line.split()))
     logging.debug(f'get_tags: extracted {tags}')
     return tags

@@ -18,7 +18,7 @@ def test_get_zettels():
         Zettel(
             title='Zet test entry',
             id_='20211016205158',
-            tags=('test-tag', 'another-tag', 'tag-after-two-spaces'),
+            tags=('another-tag', 'tag-after-two-spaces', 'test-tag'),
         ),
         Zettel(
             title='Another zet test entry',
@@ -50,7 +50,7 @@ def test_get_zettels_reverse():
         Zettel(
             title='Zet test entry',
             id_='20211016205158',
-            tags=('test-tag', 'another-tag', 'tag-after-two-spaces'),
+            tags=('another-tag', 'tag-after-two-spaces', 'test-tag'),
         ),
     ]
     assert actual == expected
@@ -83,7 +83,7 @@ def test_open_zettel():
     expected = Zettel(
         title='Zet test entry',
         id_='20211016205158',
-        tags=('test-tag', 'another-tag', 'tag-after-two-spaces'),
+        tags=('another-tag', 'tag-after-two-spaces', 'test-tag'),
     )
     actual = get_zettel(Path(f'testing/zet/{C.ZETDIR}/20211016205158'))
     assert actual == expected
