@@ -55,6 +55,9 @@ def get_all(path: Path, is_reversed: bool = False) -> list[Zettel]:
 
 
 def get_from_grep(args: Namespace, config: Config) -> Zettel:
+    if _patterns_empty(args.patterns):
+        msg = 'ERROR: provided patterns are incorrect (empty or whitespace)'
+        raise SystemExit(msg)
     opts = ['-I', '--all-match', '--name-only']
     if args.ignore_case:
         opts.append('--ignore-case')
@@ -86,6 +89,11 @@ def get_from_grep(args: Namespace, config: Config) -> Zettel:
         return matches[int(user_input)]
     except KeyError:
         raise SystemExit('ERROR: wrong zettel ID')
+
+
+def _patterns_empty(patterns: list[str]) -> bool:
+    """Returns True if all provided patterns are empty str or whitespace."""
+    return all('' == s or s.isspace() for s in patterns)
 
 
 def get_from_id(id_: str, repo: Path) -> Zettel:
