@@ -140,9 +140,28 @@ def add_id_arg(parser: ArgumentParser) -> None:
 
 
 def valid_id(id_: str) -> str:
+    """Gradually checks if given string is a valid zettel id."""
+    try:
+        int(id_)
+    except ValueError:
+        raise argparse.ArgumentTypeError(
+            f"'{id_}' is not a valid zettel id (not an integer)"
+        )
+    if len(id_) != C.ZULU_FORMAT_LEN:
+        raise argparse.ArgumentTypeError(
+            f"'{id_}' is not a valid zettel id ({_get_id_err_details(id_)})"
+        )
     try:
         datetime.strptime(id_, C.ZULU_DATETIME_FORMAT)
     except ValueError:
         raise argparse.ArgumentTypeError(f"'{id_}' is not a valid zettel id")
     else:
         return id_
+
+
+def _get_id_err_details(id_: str) -> str:
+    """Generates error msg based on the diff in expected and actual chars."""
+    num = len(id_) - C.ZULU_FORMAT_LEN
+    s = 's' if num > 1 else ''
+    diff = 'long' if num > 0 else 'short'
+    return f'{num} char{s} too {diff}'
