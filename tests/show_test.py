@@ -11,7 +11,7 @@ from tests.conftest import TEST_CFG
 
 
 def test_show(capsys):
-    main([*TEST_CFG, 'show', 'text', '20211016205158'])
+    main([*TEST_CFG, 'show', 'text', '--id', '20211016205158'])
 
     out, err = capsys.readouterr()
     assert out.endswith(
@@ -31,7 +31,7 @@ def test_show_default(capsys):
 
 
 def test_show_utf8(capsys):
-    main([*TEST_CFG, 'show', 'text', '20220101220852'])
+    main([*TEST_CFG, 'show', 'text', '--id', '20220101220852'])
 
     out, err = capsys.readouterr()
     assert out.endswith('# Zettel with UTF-8\n\nZażółć gęślą jaźń.\n')
@@ -39,7 +39,7 @@ def test_show_utf8(capsys):
 
 
 def test_show_mdlink(capsys):
-    main([*TEST_CFG, 'show', 'mdlink', '20211016205158'])
+    main([*TEST_CFG, 'show', 'mdlink', '--id', '20211016205158'])
 
     out, err = capsys.readouterr()
     assert out == '* [20211016205158](../20211016205158) Zet test entry\n'
@@ -83,7 +83,7 @@ def test_show_url(raw, expected, pyzet_init, capsys):
     with open(Path(test_zettel, C.ZETTEL_FILENAME), 'w') as file:
         file.write('# Test')
 
-    main([*TEST_CFG, '--repo', pyzet_init, 'show', 'url', id_])
+    main([*TEST_CFG, '--repo', pyzet_init, 'show', 'url', '--id', id_])
 
     out, err = capsys.readouterr()
     assert out == expected + '\n'

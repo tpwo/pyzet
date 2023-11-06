@@ -10,16 +10,17 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-* Display direct URL to zettels with `pyzet remote url <ID>` (#20)
+* Display direct URL to zettels with `pyzet remote url <ID>` (#20).
+* Add pattern-based interaction for `show` `edit`, and `rm` commands (#33).
 
 ### Changed
 
-* Convert SSH urls into HTTPS urls in 'remote' command (#55)
+* Convert SSH urls into HTTPS urls in 'remote' command (#55).
 * BREAKING CHANGE: add command subparser for `pyzet show <ID>` to
   support multiple types of output. The old behavior of showing zettel
-  in plain text now requires `pyzet show text <ID>` (#20)
-* BREAKING CHANGE: `pyzet show --link <ID>` is now `pyzet show link <ID>`
-  (#20)
+  in plain text now requires `pyzet show text <ID>` (#20).
+* BREAKING CHANGE: `pyzet show --link <ID>` is now `pyzet show link <ID>` (#20).
+* BREAKING CHANGE: zettel ID is now treated as secondary way of providing input, and should be passed with `--id` flag. The primary interaction with zettels is now done via grep patterns (#33).
 
 ## [0.8.0] - 2023-11-02
 

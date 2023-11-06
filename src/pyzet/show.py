@@ -6,7 +6,7 @@ from argparse import Namespace
 
 import pyzet.constants as C
 from pyzet import zettel
-from pyzet.utils import add_id_arg
+from pyzet.utils import add_pattern_args
 from pyzet.utils import Config
 from pyzet.utils import get_git_remote_url
 from pyzet.zettel import get_md_link
@@ -22,17 +22,16 @@ def get_parser(
     text_parser = show_subparsers.add_parser(
         'text', help='show zettel as plain text'
     )
-    add_id_arg(text_parser)
+    add_pattern_args(text_parser)
 
     link_parser = show_subparsers.add_parser(
         'mdlink', help='show zettel as a Markdown link'
     )
-    add_id_arg(link_parser)
+    add_pattern_args(link_parser)
 
     url_parser = show_subparsers.add_parser(
         'url', help='show zettel as an URL'
     )
-    add_id_arg(url_parser)
     url_parser.add_argument(
         '--origin',
         default=C.DEFAULT_REMOTE_NAME,
@@ -44,15 +43,18 @@ def get_parser(
         default=C.DEFAULT_BRANCH,
         help='initial branch name (default: %(default)s)',
     )
+    add_pattern_args(url_parser)
 
     return show_parser
 
 
 def command(args: Namespace, config: Config) -> int:
-    if args.id is None:
-        zet = zettel.get_last(config.repo)
-    else:
+    if args.patterns:
+        zet = zettel.get_from_grep(args, config)
+    elif args.id is not None:
         zet = zettel.get_from_id(args.id, config.repo)
+    else:
+        zet = zettel.get_last(config.repo)
 
     if args.show_cmd == 'text':
         return show_zettel(zet)

@@ -119,15 +119,6 @@ def compute_log_level(verbosity: int) -> int:
     return max(default_log_level - verbosity_step * verbosity, min_log_level)
 
 
-def add_id_arg(parser: ArgumentParser) -> None:
-    parser.add_argument(
-        'id',
-        nargs='?',
-        type=valid_id,
-        help='zettel id (default: newest zettel)',
-    )
-
-
 def add_pattern_args(parser: ArgumentParser) -> None:
     parser.add_argument('patterns', nargs='*', help='grep patterns')
     parser.add_argument(
