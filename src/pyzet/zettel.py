@@ -50,7 +50,10 @@ def get_all(path: Path, is_reversed: bool = False) -> list[Zettel]:
 
 def get_from_id(id_: str, repo: Path) -> Zettel:
     """Gets zettel from its ID given repo path."""
-    return get_from_dir(Path(repo, C.ZETDIR, id_))
+    try:
+        return get_from_dir(Path(repo, C.ZETDIR, id_))
+    except FileNotFoundError:
+        raise SystemExit(f"ERROR: zettel '{id_}' doesn't exist.")
 
 
 def get_last(repo: Path) -> Zettel:
