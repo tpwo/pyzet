@@ -3,11 +3,17 @@ from __future__ import annotations
 import logging
 import os
 import re
+import subprocess
+from argparse import Namespace
 from datetime import datetime
 from pathlib import Path
 from typing import NamedTuple
 
 import pyzet.constants as C
+from pyzet import zettel
+from pyzet.grep import parse_grep_patterns
+from pyzet.utils import Config
+from pyzet.utils import get_git_output
 
 
 class Zettel(NamedTuple):
@@ -46,6 +52,40 @@ def get_all(path: Path, is_reversed: bool = False) -> list[Zettel]:
     if items == []:
         raise SystemExit('ERROR: there are no zettels at given repo.')
     return items
+
+
+def get_from_grep(args: Namespace, config: Config) -> Zettel:
+    opts = ['-I', '--all-match', '--name-only']
+    if args.ignore_case:
+        opts.append('--ignore-case')
+    opts.extend(
+        [*parse_grep_patterns(args.patterns), '--', f'*/{C.ZETTEL_FILENAME}']
+    )
+    try:
+        out = get_git_output(config, 'grep', opts).decode()
+    except subprocess.CalledProcessError:
+        raise SystemExit('ERROR: no zettels found')
+
+    matches: dict[int, Zettel] = {}
+    for idx, filename in enumerate(out.splitlines(), start=1):
+        matches[idx] = zettel.get(Path(config.repo, filename))
+
+    print(f'Found {len(matches)} matches:')
+    for idx, zet in matches.items():
+        print(f'[{idx}] {get_zettel_repr(zet, args)}')
+
+    try:
+        user_input = input('Open (press enter to cancel): ')
+    except KeyboardInterrupt:
+        raise SystemExit('\naborting')
+
+    if user_input == '':
+        raise SystemExit('aborting')
+
+    try:
+        return matches[int(user_input)]
+    except KeyError:
+        raise SystemExit('ERROR: wrong zettel ID')
 
 
 def get_from_id(id_: str, repo: Path) -> Zettel:
@@ -90,9 +130,36 @@ def get(path: Path) -> Zettel:
     )
 
 
+def get_zettel_repr(zet: Zettel, args: Namespace) -> str:
+    tags = ''
+    if args.tags:
+        try:
+            tags = f'  [{get_tags_str(zet)}]'
+        except ValueError:  # No tags found
+            pass
+    if args.pretty:
+        return f'{get_timestamp(zet.id)} -- {zet.title}{tags}'
+    try:
+        if args.link:
+            return get_md_link(zet)
+    except AttributeError:  # 'Namespace' object has no attribute 'link'
+        pass
+    return f'{zet.id} -- {zet.title}{tags}'
+
+
 def get_timestamp(id_: str) -> datetime:
     """Parses zettel ID into a datetime object."""
     return datetime.strptime(id_, C.ZULU_DATETIME_FORMAT)
+
+
+def get_md_link(zet: Zettel) -> str:
+    """Returns a representation of a zettel that is a relative Markdown link.
+
+    Asterisk at the beginning is a Markdown syntax for an unordered list,
+    as links to zettels are usually just used in references section of a
+    zettel.
+    """
+    return f'* [{zet.id}](../{zet.id}) {zet.title}'
 
 
 def get_markdown_title(title_line: str, id_: str) -> str:

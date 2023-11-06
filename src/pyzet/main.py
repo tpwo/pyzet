@@ -20,20 +20,16 @@ from pyzet import utils
 from pyzet import zettel
 from pyzet.grep import define_grep_cli
 from pyzet.grep import grep
-from pyzet.grep import parse_grep_patterns
 from pyzet.sample_config import define_sample_config_cli
 from pyzet.sample_config import sample_config
 from pyzet.utils import call_git
 from pyzet.utils import Config
 from pyzet.utils import get_git_output
 from pyzet.utils import get_git_remote_url
-from pyzet.utils import get_md_relative_link
 from pyzet.utils import valid_id
 from pyzet.zettel import get
 from pyzet.zettel import get_all
-from pyzet.zettel import get_tags_str
-from pyzet.zettel import get_timestamp
-from pyzet.zettel import Zettel
+from pyzet.zettel import get_zettel_repr
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -339,25 +335,8 @@ def get_remote_url(args: Namespace, config: Config) -> int:
 
 def list_zettels(args: Namespace, path: Path) -> int:
     for zet in get_all(Path(path, C.ZETDIR), args.reverse):
-        print(_get_zettel_repr(zet, args))
+        print(get_zettel_repr(zet, args))
     return 0
-
-
-def _get_zettel_repr(zet: Zettel, args: Namespace) -> str:
-    tags = ''
-    if args.tags:
-        try:
-            tags = f'  [{get_tags_str(zet)}]'
-        except ValueError:
-            pass
-    if args.pretty:
-        return f'{get_timestamp(zet.id)} -- {zet.title}{tags}'
-    try:
-        if args.link:
-            return get_md_relative_link(zet)
-    except AttributeError:  # 'Namespace' object has no attribute 'link'
-        pass
-    return f'{zet.id} -- {zet.title}{tags}'
 
 
 def list_tags(path: Path, is_reversed: bool) -> int:
@@ -462,7 +441,7 @@ def add_zettel(config: Config) -> int:
 def edit_zettel(args: Namespace, config: Config) -> int:
     """Edits zettel and commits changes with 'ED:' in the message."""
     if args.patterns:
-        zet = _get_zet_from_patterns(args, config)
+        zet = zettel.get_from_grep(args, config)
     elif args.id is not None:
         zet = zettel.get_from_id(args.id, config.repo)
     else:
@@ -501,40 +480,6 @@ def edit_zettel(args: Namespace, config: Config) -> int:
         else:
             print(f"{zet.id} wasn't modified")
     return 0
-
-
-def _get_zet_from_patterns(args: Namespace, config: Config) -> Zettel:
-    opts = ['-I', '--all-match', '--name-only']
-    if args.ignore_case:
-        opts.append('--ignore-case')
-    opts.extend(
-        [*parse_grep_patterns(args.patterns), '--', f'*/{C.ZETTEL_FILENAME}']
-    )
-    try:
-        out = get_git_output(config, 'grep', opts).decode()
-    except subprocess.CalledProcessError:
-        raise SystemExit('ERROR: no zettels found')
-
-    matches: dict[int, Zettel] = {}
-    for idx, filename in enumerate(out.splitlines(), start=1):
-        matches[idx] = zettel.get(Path(config.repo, filename))
-
-    print(f'Found {len(matches)} matches:')
-    for idx, zet in matches.items():
-        print(f'[{idx}] {_get_zettel_repr(zet, args)}')
-
-    try:
-        user_input = input('Open (press enter to cancel): ')
-    except KeyboardInterrupt:
-        raise SystemExit('\naborting')
-
-    if user_input == '':
-        raise SystemExit('aborting')
-
-    try:
-        return matches[int(user_input)]
-    except KeyError:
-        raise SystemExit('ERROR: wrong zettel ID')
 
 
 def _get_files_touched_last_commit(config: Config) -> bytes:

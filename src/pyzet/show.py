@@ -9,7 +9,7 @@ from pyzet import zettel
 from pyzet.utils import add_id_arg
 from pyzet.utils import Config
 from pyzet.utils import get_git_remote_url
-from pyzet.utils import get_md_relative_link
+from pyzet.zettel import get_md_link
 from pyzet.zettel import Zettel
 
 
@@ -58,7 +58,7 @@ def command(args: Namespace, config: Config) -> int:
         return show_zettel(zet)
 
     if args.show_cmd == 'mdlink':
-        print(get_md_relative_link(zet))
+        print(get_md_link(zet))
         return 0
 
     if args.show_cmd == 'url':

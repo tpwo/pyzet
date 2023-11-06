@@ -14,7 +14,6 @@ from typing import Iterable
 from typing import NamedTuple
 
 import pyzet.constants as C
-from pyzet.zettel import Zettel
 
 
 class Config(NamedTuple):
@@ -72,16 +71,6 @@ def get_git_output(
 def _convert_ssh_to_https(remote: str) -> str:
     """Converts Git SSH url into HTTPS url."""
     return 'https://' + remote.partition('git@')[-1].replace(':', '/')
-
-
-def get_md_relative_link(zet: Zettel) -> str:
-    """Returns a representation of a zettel that is a relative Markdown link.
-
-    Asterisk at the beginning is a Markdown syntax for an unordered list,
-    as links to zettels are usually just used in references section of a
-    zettel.
-    """
-    return f'* [{zet.id}](../{zet.id}) {zet.title}'
 
 
 @functools.lru_cache(maxsize=1)
