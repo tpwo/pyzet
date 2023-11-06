@@ -2,9 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a
-Changelog](https://keepachangelog.com/en/1.0.0/), and this project
-adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
@@ -16,9 +14,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 
 * Convert SSH urls into HTTPS urls in 'remote' command (#55).
-* BREAKING CHANGE: add command subparser for `pyzet show <ID>` to
-  support multiple types of output. The old behavior of showing zettel
-  in plain text now requires `pyzet show text <ID>` (#20).
+* BREAKING CHANGE: add command subparser for `pyzet show <ID>` to support multiple types of output. The old behavior of showing zettel in plain text now requires `pyzet show text <ID>` (#20).
 * BREAKING CHANGE: `pyzet show --link <ID>` is now `pyzet show link <ID>` (#20).
 * BREAKING CHANGE: zettel ID is now treated as secondary way of providing input, and should be passed with `--id` flag. The primary interaction with zettels is now done via grep patterns (#33).
 
@@ -32,8 +28,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
-* Auto-squash commits after multiple edits to the same zettel in a row
-  (#51)
+* Auto-squash commits after multiple edits to the same zettel in a row (#51)
 
 ### Changed
 
@@ -55,8 +50,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 * Reorganization & update of the readme and tutorial (#36).
 * Update URL formatting suggested in the docs (#30).
 * Simplify zettel relative links by removing `--` from them (#31).
-* Extend `pyzet sample-config` to provide sane defaults also for Windows
-  (#38).
+* Extend `pyzet sample-config` to provide sane defaults also for Windows (#38).
 
 ### Fixed
 
@@ -70,32 +64,23 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-* Use `print()` for all standard program output, and `logging` for
-  displaying additional information. Logging level was changed to
-  `WARNING`, so existing warnings will be showed by default.
+* Use `print()` for all standard program output, and `logging` for displaying additional information. Logging level was changed to `WARNING`, so existing warnings will be showed by default.
 * Switch to use single quotes over back quotes in the program output.
-* Remove implicit `--ignore-case` option from `pyzet grep`; the flag
-  with this name was created and it should be explicitly added to
-  maintain the old behavior (#29).
+* Remove implicit `--ignore-case` option from `pyzet grep`; the flag with this name was created and it should be explicitly added to maintain the old behavior (#29).
 
 ## [0.4.0] - 2022-04-03
 
 ### Added
 
 * Add `--link` flag to `pyzet list` and `pyzet show` (#21).
-* Add `--line-number` flag to `pyzet grep` which was previously applied
-  automatically (#23).
-* Add `--title` flag to `pyzet grep` which shows the title of matched
-  zettel (#24).
+* Add `--line-number` flag to `pyzet grep` which was previously applied automatically (#23).
+* Add `--title` flag to `pyzet grep` which shows the title of matched zettel (#24).
 * Allow for passing multiple patterns in `pyzet grep` (#25).
 * Allow for passing custom options in `pyzet grep` (#27).
 
 ### Changed
 
-* Use `--` in `pyzet list` and `pyzet list --pretty` output. Before, a
-  single dash was used. The new syntax is in line with recommendations
-  about including references in zettels that can be found in the readme.
-  It's also used in `pyzet list --link` and `pyzet show --link` output.
+* Use `--` in `pyzet list` and `pyzet list --pretty` output. Before, a single dash was used. The new syntax is in line with recommendations about including references in zettels that can be found in the readme.  It's also used in `pyzet list --link` and `pyzet show --link` output.
 * Make output of `pyzet grep` more readable by using `--heading` and
   `--break` flags in `git grep` that is called by this command (#23).
 
