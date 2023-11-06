@@ -73,6 +73,15 @@ def get_from_grep(args: Namespace, config: Config) -> Zettel:
     for idx, filename in enumerate(out.splitlines(), start=1):
         matches[idx] = zettel.get(Path(config.repo, filename))
 
+    confirmation_threshold = 50
+    if len(matches) > confirmation_threshold:
+        prompt = f'Found {len(matches)} matching zettels. Continue? (y/N): '
+        try:
+            if input(prompt) != 'y':
+                raise SystemExit('aborting')
+        except KeyboardInterrupt:
+            raise SystemExit('\naborting')
+
     print(f'Found {len(matches)} matches:')
     for idx, zet in matches.items():
         print(f'[{idx}] {get_zettel_repr(zet, args)}')
