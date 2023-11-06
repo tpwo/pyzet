@@ -174,7 +174,7 @@ don't try to create multiple zettels at the same second :p)
 You can see that my ID of the first zettel was `20220126232605`. We can
 now paste it to the `show text` command:
 
-    $ pyzet show text 20220126232605
+    $ pyzet show text --id 20220126232605
     ============================ 20220126232605 ============================
     # This is my first zettel created with pyzet
     <snip>
@@ -211,7 +211,7 @@ It's a bit different: you have to provide the ID each time, even for the
 newest zettel, e.g. to remove my second zettel we should run the
 following:
 
-    $ pyzet rm 20220126232716
+    $ pyzet rm --id 20220126232716
     20220126232716 will be deleted including all files that might be inside. Are you sure? (y/N): y
     /home/<your-username>/zet/zettels/20220126232716/README.md was removed
     [main 009b935] RM: This is my second zettel
