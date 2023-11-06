@@ -22,11 +22,11 @@ from pyzet.grep import define_grep_cli
 from pyzet.grep import grep
 from pyzet.sample_config import define_sample_config_cli
 from pyzet.sample_config import sample_config
+from pyzet.utils import add_pattern_args
 from pyzet.utils import call_git
 from pyzet.utils import Config
 from pyzet.utils import get_git_output
 from pyzet.utils import get_git_remote_url
-from pyzet.utils import valid_id
 from pyzet.zettel import get
 from pyzet.zettel import get_all
 from pyzet.zettel import get_zettel_repr
@@ -96,28 +96,10 @@ def _get_parser() -> tuple[ArgumentParser, dict[str, ArgumentParser]]:
     subparsers.add_parser('add', help='add a new zettel')
 
     edit_parser = subparsers.add_parser('edit', help='edit an existing zettel')
-    edit_parser.add_argument(
-        '-i',
-        '--ignore-case',
-        action='store_true',
-        help='case insensitive matching',
-    )
-    edit_parser.add_argument(
-        '-p',
-        '--pretty',
-        action='store_true',
-        help='use prettier format for printing date and time',
-    )
-    edit_parser.add_argument(
-        '--tags',
-        action='store_true',
-        help='show tags for each zettel',
-    )
-    edit_parser.add_argument('patterns', nargs='*', help='grep patterns')
-    edit_parser.add_argument('--id', type=valid_id, help='zettel ID')
+    add_pattern_args(edit_parser)
 
     remove_parser = subparsers.add_parser('rm', help='remove a zettel')
-    remove_parser.add_argument('id', nargs=1, help='zettel id (timestamp)')
+    add_pattern_args(remove_parser)
 
     subparsers_dict['show'] = show.get_parser(subparsers)
 
@@ -530,9 +512,14 @@ def _open_file(filename: Path, config: Config) -> None:
 
 def remove_zettel(args: Namespace, config: Config) -> int:
     """Removes zettel and commits changes with 'RM:' in the message."""
-    zet = zettel.get_from_id(args.id, config.repo)
+    if args.patterns:
+        zet = zettel.get_from_grep(args, config)
+    elif args.id is not None:
+        zet = zettel.get_from_id(args.id, config.repo)
+    else:
+        raise SystemExit
     prompt = (
-        f'{args.id} will be deleted including all files '
+        f'{zet.id} will be deleted including all files '
         'that might be inside. Are you sure? (y/N): '
     )
     if input(prompt) != 'y':

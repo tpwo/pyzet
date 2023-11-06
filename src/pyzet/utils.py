@@ -128,6 +128,30 @@ def add_id_arg(parser: ArgumentParser) -> None:
     )
 
 
+def add_pattern_args(parser: ArgumentParser) -> None:
+    parser.add_argument('patterns', nargs='*', help='grep patterns')
+    parser.add_argument(
+        '-i',
+        '--ignore-case',
+        action='store_true',
+        help='case insensitive matching',
+    )
+    parser.add_argument(
+        '-p',
+        '--pretty',
+        action='store_true',
+        help='use prettier format for printing date and time',
+    )
+    parser.add_argument(
+        '--tags',
+        action='store_true',
+        help='show tags for each zettel',
+    )
+    parser.add_argument(
+        '--id', type=valid_id, help='provide zettel ID instead of patterns'
+    )
+
+
 def valid_id(id_: str) -> str:
     """Gradually checks if given string is a valid zettel id."""
     try:
