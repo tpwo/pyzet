@@ -10,7 +10,6 @@ from pathlib import Path
 from typing import NamedTuple
 
 import pyzet.constants as C
-from pyzet import zettel
 from pyzet.grep import parse_grep_patterns
 from pyzet.utils import Config
 from pyzet.utils import get_git_output
@@ -71,7 +70,7 @@ def get_from_grep(args: Namespace, config: Config) -> Zettel:
 
     matches: dict[int, Zettel] = {}
     for idx, filename in enumerate(out.splitlines(), start=1):
-        matches[idx] = zettel.get(Path(config.repo, filename))
+        matches[idx] = get(Path(config.repo, filename))
 
     confirmation_threshold = 50
     if len(matches) > confirmation_threshold:
