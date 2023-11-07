@@ -141,7 +141,7 @@ def get(path: Path) -> Zettel:
 
     return Zettel(
         id=id_,
-        title=get_markdown_title(title_line, id_),
+        title=get_markdown_title(title_line.strip(), id_),
         path=path,
         tags=tags,
     )
