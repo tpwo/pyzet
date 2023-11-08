@@ -38,7 +38,7 @@ def get_all(path: Path, is_reversed: bool = False) -> list[Zettel]:
                 items.append(get_from_dir(item))
                 logging.debug('get_all: found %s', items[-1])
             except FileNotFoundError:
-                logging.warning(f"empty zet folder '{item.name}' detected")
+                logging.warning("empty zet folder '%s' detected", item.name)
             except ValueError:
                 # Skips dirs with different naming convention and skips
                 # zettels without a text in the first line (i.e. during
@@ -189,7 +189,7 @@ def get_markdown_title(title_line: str, id_: str) -> str:
         raise ValueError('Empty zettel title found')
     result = re.match(C.MARKDOWN_TITLE, title_line)
     if not result:
-        logging.warning(f'wrong title formatting: {id_} "{title_line}"')
+        logging.warning('wrong title formatting: %s "%s"', id_, title_line)
         return title_line
     res = result.groups()[0]
     logging.debug("get_markdown_title: '%s' -> '%s'", title_line, res)
