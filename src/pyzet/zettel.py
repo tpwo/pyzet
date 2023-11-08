@@ -138,12 +138,14 @@ def get(path: Path) -> Zettel:
 
     id_ = path.parent.name
 
-    return Zettel(
+    zettel = Zettel(
         id=id_,
         title=get_markdown_title(title_line.strip(), id_),
         path=path,
         tags=tags,
     )
+    logging.debug('zettel.get: %s', zettel)
+    return zettel
 
 
 def get_zettel_repr(zet: Zettel, args: Namespace) -> str:
