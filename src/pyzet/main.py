@@ -27,8 +27,6 @@ from pyzet.utils import call_git
 from pyzet.utils import Config
 from pyzet.utils import get_git_output
 from pyzet.utils import get_git_remote_url
-from pyzet.zettel import get
-from pyzet.zettel import get_all
 from pyzet.zettel import get_zettel_repr
 
 
@@ -316,13 +314,13 @@ def get_remote_url(args: Namespace, config: Config) -> int:
 
 
 def list_zettels(args: Namespace, path: Path) -> int:
-    for zet in get_all(Path(path, C.ZETDIR), args.reverse):
+    for zet in zettel.get_all(Path(path, C.ZETDIR), args.reverse):
         print(get_zettel_repr(zet, args))
     return 0
 
 
 def list_tags(path: Path, is_reversed: bool) -> int:
-    zettels = get_all(Path(path, C.ZETDIR))
+    zettels = zettel.get_all(Path(path, C.ZETDIR))
     all_tags = itertools.chain.from_iterable(
         t for t in (z.tags for z in zettels)
     )
@@ -339,7 +337,8 @@ def list_tags(path: Path, is_reversed: bool) -> int:
 
 
 def count_tags(path: Path) -> int:
-    print(sum(len(zettel.tags) for zettel in get_all(Path(path, C.ZETDIR))))
+    dir = Path(path, C.ZETDIR)
+    print(sum(len(zettel.tags) for zettel in zettel.get_all(dir)))
     return 0
 
 
@@ -432,7 +431,7 @@ def edit_zettel(args: Namespace, config: Config) -> int:
     _open_file(zet.path, config)
 
     try:
-        zet = get(zet.path)
+        zet = zettel.get(zet.path)
     except ValueError:
         logging.info(
             f"edit: zettel modification aborted '{zet.path.absolute()}'"
