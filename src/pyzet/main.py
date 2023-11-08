@@ -27,7 +27,6 @@ from pyzet.utils import call_git
 from pyzet.utils import Config
 from pyzet.utils import get_git_output
 from pyzet.utils import get_git_remote_url
-from pyzet.zettel import get_zettel_repr
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -315,7 +314,7 @@ def get_remote_url(args: Namespace, config: Config) -> int:
 
 def list_zettels(args: Namespace, path: Path) -> int:
     for zet in zettel.get_all(Path(path, C.ZETDIR), args.reverse):
-        print(get_zettel_repr(zet, args))
+        print(zettel.get_repr(zet, args))
     return 0
 
 

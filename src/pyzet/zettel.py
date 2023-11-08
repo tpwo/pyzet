@@ -83,7 +83,7 @@ def get_from_grep(args: Namespace, config: Config) -> Zettel:
 
     print(f'Found {len(matches)} matches:')
     for idx, zet in matches.items():
-        print(f'[{idx}] {get_zettel_repr(zet, args)}')
+        print(f'[{idx}] {get_repr(zet, args)}')
 
     try:
         user_input = input('Open (press enter to cancel): ')
@@ -148,7 +148,7 @@ def get(path: Path) -> Zettel:
     return zettel
 
 
-def get_zettel_repr(zet: Zettel, args: Namespace) -> str:
+def get_repr(zet: Zettel, args: Namespace) -> str:
     tags = ''
     if args.tags:
         try:
