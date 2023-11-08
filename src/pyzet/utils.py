@@ -31,7 +31,7 @@ def call_git(
     if path is None:
         path = config.repo
     cmd = (_get_git_bin(), '-C', path.as_posix(), command, *options)
-    logging.debug(f'call_git: subprocess.run({cmd})')
+    logging.debug('call_git: subprocess.run(%s)', cmd)
     subprocess.run(cmd)
     return 0
 
@@ -55,7 +55,7 @@ def get_git_output(
 ) -> bytes:
     repo = config.repo.as_posix()
     cmd = (_get_git_bin(), '-C', repo, command, *options)
-    logging.debug(f'get_git_output: subprocess.run({cmd})')
+    logging.debug('get_git_output: subprocess.run(%s)', cmd)
     try:
         return subprocess.run(cmd, capture_output=True, check=True).stdout
     except subprocess.CalledProcessError as err:
@@ -77,7 +77,7 @@ def _convert_ssh_to_https(remote: str) -> str:
 def _get_git_bin() -> str:
     if (git := shutil.which('git')) is None:
         raise SystemExit(f"ERROR: '{git}' cannot be found.")
-    logging.debug(f"_get_git_bin: found at '{git}'")
+    logging.debug("_get_git_bin: found at '%s'", git)
     return git
 
 

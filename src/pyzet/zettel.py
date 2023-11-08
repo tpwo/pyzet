@@ -31,23 +31,19 @@ def get_all(path: Path, is_reversed: bool = False) -> list[Zettel]:
     """Gets all zettels from a given repo."""
     if not path.is_dir():
         raise SystemExit(f"ERROR: folder {path} doesn't exist.")
-    items = []
+    items: list[Zettel] = []
     for item in sorted(path.iterdir(), reverse=is_reversed):
         if item.is_dir():
             try:
                 items.append(get_from_dir(item))
-                logging.debug(
-                    f"get_zettels: zettel appended '{item.absolute()}'"
-                )
+                logging.debug('get_all: found %s', items[-1])
             except FileNotFoundError:
                 logging.warning(f"empty zet folder '{item.name}' detected")
             except ValueError:
                 # Skips dirs with different naming convention and skips
                 # zettels without a text in the first line (i.e. during
                 # editing).
-                logging.debug(
-                    f"get_zettels: ValueError at '{item.absolute()}'"
-                )
+                logging.debug("get_zettels: ValueError '%s'", item.absolute())
     if items == []:
         raise SystemExit('ERROR: there are no zettels at given repo.')
     return items
@@ -196,14 +192,14 @@ def get_markdown_title(title_line: str, id_: str) -> str:
         logging.warning(f'wrong title formatting: {id_} "{title_line}"')
         return title_line
     res = result.groups()[0]
-    logging.debug(f"get_markdown_title: '{title_line}' -> '{res}'")
+    logging.debug("get_markdown_title: '%s' -> '%s'", title_line, res)
     return res
 
 
 def get_tags(line: str) -> tuple[str, ...]:
     """Parses tags from a line of text."""
     tags = tuple(sorted(tag.lstrip('#') for tag in line.split()))
-    logging.debug(f'get_tags: extracted {tags}')
+    logging.debug('get_tags: got %s', tags)
     return tags
 
 
