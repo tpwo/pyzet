@@ -389,3 +389,11 @@ def test_remote_custom_origin(raw, output, pyzet_init, capfd):
     expected = output + '\n'
     assert out == expected
     assert err == ''
+
+
+def test_remote_wrong_name(pyzet_init):
+    subprocess.run(('git', '-C', pyzet_init, 'remote', 'add', 'origin', 'foo'))
+    with pytest.raises(SystemExit) as excinfo:
+        main([*TEST_CFG, '--repo', pyzet_init, 'remote', '--name', 'FOOBAR'])
+    (msg,) = excinfo.value.args
+    assert msg == "GIT ERROR:\nerror: No such remote 'FOOBAR'"
