@@ -47,6 +47,22 @@ def test_show_patterns_ignore_case(capsys):
     assert err == ''
 
 
+def test_show_patterns_empty_pattern():
+    with pytest.raises(SystemExit) as excinfo:
+        main([*TEST_CFG, 'show', 'text', ''])
+    (msg,) = excinfo.value.args
+    assert (
+        msg == 'ERROR: provided patterns are incorrect (empty or whitespace)'
+    )
+
+
+def test_show_patterns_empty_repo(pyzet_init):
+    with pytest.raises(SystemExit) as excinfo:
+        main([*TEST_CFG, '--repo', pyzet_init, 'show', 'text', 'zet'])
+    (msg,) = excinfo.value.args
+    assert msg == 'ERROR: no zettels found'
+
+
 def test_show_utf8(capsys):
     main([*TEST_CFG, 'show', 'text', '--id', '20220101220852'])
 
