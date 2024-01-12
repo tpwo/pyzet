@@ -30,11 +30,11 @@ repos:
     -   id: pyupgrade
         args: [--py38-plus]
 -   repo: https://github.com/pycqa/flake8
-    rev: 6.1.0
+    rev: 7.0.0
     hooks:
     -   id: flake8
 -   repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.6.1
+    rev: v1.8.0
     hooks:
     -   id: mypy
         args: [--non-interactive, --install-types]
@@ -48,6 +48,6 @@ repos:
     hooks:
     -   id: setup-cfg-fmt
 -   repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.37.0
+    rev: v0.38.0
     hooks:
     -   id: markdownlint
