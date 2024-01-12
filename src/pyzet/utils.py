@@ -63,9 +63,8 @@ def get_git_output(
             # Grep returns non-zero exit code if no match,
             # but without any error msg
             raise
-        git_err_prefix = 'error: '
-        errmsg = err.stderr.decode().strip().partition(git_err_prefix)[-1]
-        raise SystemExit(f'GIT ERROR: {errmsg}') from err
+        errmsg = err.stderr.decode().strip()
+        raise SystemExit(f'GIT ERROR:\n{errmsg}') from err
 
 
 def _convert_ssh_to_https(remote: str) -> str:
