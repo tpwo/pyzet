@@ -4,10 +4,10 @@ CLI editors like vim or nano should work out of the box without the need
 of passing any `editor_args`. For GUI editors you almost always are
 expected to pass some args. Below is the list with some tested editors.
 
-**TIP:** if your editor is not listed, you can search how to set it up as
-Git's commit message editor. It's almost certain that if such editor
-works with Git with certain args, it will work with pyzet when the same
-args are used.
+> 💡 **TIP:** if your editor is not listed, you can search how to set it
+> up as Git's commit message editor. Very likely if an editor works with
+> Git with certain args, it should work with pyzet when the same args are
+> used.
 
 ## [VS Code](https://code.visualstudio.com/)
 
