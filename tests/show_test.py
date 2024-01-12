@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import subprocess
 from pathlib import Path
+from unittest import mock
 
 import pytest
 
@@ -27,6 +28,22 @@ def test_show_default(capsys):
 
     out, err = capsys.readouterr()
     assert out.endswith('# Zettel with UTF-8\n\nZażółć gęślą jaźń.\n')
+    assert err == ''
+
+
+def test_show_patterns(capsys):
+    with mock.patch('builtins.input', return_value='1'):
+        main([*TEST_CFG, 'show', 'text', 'zet', 'test'])
+    out, err = capsys.readouterr()
+    assert '# Another zet test entry' in out
+    assert err == ''
+
+
+def test_show_patterns_ignore_case(capsys):
+    with mock.patch('builtins.input', return_value='1'):
+        main([*TEST_CFG, 'show', 'text', '--ignore-case', 'zet', 'test'])
+    out, err = capsys.readouterr()
+    assert '# Zet test entry' in out
     assert err == ''
 
 
