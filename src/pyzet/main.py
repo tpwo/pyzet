@@ -175,7 +175,7 @@ def _get_parser() -> tuple[ArgumentParser, dict[str, ArgumentParser]]:
         'remote', help="run 'git remote get-url' in ZK repo"
     )
     remote_parser.add_argument(
-        '--origin',
+        '--name',
         default=C.DEFAULT_REMOTE_NAME,
         help='name of git repo remote (default: %(default)s)',
     )
@@ -307,7 +307,7 @@ def process_yaml(
 
 
 def get_remote_url(args: Namespace, config: Config) -> int:
-    print(get_git_remote_url(config, args.origin))
+    print(get_git_remote_url(config, args.name))
     return 0
 
 

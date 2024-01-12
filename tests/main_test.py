@@ -382,7 +382,7 @@ def test_remote(raw, output, pyzet_init, capfd):
 def test_remote_custom_origin(raw, output, pyzet_init, capfd):
     subprocess.run(('git', '-C', pyzet_init, 'remote', 'add', 'foo', raw))
 
-    test_cmd = [*TEST_CFG, '--repo', pyzet_init, 'remote', '--origin', 'foo']
+    test_cmd = [*TEST_CFG, '--repo', pyzet_init, 'remote', '--name', 'foo']
     main(test_cmd)
 
     out, err = capfd.readouterr()

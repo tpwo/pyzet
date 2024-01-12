@@ -33,7 +33,7 @@ def get_parser(
         'url', help='show zettel as an URL'
     )
     url_parser.add_argument(
-        '--origin',
+        '--name',
         default=C.DEFAULT_REMOTE_NAME,
         help='name of git repo remote (default: %(default)s)',
     )
@@ -64,7 +64,7 @@ def command(args: Namespace, config: Config) -> int:
         return 0
 
     if args.show_cmd == 'url':
-        remote = _remote_dot_git(get_git_remote_url(config, args.origin))
+        remote = _remote_dot_git(get_git_remote_url(config, args.name))
         print(_get_zettel_url(remote, args.branch, zet.id))
         return 0
 

@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed
 
 * Zero-padding is used when displaying the list of matched zettels.
+* BREAKING CHANGE: rename flag `--origin` to `--name` in `pyzet remote`
 
 ### Removed
 
