@@ -38,7 +38,10 @@ def main(argv: list[str] | None = None) -> int:
     if args.command is None:
         parser.print_usage()
         return 0
-    return _parse_args(args)
+    try:
+        return _parse_args(args)
+    except BrokenPipeError:
+        raise SystemExit
 
 
 def _get_parser() -> tuple[ArgumentParser, dict[str, ArgumentParser]]:

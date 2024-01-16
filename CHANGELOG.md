@@ -22,6 +22,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 * No longer allow for passing Git options to `pyzet remote`. Since #20 from 0.9.0 this doesn't make sense anymore, as we're directly calling `git remote get-url`.
 
+## Fixed
+
+* Handle `BrokenPipeError` (#19).
+
 ## [0.9.0] - 2023-11-08
 
 ### Added
