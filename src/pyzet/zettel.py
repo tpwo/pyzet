@@ -83,7 +83,7 @@ def get_from_grep(
     num_matches = len(matches)
     confirmation_threshold = 50
     if num_matches > confirmation_threshold:
-        prompt = f'Found {num_matches} matching zettels. Continue? (y/N): '
+        prompt = f'Found {num_matches} matches. Continue? (y/N): '
         try:
             if input(prompt) != 'y':
                 raise SystemExit('aborting')
