@@ -109,6 +109,6 @@ See also:
 * Even simpler approach to Zettelkasten\
   <https://gsilvapt.me/posts/poor-man-zettel/>
 
-* Simple, Non-Commercial, Open Source Notes, a great video about tools to do
-  note taking\
+* *Simple, Non-Commercial, Open Source Notes*, a great video about tools
+  to do note-taking\
   <https://youtu.be/XRpHIa-2XCE>
