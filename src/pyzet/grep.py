@@ -6,8 +6,8 @@ from argparse import Namespace
 from pathlib import Path
 
 import pyzet.constants as C
+from pyzet.config import Config
 from pyzet.utils import call_git
-from pyzet.utils import Config
 
 
 def define_grep_cli(subparsers: _SubParsersAction[ArgumentParser]) -> None:

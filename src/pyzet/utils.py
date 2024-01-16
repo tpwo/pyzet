@@ -11,15 +11,9 @@ from argparse import ArgumentParser
 from datetime import datetime
 from pathlib import Path
 from typing import Iterable
-from typing import NamedTuple
 
 import pyzet.constants as C
-
-
-class Config(NamedTuple):
-    repo: Path
-    editor: str
-    editor_args: tuple[str, ...]
+from pyzet.config import Config
 
 
 def call_git(

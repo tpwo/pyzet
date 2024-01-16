@@ -16,9 +16,9 @@ from pathlib import Path
 
 import pyzet.constants as C
 from pyzet import zettel
+from pyzet.config import Config
 from pyzet.exceptions import CreateNewZettel
 from pyzet.utils import call_git
-from pyzet.utils import Config
 from pyzet.utils import get_git_output
 from pyzet.utils import get_git_remote_url
 

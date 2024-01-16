@@ -4,11 +4,17 @@ from __future__ import annotations
 from argparse import Namespace
 from pathlib import Path
 from typing import Iterable
+from typing import NamedTuple
 
 import yaml
 
 import pyzet.constants as C
-from pyzet.utils import Config
+
+
+class Config(NamedTuple):
+    repo: Path
+    editor: str
+    editor_args: tuple[str, ...]
 
 
 def get(args: Namespace) -> Config:
