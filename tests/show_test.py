@@ -93,27 +93,27 @@ def test_show_mdlink(capsys):
     (
         (
             'https://github.com/tpwo/pyzet',
-            'https://github.com/tpwo/pyzet/tree/main/zettels/20211016205159',
+            'https://github.com/tpwo/pyzet/tree/main/docs/20211016205159',
         ),
         (
             'https://github.com/tpwo/pyzet.git',
-            'https://github.com/tpwo/pyzet/tree/main/zettels/20211016205159',
+            'https://github.com/tpwo/pyzet/tree/main/docs/20211016205159',
         ),
         (
             'git@github.com:tpwo/pyzet',
-            'https://github.com/tpwo/pyzet/tree/main/zettels/20211016205159',
+            'https://github.com/tpwo/pyzet/tree/main/docs/20211016205159',
         ),
         (
             'git@github.com:tpwo/pyzet.git',
-            'https://github.com/tpwo/pyzet/tree/main/zettels/20211016205159',
+            'https://github.com/tpwo/pyzet/tree/main/docs/20211016205159',
         ),
         (
             'git@gitlab.com:user/repo.git',
-            'https://gitlab.com/user/repo/-/tree/main/zettels/20211016205159',
+            'https://gitlab.com/user/repo/-/tree/main/docs/20211016205159',
         ),
         (
             'git@bitbucket.org:user/repo.git',
-            'https://bitbucket.org/user/repo/src/main/zettels/20211016205159',
+            'https://bitbucket.org/user/repo/src/main/docs/20211016205159',
         ),
     ),
 )

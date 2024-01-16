@@ -12,7 +12,7 @@ DEFAULT_CFG_LOCATION = Path(Path.home(), '.config', 'pyzet', CONFIG_FILE)
 DEFAULT_BRANCH = 'main'
 DEFAULT_REMOTE_NAME = 'origin'
 
-ZETDIR = 'zettels'
+ZETDIR = 'docs'
 ZETTEL_FILENAME = 'README.md'
 
 ZULU_DATETIME_FORMAT = '%Y%m%d%H%M%S'

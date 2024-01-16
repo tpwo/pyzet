@@ -19,19 +19,19 @@ def test_get_all():
             title='Zet test entry',
             id='20211016205158',
             tags=('another-tag', 'tag-after-two-spaces', 'test-tag'),
-            path=Path('testing/zet/zettels/20211016205158/README.md'),
+            path=Path('testing/zet/docs/20211016205158/README.md'),
         ),
         Zettel(
             title='Another zet test entry',
             id='20211016223643',
             tags=('test-tag',),
-            path=Path('testing/zet/zettels/20211016223643/README.md'),
+            path=Path('testing/zet/docs/20211016223643/README.md'),
         ),
         Zettel(
             title='Zettel with UTF-8',
             id='20220101220852',
             tags=(),
-            path=Path('testing/zet/zettels/20220101220852/README.md'),
+            path=Path('testing/zet/docs/20220101220852/README.md'),
         ),
     ]
     assert actual == expected
@@ -44,26 +44,26 @@ def test_get_all_reverse():
             title='Zettel with UTF-8',
             id='20220101220852',
             tags=(),
-            path=Path('testing/zet/zettels/20220101220852/README.md'),
+            path=Path('testing/zet/docs/20220101220852/README.md'),
         ),
         Zettel(
             title='Another zet test entry',
             id='20211016223643',
             tags=('test-tag',),
-            path=Path('testing/zet/zettels/20211016223643/README.md'),
+            path=Path('testing/zet/docs/20211016223643/README.md'),
         ),
         Zettel(
             title='Zet test entry',
             id='20211016205158',
             tags=('another-tag', 'tag-after-two-spaces', 'test-tag'),
-            path=Path('testing/zet/zettels/20211016205158/README.md'),
+            path=Path('testing/zet/docs/20211016205158/README.md'),
         ),
     ]
     assert actual == expected
 
 
 def test_get_all_skip_file(tmp_path):
-    zettel = 'testing/zet/zettels/20220101220852'
+    zettel = 'testing/zet/docs/20220101220852'
     zet_repo = Path(tmp_path, C.ZETDIR)
     zet_repo.mkdir()
     shutil.copytree(zettel, Path(zet_repo, '20220101220852'))
@@ -77,7 +77,7 @@ def test_get_all_skip_file(tmp_path):
             title='Zettel with UTF-8',
             id='20220101220852',
             tags=(),
-            path=Path(tmp_path, 'zettels/20220101220852/README.md'),
+            path=Path(tmp_path, 'docs/20220101220852/README.md'),
         )
     ]
     assert actual == expected
@@ -95,7 +95,7 @@ def test_get():
         title='Zet test entry',
         id='20211016205158',
         tags=('another-tag', 'tag-after-two-spaces', 'test-tag'),
-        path=Path('testing/zet/zettels/20211016205158/README.md'),
+        path=Path('testing/zet/docs/20211016205158/README.md'),
     )
     dir = Path(f'testing/zet/{C.ZETDIR}/20211016205158/{C.ZETTEL_FILENAME}')
     actual = zettel.get(dir)
@@ -107,7 +107,7 @@ def test_get_from_dir():
         title='Zet test entry',
         id='20211016205158',
         tags=('another-tag', 'tag-after-two-spaces', 'test-tag'),
-        path=Path('testing/zet/zettels/20211016205158/README.md'),
+        path=Path('testing/zet/docs/20211016205158/README.md'),
     )
     dir = Path(f'testing/zet/{C.ZETDIR}/20211016205158')
     actual = zettel.get_from_dir(dir)
@@ -119,7 +119,7 @@ def test_get_from_id():
         title='Zet test entry',
         id='20211016205158',
         tags=('another-tag', 'tag-after-two-spaces', 'test-tag'),
-        path=Path('testing/zet/zettels/20211016205158/README.md'),
+        path=Path('testing/zet/docs/20211016205158/README.md'),
     )
     actual = zettel.get_from_id('20211016205158', repo=Path('testing/zet'))
     assert actual == expected
@@ -130,7 +130,7 @@ def test_get_last():
         title='Zettel with UTF-8',
         id='20220101220852',
         tags=(),
-        path=Path('testing/zet/zettels/20220101220852/README.md'),
+        path=Path('testing/zet/docs/20220101220852/README.md'),
     )
     actual = zettel.get_last(Path('testing/zet'))
     assert actual == expected

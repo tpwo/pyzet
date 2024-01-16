@@ -99,7 +99,7 @@ output:
     20220126232605 was created
     [main (root-commit) 7d40260] This is my first zettel created with pyzet
     1 file changed, 14 insertions(+)
-    create mode 100644 zettels/20220126232605/README.md
+    create mode 100644 docs/20220126232605/README.md
 
 Now, you can run `pyzet show text` to see your zettel:
 
@@ -213,11 +213,11 @@ following:
 
     $ pyzet rm --id 20220126232716
     20220126232716 will be deleted including all files that might be inside. Are you sure? (y/N): y
-    /home/<your-username>/zet/zettels/20220126232716/README.md was removed
+    /home/<your-username>/zet/docs/20220126232716/README.md was removed
     [main 009b935] RM: This is my second zettel
     1 file changed, 7 deletions(-)
-    delete mode 100644 zettels/20220126232716/README.md
-    /home/<your-username>/zet/zettels/20220126232716 was removed
+    delete mode 100644 docs/20220126232716/README.md
+    /home/<your-username>/zet/docs/20220126232716 was removed
 
 As you can see, we had to confirm the deletion with `y` (capitalization
 matters). Pressing `Enter` or any other key will abort the process.
@@ -408,7 +408,7 @@ similarly to `git clean` but targets a very specific use case: it
 removes empty folders at your ZK repo.
 
 Let's try it. At first, let's create an empty folder with `mkdir
-~/zet/zettels/test`. Now, we can run the command:
+~/zet/docs/test`. Now, we can run the command:
 
     $ pyzet clean
     will delete test
@@ -425,7 +425,7 @@ will show a warning about it. We can simulate it:
 
 Let's remove `README.md` from our only zettel:
 
-    rm ~/zet/zettels/20220126232605/README.md
+    rm ~/zet/docs/20220126232605/README.md
 
 And now, list the zettels:
 

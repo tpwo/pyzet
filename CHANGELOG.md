@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 * Zero-padding is used when displaying the list of matched zettels.
 * BREAKING CHANGE: rename flag `--origin` to `--name` in `pyzet remote`
+* BREAKING CHANGE: rename the folder in initialized zet repo from `zettels` to `docs`
 
 ### Removed
 
