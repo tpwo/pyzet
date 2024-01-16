@@ -6,7 +6,9 @@
 > within the Zettelkasten".
 
 `pyzet` is a CLI tool targeted at note-taking and personal knowledge
-management using the Zettelkasten approach with Git repos.
+management loosely inspired by the Zettelkasten approach, hence the
+name. The whole workflow is centered around Git repos where notes are
+stored.
 
 ## Installation
 
