@@ -67,7 +67,7 @@ def get_from_grep(
     except subprocess.CalledProcessError:
         if create_if_not_found:
             try:
-                if input('No zettels found. Create a new one (y/N)? ') != 'y':
+                if input('No zettels found. Create a new one? (y/N) ') != 'y':
                     raise SystemExit('aborting')
             except KeyboardInterrupt:
                 raise SystemExit('\naborting')
