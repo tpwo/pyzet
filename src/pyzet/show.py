@@ -17,7 +17,9 @@ from pyzet.zettel import Zettel
 def get_parser(
     subparsers: _SubParsersAction[ArgumentParser],
 ) -> ArgumentParser:
-    show_parser = subparsers.add_parser('show', help='print zettel contents')
+    show_parser = subparsers.add_parser(
+        'show', help='show zettel in a chosen representation'
+    )
     show_subparsers = show_parser.add_subparsers(dest='show_cmd')
 
     text_parser = show_subparsers.add_parser(

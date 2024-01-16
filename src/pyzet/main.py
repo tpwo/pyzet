@@ -101,7 +101,7 @@ def _get_parser() -> tuple[ArgumentParser, dict[str, ArgumentParser]]:
 
     print_parser = subparsers.add_parser(
         'print',
-        help="print zettel contents, shorthand for 'pyzet show text'",
+        help="print zettel contents, a shorthand for 'pyzet show text'",
     )
     add_pattern_args(print_parser)
 
