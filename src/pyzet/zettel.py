@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import NamedTuple
 
 import pyzet.constants as C
+from pyzet.exceptions import CreateNewZettel
 from pyzet.grep import parse_grep_patterns
 from pyzet.utils import Config
 from pyzet.utils import get_git_output
@@ -49,7 +50,9 @@ def get_all(path: Path, is_reversed: bool = False) -> list[Zettel]:
     return items
 
 
-def get_from_grep(args: Namespace, config: Config) -> Zettel:
+def get_from_grep(
+    args: Namespace, config: Config, create_if_not_found: bool = True
+) -> Zettel:
     if _patterns_empty(args.patterns):
         msg = 'ERROR: provided patterns are incorrect (empty or whitespace)'
         raise SystemExit(msg)
@@ -62,7 +65,16 @@ def get_from_grep(args: Namespace, config: Config) -> Zettel:
     try:
         out = get_git_output(config, 'grep', opts).decode()
     except subprocess.CalledProcessError:
-        raise SystemExit('ERROR: no zettels found')
+        if create_if_not_found:
+            try:
+                if input('No zettels found. Create a new one (y/N)? ') != 'y':
+                    raise SystemExit('aborting')
+            except KeyboardInterrupt:
+                raise SystemExit('\naborting')
+            else:
+                raise CreateNewZettel
+        else:
+            raise SystemExit('ERROR: no zettels found')
 
     matches: dict[int, Zettel] = {}
     for idx, filename in enumerate(out.splitlines(), start=1):

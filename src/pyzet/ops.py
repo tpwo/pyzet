@@ -16,6 +16,7 @@ from pathlib import Path
 
 import pyzet.constants as C
 from pyzet import zettel
+from pyzet.exceptions import CreateNewZettel
 from pyzet.utils import call_git
 from pyzet.utils import Config
 from pyzet.utils import get_git_output
@@ -136,7 +137,10 @@ def add_zettel(config: Config) -> int:
 def edit_zettel(args: Namespace, config: Config) -> int:
     """Edits zettel and commits changes with 'ED:' in the message."""
     if args.patterns:
-        zet = zettel.get_from_grep(args, config)
+        try:
+            zet = zettel.get_from_grep(args, config)
+        except CreateNewZettel:
+            return add_zettel(config)
     elif args.id is not None:
         zet = zettel.get_from_id(args.id, config.repo)
     else:
@@ -226,7 +230,7 @@ def _open_file(filename: Path, config: Config) -> None:
 def remove_zettel(args: Namespace, config: Config) -> int:
     """Removes zettel and commits changes with 'RM:' in the message."""
     if args.patterns:
-        zet = zettel.get_from_grep(args, config)
+        zet = zettel.get_from_grep(args, config, create_if_not_found=False)
     elif args.id is not None:
         zet = zettel.get_from_id(args.id, config.repo)
     else:

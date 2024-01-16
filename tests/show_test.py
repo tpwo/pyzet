@@ -57,17 +57,19 @@ def test_show_patterns_empty_pattern():
 
 
 def test_show_patterns_not_matching_pattern(pyzet_init):
-    with pytest.raises(SystemExit) as excinfo:
-        main([*TEST_CFG, '--repo', pyzet_init, 'show', 'text', 'zet'])
+    with mock.patch('builtins.input', return_value='\n'):
+        with pytest.raises(SystemExit) as excinfo:
+            main([*TEST_CFG, '--repo', pyzet_init, 'show', 'text', 'zet'])
     (msg,) = excinfo.value.args
-    assert msg == 'ERROR: no zettels found'
+    assert msg == 'aborting'
 
 
 def test_show_patterns_empty_repo(pyzet_init):
-    with pytest.raises(SystemExit) as excinfo:
-        main([*TEST_CFG, '--repo', pyzet_init, 'show', 'text', 'zet'])
+    with mock.patch('builtins.input', return_value='\n'):
+        with pytest.raises(SystemExit) as excinfo:
+            main([*TEST_CFG, '--repo', pyzet_init, 'show', 'text', 'zet'])
     (msg,) = excinfo.value.args
-    assert msg == 'ERROR: no zettels found'
+    assert msg == 'aborting'
 
 
 def test_show_utf8(capsys):
