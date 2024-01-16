@@ -84,6 +84,15 @@ Then you can easily run:
     tox -e coverage    # pytest with test coverage
     tox -e pre-commit  # run pre-commit checks on all files
 
+## Building
+
+    tox                  # runs all tox envs making sure tests pass
+    pyproject-build      # builds both the wheel and source dist
+    twine check dist/*   # checks if the build isn't completely broken
+    twine upload dist/*  # asks for username and password
+
+It's best to use token (`__token__` as username) for the last command.
+
 ## Inspiration and further reading
 
 The biggest inspiration for this project was Rob Muhlestein
