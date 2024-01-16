@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Added
 
 * Ask to create a new zettel if none are found by grep in `pyzet edit` & `pyzet show`.
+* Add `pyzet print` as a shorthand for `pyzet show text`.
 
 ### Changed
 

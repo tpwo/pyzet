@@ -96,6 +96,12 @@ def _get_parser() -> tuple[ArgumentParser, dict[str, ArgumentParser]]:
 
     subparsers_dict['show'] = show.get_parser(subparsers)
 
+    print_parser = subparsers.add_parser(
+        'print',
+        help="print zettel contents, shorthand for 'pyzet show text'",
+    )
+    add_pattern_args(print_parser)
+
     list_parser = subparsers.add_parser('list', help='list all zettels')
     list_parser.add_argument(
         '-p',
@@ -199,6 +205,10 @@ def _parse_args(args: Namespace) -> int:
     config = get(args)
 
     if args.command == 'show':
+        return show.command(args, config)
+
+    if args.command == 'print':
+        args.show_cmd = 'text'
         return show.command(args, config)
 
     if args.command == 'rm':
