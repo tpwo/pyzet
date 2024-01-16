@@ -12,28 +12,33 @@ from tests.conftest import TEST_CFG
 
 
 def test_show(capsys):
-    main([*TEST_CFG, 'show', 'text', '--id', '20211016205158'])
+    with mock.patch('builtins.input', return_value='\n'):
+        with pytest.raises(SystemExit):
+            main([*TEST_CFG, 'show', 'text', '--id', '20211016205158'])
 
     out, err = capsys.readouterr()
-    assert out.endswith(
+    assert (
         '# Zet test entry\n\nHello there!\n\nTags:\n\n'
         '    #test-tag #another-tag  #tag-after-two-spaces\n'
-    )
+    ) in out
     assert err == ''
 
 
 def test_show_default(capsys):
     # by default, the command shows a zettel with the highest ID (the newest)
-    main([*TEST_CFG, 'show', 'text'])
+    with mock.patch('builtins.input', return_value='\n'):
+        with pytest.raises(SystemExit):
+            main([*TEST_CFG, 'show', 'text'])
 
     out, err = capsys.readouterr()
-    assert out.endswith('# Zettel with UTF-8\n\nZażółć gęślą jaźń.\n')
+    assert '# Zettel with UTF-8\n\nZażółć gęślą jaźń.\n' in out
     assert err == ''
 
 
 def test_show_patterns(capsys):
     with mock.patch('builtins.input', return_value='1'):
-        main([*TEST_CFG, 'show', 'text', 'zet', 'test'])
+        with pytest.raises(SystemExit):
+            main([*TEST_CFG, 'show', 'text', 'zet', 'test'])
     out, err = capsys.readouterr()
     assert '# Another zet test entry' in out
     assert err == ''
@@ -41,7 +46,8 @@ def test_show_patterns(capsys):
 
 def test_show_patterns_ignore_case(capsys):
     with mock.patch('builtins.input', return_value='1'):
-        main([*TEST_CFG, 'show', 'text', '--ignore-case', 'zet', 'test'])
+        with pytest.raises(SystemExit):
+            main([*TEST_CFG, 'show', 'text', '--ignore-case', 'zet', 'test'])
     out, err = capsys.readouterr()
     assert '# Zet test entry' in out
     assert err == ''
@@ -73,15 +79,19 @@ def test_show_patterns_empty_repo(pyzet_init):
 
 
 def test_show_utf8(capsys):
-    main([*TEST_CFG, 'show', 'text', '--id', '20220101220852'])
+    with mock.patch('builtins.input', return_value='\n'):
+        with pytest.raises(SystemExit):
+            main([*TEST_CFG, 'show', 'text', '--id', '20220101220852'])
 
     out, err = capsys.readouterr()
-    assert out.endswith('# Zettel with UTF-8\n\nZażółć gęślą jaźń.\n')
+    assert '# Zettel with UTF-8\n\nZażółć gęślą jaźń.\n' in out
     assert err == ''
 
 
 def test_show_mdlink(capsys):
-    main([*TEST_CFG, 'show', 'mdlink', '--id', '20211016205158'])
+    with mock.patch('builtins.input', return_value='\n'):
+        with pytest.raises(SystemExit):
+            main([*TEST_CFG, 'show', 'mdlink', '--id', '20211016205158'])
 
     out, err = capsys.readouterr()
     assert out == '* [20211016205158](../20211016205158) Zet test entry\n'
@@ -125,7 +135,9 @@ def test_show_url(raw, expected, pyzet_init, capsys):
     with open(Path(test_zettel, C.ZETTEL_FILENAME), 'w') as file:
         file.write('# Test')
 
-    main([*TEST_CFG, '--repo', pyzet_init, 'show', 'url', '--id', id_])
+    with mock.patch('builtins.input', return_value='\n'):
+        with pytest.raises(SystemExit):
+            main([*TEST_CFG, '--repo', pyzet_init, 'show', 'url', '--id', id_])
 
     out, err = capsys.readouterr()
     assert out == expected + '\n'

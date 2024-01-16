@@ -7,6 +7,7 @@ from argparse import Namespace
 import pyzet.constants as C
 from pyzet import zettel
 from pyzet.config import Config
+from pyzet.ops import edit_zettel
 from pyzet.utils import add_pattern_args
 from pyzet.utils import get_git_remote_url
 from pyzet.zettel import get_md_link
@@ -57,26 +58,31 @@ def command(args: Namespace, config: Config) -> int:
         zet = zettel.get_last(config.repo)
 
     if args.show_cmd == 'text':
-        return show_zettel(zet)
+        show_zettel(zet)
 
     if args.show_cmd == 'mdlink':
         print(get_md_link(zet))
-        return 0
 
     if args.show_cmd == 'url':
         remote = _remote_dot_git(get_git_remote_url(config, args.name))
         print(_get_zettel_url(remote, args.branch, zet.id))
-        return 0
 
-    raise NotImplementedError
+    try:
+        if input('Enter editor (y/N)? ') != 'y':
+            raise SystemExit('aborting')
+    except KeyboardInterrupt:
+        raise SystemExit('\naborting')
+    else:
+        return edit_zettel(args, config)
 
 
-def show_zettel(zet: Zettel) -> int:
+def show_zettel(zet: Zettel) -> None:
     """Prints zettel text prepended with centered ID as a header."""
-    print(f' {zet.id} '.center(C.ZETTEL_WIDTH, '='))
+    fillchar = '='
+    print(f' {zet.id} '.center(C.ZETTEL_WIDTH, fillchar))
     with open(zet.path, encoding='utf-8') as file:
         print(file.read(), end='')
-    return 0
+    print(''.center(C.ZETTEL_WIDTH, fillchar))
 
 
 def _remote_dot_git(remote: str) -> str:
