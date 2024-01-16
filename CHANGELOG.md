@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Changed
+
+* Ask directly to continue if only one match was found when using grep patterns.
+
 ## [0.10.0] - 2024-01-17
 
 ### Added

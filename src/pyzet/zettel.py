@@ -95,6 +95,14 @@ def get_from_grep(
     for idx, zet in matches.items():
         print(f'[{str(idx).zfill(zero_padding)}] {get_repr(zet, args)}')
 
+    if num_matches == 1:
+        try:
+            if input('Continue? (Y/n): ') != 'n':
+                return matches[1]
+        except KeyboardInterrupt:
+            raise SystemExit('\naborting')
+        else:
+            raise SystemExit('aborting')
     try:
         user_input = input('Open (press enter to cancel): ')
     except KeyboardInterrupt:
