@@ -95,13 +95,9 @@ It's best to use token (`__token__` as username) for the last command.
 
 ## Inspiration and further reading
 
-The biggest inspiration for this project was Rob Muhlestein
-([`@rwxrob`](https://github.com/rwxrob)), and his approach to
-Zettelkasten. Probably the best way to get a grasp of it, is to read
-about it in [his public Zettelkasten
-repo](https://github.com/rwxrob/zet/blob/main/README.md). Rob also
-maintains a Bash CLI tool
-[`cmd-zet`](https://github.com/rwxrob/cmd-zet).
+[`@rwxrob`](https://github.com/rwxrob) inspired me to write a
+stand-alone tool for note taking rather than use a ready solution. He
+posted a good summary in [this video](https://youtu.be/26X2onaKGc0).
 
 See also:
 
@@ -109,14 +105,8 @@ See also:
   <https://luhmann.surge.sh/>
 
 * Even simpler approach to Zettelkasten\
-  <https://gsilvapt.me/posts/building-a-zettelkasten-the-simple-way/>
+  <https://gsilvapt.me/posts/poor-man-zettel/>
 
-* Similar tool written in Go by the author of the above\
-  <https://github.com/gsilvapt/pmz>
-
-* A Zettelkasten tool for people who prefer to have a GUI\
-  <https://github.com/Zettlr/Zettlr>
-
-  There is also an [interesting video](https://youtu.be/c5Tst3-zcWI)
-  from the author of this tool that describes his vision of
-  Zettelkasten.
+* Simple, Non-Commercial, Open Source Notes, a great video about tools to do
+  note taking\
+  <https://youtu.be/XRpHIa-2XCE>
