@@ -37,7 +37,7 @@ editor_args: []
 """
 
 
-def sample_config(kind: str) -> int:
+def sample_config(kind: str) -> None:
     if kind == 'unix':
         print(SAMPLE_CONFIG_UNIX, end='')
     elif kind == 'windows':
@@ -46,4 +46,3 @@ def sample_config(kind: str) -> int:
         raise NotImplementedError(
             f"ERROR: sample config kind '{kind}' not recognized."
         )
-    return 0

@@ -10,7 +10,8 @@ from pathlib import Path
 from typing import NamedTuple
 
 import pyzet.constants as C
-from pyzet.exceptions import CreateNewZettel
+from pyzet.exceptions import NotEntered
+from pyzet.exceptions import NotFound
 from pyzet.grep import parse_grep_patterns
 from pyzet.utils import Config
 from pyzet.utils import get_git_output
@@ -65,16 +66,8 @@ def get_from_grep(
     try:
         out = get_git_output(config, 'grep', opts).decode()
     except subprocess.CalledProcessError:
-        if create_if_not_found:
-            try:
-                if input('No zettels found. Create a new one? (y/N) ') != 'y':
-                    raise SystemExit('aborting')
-            except KeyboardInterrupt:
-                raise SystemExit('\naborting')
-            else:
-                raise CreateNewZettel
-        else:
-            raise SystemExit('ERROR: no zettels found')
+        print('No zettels found!')
+        raise NotFound
 
     matches: dict[int, Zettel] = {}
     for idx, filename in enumerate(out.splitlines(), start=1):
@@ -86,9 +79,11 @@ def get_from_grep(
         prompt = f'Found {num_matches} matches. Continue? (y/N): '
         try:
             if input(prompt) != 'y':
-                raise SystemExit('aborting')
+                print('aborting')
+                raise NotFound
         except KeyboardInterrupt:
-            raise SystemExit('\naborting')
+            print('\naborting')
+            raise NotFound
 
     print(f'Found {num_matches} matches:')
     zero_padding = len(str(num_matches))
@@ -97,24 +92,33 @@ def get_from_grep(
 
     if num_matches == 1:
         try:
+            # TODO: this might be very annoying in the long time. Maybe
+            # we can just continue automatically?
             if input('Continue? (Y/n): ') != 'n':
+                args.id = matches[1].id
                 return matches[1]
         except KeyboardInterrupt:
-            raise SystemExit('\naborting')
+            print('\naborting')
+            raise NotEntered
         else:
-            raise SystemExit('aborting')
-    try:
-        user_input = input('Open (press enter to cancel): ')
-    except KeyboardInterrupt:
-        raise SystemExit('\naborting')
+            print('aborting')
+            raise NotEntered
 
-    if user_input == '':
-        raise SystemExit('aborting')
-
-    try:
-        return matches[int(user_input)]
-    except KeyError:
-        raise SystemExit('ERROR: wrong zettel ID')
+    while True:
+        try:
+            user_input = input('Open (press enter to cancel): ')
+            if user_input == '':
+                print('aborting')
+                raise NotEntered
+            try:
+                idx = int(user_input)
+                args.id = matches[idx].id
+                return matches[idx]
+            except KeyError:
+                print('Wrong ID provided!')
+        except KeyboardInterrupt:
+            print('\naborting')
+            raise NotEntered
 
 
 def _patterns_empty(patterns: list[str]) -> bool:

@@ -5,13 +5,14 @@ from argparse import ArgumentParser
 from argparse import Namespace
 
 import pyzet.constants as C
+from pyzet import config
 from pyzet import show
 from pyzet import utils
-from pyzet.config import get
 from pyzet.grep import define_grep_cli
 from pyzet.grep import grep
 from pyzet.ops import add_zettel
 from pyzet.ops import clean_zet_repo
+from pyzet.ops import decide_whats_next
 from pyzet.ops import edit_zettel
 from pyzet.ops import get_remote_url
 from pyzet.ops import info
@@ -182,6 +183,8 @@ def _get_parser() -> tuple[ArgumentParser, dict[str, ArgumentParser]]:
 
     subparsers.add_parser('info', help='show stats about ZK repo')
 
+    subparsers.add_parser('query', help='query ZK repo')
+
     define_sample_config_cli(subparsers)
 
     return parser, subparsers_dict
@@ -200,56 +203,66 @@ def _add_git_cmd_options(parser: ArgumentParser, cmd_name: str) -> None:
 
 def _parse_args(args: Namespace) -> int:
     if args.command == 'sample-config':
-        return sample_config(args.kind)
+        sample_config(args.kind)
+        return 0
 
-    config = get(args)
+    looped_cmds = {'add', 'edit', 'rm', 'show', 'print', 'query'}
+    cfg = config.get(args)
 
-    if args.command == 'show':
-        return show.command(args, config)
+    if args.command in looped_cmds:
+        if args.command == 'add':
+            add_zettel(args, cfg)
 
-    if args.command == 'print':
-        args.show_cmd = 'text'
-        return show.command(args, config)
+        elif args.command == 'edit':
+            edit_zettel(args, cfg)
 
-    if args.command == 'rm':
-        return remove_zettel(args, config)
+        elif args.command == 'rm':
+            remove_zettel(args, cfg)
 
-    if args.command == 'init':
-        return init_repo(config, args.initial_branch)
+        if args.command == 'show':
+            show.command(args, cfg)
 
-    if args.command == 'add':
-        return add_zettel(config)
+        elif args.command == 'print':
+            args.show_cmd = 'text'
+            show.command(args, cfg)
 
-    if args.command == 'edit':
-        return edit_zettel(args, config)
+        if args.command == 'query':
+            # Directly go to decide_whats_next
+            print('Hello there! ', end='')
 
-    if args.command == 'list':
-        return list_zettels(args, config.repo)
+        decide_whats_next(args, cfg)
 
-    if args.command == 'tags':
-        return list_tags(config.repo, is_reversed=args.reverse)
+    else:
+        if args.command == 'init':
+            init_repo(cfg, args.initial_branch)
 
-    if args.command == 'grep':
-        return grep(args, config)
+        elif args.command == 'list':
+            list_zettels(args, cfg.repo)
 
-    if args.command in {'status', 'push'}:
-        return call_git(config, args.command, args.options)
+        elif args.command == 'tags':
+            list_tags(cfg.repo, is_reversed=args.reverse)
 
-    if args.command == 'remote':
-        return get_remote_url(args, config)
+        elif args.command == 'grep':
+            grep(args, cfg)
 
-    if args.command == 'pull':
-        # --rebase is used to maintain a linear history without merges,
-        # as this seems to be a reasonable approach in ZK repo that is
-        # usually personal.
-        return call_git(config, 'pull', ('--rebase',))
+        elif args.command in {'status', 'push'}:
+            call_git(cfg, args.command, args.options)
 
-    if args.command == 'clean':
-        return clean_zet_repo(
-            config.repo, is_dry_run=args.dry_run, is_force=args.force
-        )
+        elif args.command == 'remote':
+            get_remote_url(args, cfg)
 
-    if args.command == 'info':
-        return info(config)
+        elif args.command == 'pull':
+            # --rebase is used to maintain a linear history without merges,
+            # as this seems to be a reasonable approach in ZK repo that is
+            # usually personal.
+            call_git(cfg, 'pull', ('--rebase',))
 
-    raise NotImplementedError
+        elif args.command == 'clean':
+            clean_zet_repo(
+                cfg.repo, is_dry_run=args.dry_run, is_force=args.force
+            )
+
+        elif args.command == 'info':
+            info(cfg)
+
+    return 0

@@ -39,13 +39,13 @@ def define_grep_cli(subparsers: _SubParsersAction[ArgumentParser]) -> None:
     )
 
 
-def grep(args: Namespace, config: Config) -> int:
+def grep(args: Namespace, config: Config) -> None:
     grep_opts = _build_grep_options(
         args.ignore_case, args.line_number, args.title
     )
     patterns = parse_grep_patterns(args.patterns)
     grep_opts.extend(patterns)
-    return call_git(
+    call_git(
         config,
         'grep',
         tuple(grep_opts),

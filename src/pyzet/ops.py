@@ -16,26 +16,107 @@ from glob import glob
 from pathlib import Path
 
 import pyzet.constants as C
+from pyzet import show
 from pyzet import zettel
 from pyzet.config import Config
-from pyzet.exceptions import CreateNewZettel
+from pyzet.exceptions import NotEntered
+from pyzet.exceptions import NotFound
 from pyzet.utils import call_git
 from pyzet.utils import get_git_output
 from pyzet.utils import get_git_remote_url
 
 
-def get_remote_url(args: Namespace, config: Config) -> int:
+def decide_whats_next(args: Namespace, config: Config) -> None:
+    """Decides what to do after finishing a command.
+
+    This function is intended to be called recursively, so it keeps the
+    state of the program and input arguments intact.
+    """
+    # TODO: this is ugly, I'd prefer to find a better solution.
+    #
+    # Another TODO is how to enable user to switch pretty, tags &
+    # show_cmd during the session
+    args.id = None
+    try:
+        args.patterns
+    except AttributeError:
+        args.patterns = []
+    try:
+        args.show_cmd
+    except AttributeError:
+        args.show_cmd = 'text'
+    try:
+        args.tags
+    except AttributeError:
+        args.tags = False
+    try:
+        args.pretty
+    except AttributeError:
+        args.pretty = False
+
+    help_msg = """\
+p - print note
+e - edit note
+d - delete note
+g - grep for another note
+G - grep for another note (case insensitive)
+a - add new note
+q - quit
+? - print help
+"""
+    prompt = "What's next? [p,e,d,g,G,a,q,?] "
+    while True:
+        try:
+            choice = input(prompt)
+        except KeyboardInterrupt:
+            raise SystemExit('\naborting')
+        else:
+            try:
+                if choice == 'p':
+                    show.command(args, config)
+                elif choice == 'e':
+                    edit_zettel(args, config)
+                elif choice == 'd':
+                    remove_zettel(args, config)
+                elif choice == 'g':
+                    args.show_cmd = 'text'
+                    args.id = None
+                    args.ignore_case = False
+                    args.patterns = input('Grep patterns: ').split()
+                elif choice == 'G':
+                    args.show_cmd = 'text'
+                    args.id = None
+                    args.ignore_case = True
+                    args.patterns = input('Grep patterns: ').split()
+                elif choice == 'a':
+                    add_zettel(args, config)
+                elif choice == 'q':
+                    raise SystemExit
+                elif choice == '?':
+                    print(help_msg, end='')
+                else:  # By default print the note again.
+                    pass
+            except NotFound:
+                logging.info('decide_whats_next: NotFound')
+                args.id = None
+                args.patterns = []
+            except NotEntered:
+                # Presents the users list of found notes, as patterns
+                # are not nullified
+                logging.info('decide_whats_next: NotEntered')
+                args.id = None
+
+
+def get_remote_url(args: Namespace, config: Config) -> None:
     print(get_git_remote_url(config, args.name))
-    return 0
 
 
-def list_zettels(args: Namespace, path: Path) -> int:
+def list_zettels(args: Namespace, path: Path) -> None:
     for zet in zettel.get_all(Path(path, C.ZETDIR), args.reverse):
         print(zettel.get_repr(zet, args))
-    return 0
 
 
-def clean_zet_repo(repo_path: Path, is_dry_run: bool, is_force: bool) -> int:
+def clean_zet_repo(repo_path: Path, is_dry_run: bool, is_force: bool) -> None:
     is_any_empty = False
     for folder in sorted(Path(repo_path, C.ZETDIR).iterdir(), reverse=True):
         if folder.is_dir() and _is_empty(folder):
@@ -47,10 +128,9 @@ def clean_zet_repo(repo_path: Path, is_dry_run: bool, is_force: bool) -> int:
                 print(f'will delete {folder.name}')
     if is_any_empty and not is_force:
         print("use '--force' to proceed with deletion")
-    return 0
 
 
-def init_repo(config: Config, branch_name: str) -> int:
+def init_repo(config: Config, branch_name: str) -> None:
     """Initializes a git repository in a given path."""
     # We create both main ZK folder, and the folder that keeps all the
     # zettels. This is split, as each one can raise an Exception, and
@@ -59,7 +139,6 @@ def init_repo(config: Config, branch_name: str) -> int:
     _create_empty_folder(Path(config.repo, C.ZETDIR))
     call_git(config, 'init', ('--initial-branch', branch_name))
     logging.info(f"init: create git repo '{config.repo.absolute()}'")
-    return 0
 
 
 def _create_empty_folder(path: Path) -> None:
@@ -82,7 +161,7 @@ def _is_empty(folder: Path) -> bool:
     return not any(Path(folder).iterdir())
 
 
-def add_zettel(config: Config) -> int:
+def add_zettel(args: Namespace, config: Config) -> None:
     """Adds zettel and commits changes with zettel title as the message."""
     id_ = datetime.utcnow().strftime(C.ZULU_DATETIME_FORMAT)
 
@@ -109,21 +188,19 @@ def add_zettel(config: Config) -> int:
         _commit_zettel(config, zettel_path, zet.title)
         logging.info(f"add: zettel created '{zettel_path.absolute()}'")
         print(f'{id_} was created')
-    return 0
+        args.id = id_
 
 
-def edit_zettel(args: Namespace, config: Config) -> int:
+def edit_zettel(args: Namespace, config: Config) -> None:
     """Edits zettel and commits changes with 'ED:' in the message."""
-    if args.patterns:
-        try:
-            zet = zettel.get_from_grep(args, config)
-        except CreateNewZettel:
-            return add_zettel(config)
-    elif args.id is not None:
+    if args.id is not None:
         zet = zettel.get_from_id(args.id, config.repo)
+    elif args.patterns:
+        zet = zettel.get_from_grep(args, config)
     else:
         zet = zettel.get_last(config.repo)
 
+    args.id = zet.id
     _open_file(zet.path, config)
 
     try:
@@ -156,7 +233,6 @@ def edit_zettel(args: Namespace, config: Config) -> int:
                 print(f'{zet.id} was edited')
         else:
             print(f"{zet.id} wasn't modified")
-    return 0
 
 
 def _get_files_touched_last_commit(config: Config) -> bytes:
@@ -205,12 +281,12 @@ def _open_file(filename: Path, config: Config) -> None:
         )
 
 
-def remove_zettel(args: Namespace, config: Config) -> int:
+def remove_zettel(args: Namespace, config: Config) -> None:
     """Removes zettel and commits changes with 'RM:' in the message."""
-    if args.patterns:
-        zet = zettel.get_from_grep(args, config, create_if_not_found=False)
-    elif args.id is not None:
+    if args.id is not None:
         zet = zettel.get_from_id(args.id, config.repo)
+    elif args.patterns:
+        zet = zettel.get_from_grep(args, config, create_if_not_found=False)
     else:
         raise SystemExit
     prompt = (
@@ -218,7 +294,8 @@ def remove_zettel(args: Namespace, config: Config) -> int:
         'that might be inside. Are you sure? (y/N): '
     )
     if input(prompt) != 'y':
-        raise SystemExit('aborting')
+        print('aborting')
+        raise NotEntered
 
     # All files in given zettel folder are removed one by one. This
     # might be slower than shutil.rmtree() but gives nice log entry for
@@ -235,8 +312,7 @@ def remove_zettel(args: Namespace, config: Config) -> int:
     zet.path.parent.rmdir()
     logging.info(f"remove: delete folder '{zet.path.parent}'")
     print(f'{zet.id} was removed')
-
-    return 0
+    args.id = None
 
 
 def _commit_zettel(config: Config, zettel_path: Path, message: str) -> None:
@@ -248,19 +324,17 @@ def _commit_zettel(config: Config, zettel_path: Path, message: str) -> None:
     )
 
 
-def list_tags(repo: Path, is_reversed: bool) -> int:
+def list_tags(repo: Path, is_reversed: bool) -> None:
     tags = _get_tags(repo)
     target = (
         tags.most_common() if is_reversed else reversed(tags.most_common())
     )
     print(*(f'{occurrences}\t#{tag}' for tag, occurrences in target), sep='\n')
-    return 0
 
 
-def info(config: Config) -> int:
+def info(config: Config) -> None:
     """Prints info about ZK repo."""
     print(_get_info(config))
-    return 0
 
 
 def _get_info(config: Config) -> str:
