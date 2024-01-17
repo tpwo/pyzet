@@ -12,9 +12,9 @@ from pyzet.grep import define_grep_cli
 from pyzet.grep import grep
 from pyzet.ops import add_zettel
 from pyzet.ops import clean_zet_repo
-from pyzet.ops import count_tags
 from pyzet.ops import edit_zettel
 from pyzet.ops import get_remote_url
+from pyzet.ops import info
 from pyzet.ops import init_repo
 from pyzet.ops import list_tags
 from pyzet.ops import list_zettels
@@ -140,11 +140,6 @@ def _get_parser() -> tuple[ArgumentParser, dict[str, ArgumentParser]]:
         action='store_true',
         help='reverse the output',
     )
-    tags_parser.add_argument(
-        '--count',
-        action='store_true',
-        help='count the total number of all tags in ZK repo (non-unique)',
-    )
 
     clean_parser = subparsers.add_parser(
         'clean', help=f"delete empty folders in '{C.ZETDIR}' folder in ZK repo"
@@ -184,6 +179,8 @@ def _get_parser() -> tuple[ArgumentParser, dict[str, ArgumentParser]]:
         default=C.DEFAULT_REMOTE_NAME,
         help='name of git repo remote (default: %(default)s)',
     )
+
+    subparsers.add_parser('info', help='show stats about ZK repo')
 
     define_sample_config_cli(subparsers)
 
@@ -230,8 +227,6 @@ def _parse_args(args: Namespace) -> int:
         return list_zettels(args, config.repo)
 
     if args.command == 'tags':
-        if args.count:
-            return count_tags(config.repo)
         return list_tags(config.repo, is_reversed=args.reverse)
 
     if args.command == 'grep':
@@ -253,4 +248,8 @@ def _parse_args(args: Namespace) -> int:
         return clean_zet_repo(
             config.repo, is_dry_run=args.dry_run, is_force=args.force
         )
+
+    if args.command == 'info':
+        return info(config)
+
     raise NotImplementedError

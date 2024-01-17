@@ -12,6 +12,7 @@ import subprocess
 from argparse import Namespace
 from collections import Counter
 from datetime import datetime
+from glob import glob
 from pathlib import Path
 
 import pyzet.constants as C
@@ -31,29 +32,6 @@ def get_remote_url(args: Namespace, config: Config) -> int:
 def list_zettels(args: Namespace, path: Path) -> int:
     for zet in zettel.get_all(Path(path, C.ZETDIR), args.reverse):
         print(zettel.get_repr(zet, args))
-    return 0
-
-
-def list_tags(path: Path, is_reversed: bool) -> int:
-    zettels = zettel.get_all(Path(path, C.ZETDIR))
-    all_tags = itertools.chain.from_iterable(
-        t for t in (z.tags for z in zettels)
-    )
-    # Chain is reverse sorted for the correct alphabetical displaying of
-    # tag counts. This is because Counter's most_common() method
-    # remembers the insertion order.
-    tags = Counter(sorted(all_tags, reverse=True))
-
-    target = (
-        tags.most_common() if is_reversed else reversed(tags.most_common())
-    )
-    print(*(f'{occurrences}\t#{tag}' for tag, occurrences in target), sep='\n')
-    return 0
-
-
-def count_tags(path: Path) -> int:
-    dir = Path(path, C.ZETDIR)
-    print(sum(len(zettel.tags) for zettel in zettel.get_all(dir)))
     return 0
 
 
@@ -268,3 +246,87 @@ def _commit_zettel(config: Config, zettel_path: Path, message: str) -> None:
         f"_commit_zettel: committed '{zettel_path.absolute()}'"
         " with message '{message}'"
     )
+
+
+def list_tags(repo: Path, is_reversed: bool) -> int:
+    tags = _get_tags(repo)
+    target = (
+        tags.most_common() if is_reversed else reversed(tags.most_common())
+    )
+    print(*(f'{occurrences}\t#{tag}' for tag, occurrences in target), sep='\n')
+    return 0
+
+
+def info(config: Config) -> int:
+    """Prints info about ZK repo."""
+    print(_get_info(config))
+    return 0
+
+
+def _get_info(config: Config) -> str:
+    dir = Path(config.repo, C.ZETDIR)
+    zettels = zettel.get_all(dir)
+    lines, words, bytes = _get_wc_output(config)
+    git_size, git_size_pack = _get_git_size_stats(config)
+    return f"""\
+Number of notes:       {len(zettels)}
+Number of lines:       {lines}
+Number of words:       {words}
+Number of bytes:       {bytes}
+Number of tags:        {_count_tags(config.repo)}
+Number of unique tags: {len(_get_tags(config.repo))}
+Size on disk:          {_bytes_to_mb(bytes)} MiB
+Git repo size:         {git_size} MiB
+Git repo size-pack:    {git_size_pack} MiB\
+"""
+
+
+def _bytes_to_mb(bytes: int) -> float:
+    return round(bytes / 1024 / 1024, 2)
+
+
+def _get_wc_output(config: Config) -> tuple[int, int, int]:
+    """Uses wc and glob to count the number of lines in md files.
+
+    wc output shows total number of lines, words, and bytes in the last
+    line, so we parse it to get out the value.
+    """
+    repo = config.repo.as_posix()
+    files = glob(f'{repo}/{C.ZETDIR}/**/*.md', recursive=True)
+    cmd = ('wc', *files)
+    wc_out = subprocess.run(cmd, capture_output=True).stdout.decode().strip()
+    last_line = wc_out.split('\n')[-1].strip()
+    lines, words, bytes, _ = last_line.split()
+    return int(lines), int(words), int(bytes)
+
+
+def _get_tags(repo: Path) -> Counter[str]:
+    zettels = zettel.get_all(Path(repo, C.ZETDIR))
+    all_tags = itertools.chain.from_iterable(
+        t for t in (z.tags for z in zettels)
+    )
+    # Chain is reverse sorted for the correct alphabetical displaying of
+    # tag counts. This is because Counter's most_common() method
+    # remembers the insertion order.
+    return Counter(sorted(all_tags, reverse=True))
+
+
+def _count_tags(repo: Path) -> int:
+    dir = Path(repo, C.ZETDIR)
+    return sum(len(zettel.tags) for zettel in zettel.get_all(dir))
+
+
+def _get_git_size_stats(config: Config) -> tuple[float, float]:
+    """Runs 'git count-objects -v' and parses the output.
+
+    'size' and 'size-pack' values are returned.
+    """
+    git_stats = get_git_output(config, 'count-objects', ('-v',))
+    git_stats_parsed = git_stats.decode().split('\n')
+    size = ' '.join(git_stats_parsed[1].split()[1:])
+    size_pack = ' '.join(git_stats_parsed[4].split()[1:])
+    return _kb_to_mb(int(size)), _kb_to_mb(int(size_pack))
+
+
+def _kb_to_mb(kb: int) -> float:
+    return round(kb / 1024, 2)

@@ -296,14 +296,6 @@ def test_tags_reverse(capsys):
     assert err == ''
 
 
-def test_tags_count(capsys):
-    main([*TEST_CFG, 'tags', '--count'])
-
-    out, err = capsys.readouterr()
-    assert out == '4\n'
-    assert err == ''
-
-
 def test_clean(tmp_path, capsys):
     id_ = '20211016205158'
     Path(tmp_path, C.ZETDIR, id_).mkdir(parents=True)
