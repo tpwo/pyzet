@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [0.11.0] -- 2024-01-17
 
-## Added
+### Added
 
 * `pyzet info` command which shows a bunch of stats about ZK repo
 
