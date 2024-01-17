@@ -18,7 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 * `pyzet tags --count`, as number of tags is now showed in `pyzet info`.
 
-## [0.10.0] - 2024-01-17
+## [0.10.0] -- 2024-01-17
 
 ### Added
 
@@ -40,7 +40,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 * Handle `BrokenPipeError` (#19).
 
-## [0.9.0] - 2023-11-08
+## [0.9.0] -- 2023-11-08
 
 ### Added
 
@@ -54,13 +54,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 * BREAKING CHANGE: `pyzet show --link <ID>` is now `pyzet show link <ID>` (#20).
 * BREAKING CHANGE: zettel ID is now treated as secondary way of providing input, and should be passed with `--id` flag. The primary interaction with zettels is now done via grep patterns (#33).
 
-## [0.8.0] - 2023-11-02
+## [0.8.0] -- 2023-11-02
 
 ### Added
 
 * Allow for passing editor CLI arguments (#54)
 
-## [0.7.0] - 2023-02-12
+## [0.7.0] -- 2023-02-12
 
 ### Added
 
@@ -74,7 +74,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 * Get rid of `git` config field, and just use Git from PATH (#53).
 
-## [0.6.0] - 2022-04-18
+## [0.6.0] -- 2022-04-18
 
 ### Added
 
@@ -92,7 +92,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 * Fix `pyzet init` when a custom target path was provided (#40).
 
-## [0.5.0] - 2022-04-04
+## [0.5.0] -- 2022-04-04
 
 ### Added
 
@@ -104,7 +104,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 * Switch to use single quotes over back quotes in the program output.
 * Remove implicit `--ignore-case` option from `pyzet grep`; the flag with this name was created and it should be explicitly added to maintain the old behavior (#29).
 
-## [0.4.0] - 2022-04-03
+## [0.4.0] -- 2022-04-03
 
 ### Added
 
@@ -120,7 +120,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 * Make output of `pyzet grep` more readable by using `--heading` and
   `--break` flags in `git grep` that is called by this command (#23).
 
-## [0.3.0] - 2022-02-18
+## [0.3.0] -- 2022-02-18
 
 Start using `git grep` rather than relying on availability of `grep`
 executable which means even simpler config file.
@@ -130,7 +130,7 @@ executable which means even simpler config file.
 * Do not display binary files in `pyzet grep` output (#18).
 * Use `git grep` over `grep` (#18).
 
-## [0.2.0] - 2022-01-27
+## [0.2.0] -- 2022-01-27
 
 Introduce YAML config file, some new features, and bug fixes.
 
@@ -150,7 +150,7 @@ Introduce YAML config file, some new features, and bug fixes.
 * Fix `pyzet rm` so it also removes other files in the zettel folder
   (#9).
 
-## [0.1.0] - 2022-01-23
+## [0.1.0] -- 2022-01-23
 
 Initial release.
 
