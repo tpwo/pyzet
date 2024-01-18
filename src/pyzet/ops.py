@@ -36,6 +36,9 @@ def decide_whats_next(args: Namespace, config: Config) -> None:
     #
     # Another TODO is how to enable user to switch pretty, tags &
     # show_cmd during the session
+    #
+    # TODO: colors would be nice to have here, so generated msgs are
+    # easier to grasp.
     args.id = None
     try:
         args.patterns
