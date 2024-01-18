@@ -54,18 +54,29 @@ def decide_whats_next(args: Namespace, config: Config) -> None:
     except AttributeError:
         args.pretty = False
 
-    help_msg = """\
-p - print note
-e - edit note
-d - delete note
-g - grep for another note
-G - grep for another note (case insensitive)
-a - add new note
+    help_msg_with_id = """\
+p - print current note
+e - edit current note
+d - delete current note
+g - grep for other notes
+G - grep for other notes (case insensitive)
+a - add a new note
+q - quit
+? - print help
+"""
+    help_msg_with_patterns = """\
+p - print one of matching notes
+e - edit one of matching notes
+d - delete one of matching notes
+g - grep for other notes
+G - grep for other notes (case insensitive)
+a - add a new note
 q - quit
 ? - print help
 """
     prompt = "What's next? [p,e,d,g,G,a,q,?] "
     while True:
+        help_msg = help_msg_with_id if args.id else help_msg_with_patterns
         try:
             choice = input(prompt)
         except KeyboardInterrupt:
