@@ -102,7 +102,7 @@ q - quit
                 elif choice == 'a':
                     add_zettel(args, config)
                 elif choice == 'q':
-                    raise SystemExit
+                    raise SystemExit('Bye!')
                 elif choice == '?':
                     print(help_msg, end='')
                 else:  # By default print the note again.
