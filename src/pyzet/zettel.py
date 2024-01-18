@@ -114,7 +114,7 @@ def get_from_grep(
                 idx = int(user_input)
                 args.id = matches[idx].id
                 return matches[idx]
-            except KeyError:
+            except (KeyError, ValueError):
                 print('Wrong ID provided!')
         except KeyboardInterrupt:
             print('\naborting')
