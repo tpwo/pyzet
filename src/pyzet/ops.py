@@ -134,11 +134,11 @@ q - quit
 ? - print help
 """
     status = f"""
-ID: {args.id}
+current ID: {args.id}
 patterns: {args.patterns}
 """
     help_msg = help_msg_with_id if args.id else help_msg_with_patterns
-    return help_msg + ''.center(50, '-') + status
+    return help_msg + ''.center(27, '-') + status
 
 
 def get_remote_url(args: Namespace, config: Config) -> None:
