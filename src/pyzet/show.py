@@ -1,56 +1,15 @@
 from __future__ import annotations
 
-from argparse import _SubParsersAction
-from argparse import ArgumentParser
-from argparse import Namespace
-
 import pyzet.constants as C
 from pyzet import zettel
+from pyzet.cli import AppState
 from pyzet.config import Config
-from pyzet.utils import add_pattern_args
 from pyzet.utils import get_git_remote_url
 from pyzet.zettel import get_md_link
 from pyzet.zettel import Zettel
 
 
-def get_parser(
-    subparsers: _SubParsersAction[ArgumentParser],
-) -> ArgumentParser:
-    show_parser = subparsers.add_parser(
-        'show', help='show zettel in a chosen representation'
-    )
-    show_subparsers = show_parser.add_subparsers(dest='show_cmd')
-
-    text_parser = show_subparsers.add_parser(
-        'text', help='show zettel as plain text'
-    )
-    add_pattern_args(text_parser)
-
-    link_parser = show_subparsers.add_parser(
-        'mdlink', help='show zettel as a Markdown link'
-    )
-    add_pattern_args(link_parser)
-
-    url_parser = show_subparsers.add_parser(
-        'url', help='show zettel as an URL'
-    )
-    url_parser.add_argument(
-        '--name',
-        default=C.DEFAULT_REMOTE_NAME,
-        help='name of git repo remote (default: %(default)s)',
-    )
-    url_parser.add_argument(
-        '-b',
-        '--branch',
-        default=C.DEFAULT_BRANCH,
-        help='initial branch name (default: %(default)s)',
-    )
-    add_pattern_args(url_parser)
-
-    return show_parser
-
-
-def command(args: Namespace, config: Config) -> None:
+def command(args: AppState, config: Config) -> None:
     if args.id is not None:
         zet = zettel.get_from_id(args.id, config.repo)
     elif args.patterns:

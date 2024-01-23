@@ -1,24 +1,12 @@
 from __future__ import annotations
 
-from argparse import _SubParsersAction
-from argparse import ArgumentParser
-
 import pyzet.constants as C
-
-
-def define_sample_config_cli(
-    subparsers: _SubParsersAction[ArgumentParser],
-) -> None:
-    sample_config_parser = subparsers.add_parser(
-        'sample-config', help=f'produce a sample {C.CONFIG_FILE} file'
-    )
-    sample_config_parser.add_argument('kind', choices=('unix', 'windows'))
 
 
 _header = f"""\
 # See https://github.com/tpwo/pyzet for more information.
 #
-# Put this file at {C.DEFAULT_CFG_LOCATION.as_posix()}
+# Put this file at {C.DEFAULT_CFG_LOCATION}
 # Below options use global paths, but feel free
 # to use program name directly if it's on your PATH."""
 

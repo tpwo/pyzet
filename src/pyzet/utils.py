@@ -1,18 +1,14 @@
 from __future__ import annotations
 
-import argparse
 import functools
 import io
 import logging
 import shutil
 import subprocess
 import sys
-from argparse import ArgumentParser
-from datetime import datetime
 from pathlib import Path
 from typing import Iterable
 
-import pyzet.constants as C
 from pyzet.config import Config
 
 
@@ -109,55 +105,3 @@ def compute_log_level(verbosity: int) -> int:
     min_log_level = 10  # match DEBUG level
     verbosity_step = 10
     return max(default_log_level - verbosity_step * verbosity, min_log_level)
-
-
-def add_pattern_args(parser: ArgumentParser) -> None:
-    parser.add_argument('patterns', nargs='*', help='grep patterns')
-    parser.add_argument(
-        '-i',
-        '--ignore-case',
-        action='store_true',
-        help='case insensitive matching',
-    )
-    parser.add_argument(
-        '-p',
-        '--pretty',
-        action='store_true',
-        help='use prettier format for printing date and time',
-    )
-    parser.add_argument(
-        '--tags',
-        action='store_true',
-        help='show tags for each zettel',
-    )
-    parser.add_argument(
-        '--id', type=valid_id, help='provide zettel ID instead of patterns'
-    )
-
-
-def valid_id(id_: str) -> str:
-    """Gradually checks if given string is a valid zettel id."""
-    try:
-        int(id_)
-    except ValueError:
-        raise argparse.ArgumentTypeError(
-            f"'{id_}' is not a valid zettel id (not an integer)"
-        )
-    if len(id_) != C.ZULU_FORMAT_LEN:
-        raise argparse.ArgumentTypeError(
-            f"'{id_}' is not a valid zettel id ({_get_id_err_details(id_)})"
-        )
-    try:
-        datetime.strptime(id_, C.ZULU_DATETIME_FORMAT)
-    except ValueError:
-        raise argparse.ArgumentTypeError(f"'{id_}' is not a valid zettel id")
-    else:
-        return id_
-
-
-def _get_id_err_details(id_: str) -> str:
-    """Generates error msg based on the diff in expected and actual chars."""
-    num = len(id_) - C.ZULU_FORMAT_LEN
-    s = 's' if num > 1 else ''
-    diff = 'long' if num > 0 else 'short'
-    return f'{num} char{s} too {diff}'

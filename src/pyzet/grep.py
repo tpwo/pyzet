@@ -1,45 +1,14 @@
 from __future__ import annotations
 
-from argparse import _SubParsersAction
-from argparse import ArgumentParser
-from argparse import Namespace
 from pathlib import Path
 
 import pyzet.constants as C
+from pyzet.cli import AppState
 from pyzet.config import Config
 from pyzet.utils import call_git
 
 
-def define_grep_cli(subparsers: _SubParsersAction[ArgumentParser]) -> None:
-    grep_parser = subparsers.add_parser(
-        'grep', help="run 'git grep' with some handy flags in ZK repo"
-    )
-    grep_parser.add_argument(
-        '-i',
-        '--ignore-case',
-        action='store_true',
-        help='case insensitive matching',
-    )
-    grep_parser.add_argument(
-        '-t',
-        '--title',
-        action='store_true',
-        help='add zettel title to matching lines',
-    )
-    grep_parser.add_argument(
-        '-n',
-        '--line-number',
-        action='store_true',
-        help='prefix the line number to matching lines',
-    )
-    grep_parser.add_argument(
-        'patterns',
-        nargs='+',
-        help="grep patterns, pass 'git grep' options after '--'",
-    )
-
-
-def grep(args: Namespace, config: Config) -> None:
+def grep(args: AppState, config: Config) -> None:
     grep_opts = _build_grep_options(
         args.ignore_case, args.line_number, args.title
     )

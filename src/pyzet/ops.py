@@ -9,7 +9,6 @@ import itertools
 import logging
 import shutil
 import subprocess
-from argparse import Namespace
 from collections import Counter
 from datetime import datetime
 from glob import glob
@@ -18,6 +17,7 @@ from pathlib import Path
 import pyzet.constants as C
 from pyzet import show
 from pyzet import zettel
+from pyzet.cli import AppState
 from pyzet.config import Config
 from pyzet.exceptions import NotEntered
 from pyzet.exceptions import NotFound
@@ -26,7 +26,7 @@ from pyzet.utils import get_git_output
 from pyzet.utils import get_git_remote_url
 
 
-def decide_whats_next(args: Namespace, config: Config) -> None:
+def decide_whats_next(args: AppState, config: Config) -> None:
     """Decides what to do after finishing a command.
 
     This function is intended to be called recursively, so it keeps the
@@ -34,7 +34,6 @@ def decide_whats_next(args: Namespace, config: Config) -> None:
     """
     # TODO: how to enable user to switch pretty, tags &
     # show_cmd during the session
-    _populate_args(args)
     while True:
         try:
             choice = input("What's next? [p,e,d,g,G,a,q,?] ")
@@ -54,28 +53,7 @@ def decide_whats_next(args: Namespace, config: Config) -> None:
                 args.id = None
 
 
-def _populate_args(args: Namespace) -> None:
-    # TODO: this is ugly, I'd prefer to find a better solution.
-    args.id = None
-    try:
-        args.patterns
-    except AttributeError:
-        args.patterns = []
-    try:
-        args.show_cmd
-    except AttributeError:
-        args.show_cmd = 'text'
-    try:
-        args.tags
-    except AttributeError:
-        args.tags = False
-    try:
-        args.pretty
-    except AttributeError:
-        args.pretty = False
-
-
-def _decide(choice: str, args: Namespace, config: Config) -> None:
+def _decide(choice: str, args: AppState, config: Config) -> None:
     if choice == 'p':
         show.command(args, config)
     elif choice == 'e':
@@ -112,7 +90,7 @@ def _get_grep_patterns() -> list[str]:
         return patterns
 
 
-def _get_help_msg(args: Namespace) -> str:
+def _get_help_msg(args: AppState) -> str:
     help_msg_with_id = """\
 p - print current note
 e - edit current note
@@ -141,11 +119,11 @@ patterns: {args.patterns}
     return help_msg + ''.center(27, '-') + status
 
 
-def get_remote_url(args: Namespace, config: Config) -> None:
+def get_remote_url(args: AppState, config: Config) -> None:
     print(get_git_remote_url(config, args.name))
 
 
-def list_zettels(args: Namespace, path: Path) -> None:
+def list_zettels(args: AppState, path: Path) -> None:
     for zet in zettel.get_all(Path(path, C.ZETDIR), args.reverse):
         print(zettel.get_repr(zet, args))
 
@@ -195,7 +173,7 @@ def _is_empty(folder: Path) -> bool:
     return not any(Path(folder).iterdir())
 
 
-def add_zettel(args: Namespace, config: Config) -> None:
+def add_zettel(args: AppState, config: Config) -> None:
     """Adds zettel and commits changes with zettel title as the message."""
     id_ = datetime.utcnow().strftime(C.ZULU_DATETIME_FORMAT)
 
@@ -225,7 +203,7 @@ def add_zettel(args: Namespace, config: Config) -> None:
         args.id = id_
 
 
-def edit_zettel(args: Namespace, config: Config) -> None:
+def edit_zettel(args: AppState, config: Config) -> None:
     """Edits zettel and commits changes with 'ED:' in the message."""
     if args.id is not None:
         zet = zettel.get_from_id(args.id, config.repo)
@@ -315,7 +293,7 @@ def _open_file(filename: Path, config: Config) -> None:
         )
 
 
-def remove_zettel(args: Namespace, config: Config) -> None:
+def remove_zettel(args: AppState, config: Config) -> None:
     """Removes zettel and commits changes with 'RM:' in the message."""
     if args.id is not None:
         zet = zettel.get_from_id(args.id, config.repo)

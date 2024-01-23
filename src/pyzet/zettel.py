@@ -4,16 +4,16 @@ import logging
 import os
 import re
 import subprocess
-from argparse import Namespace
 from datetime import datetime
 from pathlib import Path
 from typing import NamedTuple
 
 import pyzet.constants as C
+from pyzet.cli import AppState
+from pyzet.config import Config
 from pyzet.exceptions import NotEntered
 from pyzet.exceptions import NotFound
 from pyzet.grep import parse_grep_patterns
-from pyzet.utils import Config
 from pyzet.utils import get_git_output
 
 
@@ -52,7 +52,7 @@ def get_all(path: Path, is_reversed: bool = False) -> list[Zettel]:
 
 
 def get_from_grep(
-    args: Namespace, config: Config, create_if_not_found: bool = True
+    args: AppState, config: Config, create_if_not_found: bool = True
 ) -> Zettel:
     if _patterns_empty(args.patterns):
         msg = 'ERROR: provided patterns are incorrect (empty or whitespace)'
@@ -170,7 +170,7 @@ def get(path: Path) -> Zettel:
     return zettel
 
 
-def get_repr(zet: Zettel, args: Namespace) -> str:
+def get_repr(zet: Zettel, args: AppState) -> str:
     tags = ''
     if args.tags:
         try:

@@ -1,7 +1,6 @@
 """Logic for parsing pyzet config file."""
 from __future__ import annotations
 
-from argparse import Namespace
 from pathlib import Path
 from typing import Iterable
 from typing import NamedTuple
@@ -9,6 +8,7 @@ from typing import NamedTuple
 import yaml
 
 import pyzet.constants as C
+from pyzet.cli import AppState
 
 
 class Config(NamedTuple):
@@ -17,7 +17,7 @@ class Config(NamedTuple):
     editor_args: tuple[str, ...]
 
 
-def get(args: Namespace) -> Config:
+def get(args: AppState) -> Config:
     """Gets config from YAML."""
     try:
         with open(args.config) as file:
