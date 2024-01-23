@@ -57,6 +57,53 @@ def decide_whats_next(args: Namespace, config: Config) -> None:
     except AttributeError:
         args.pretty = False
 
+    while True:
+        try:
+            choice = input("What's next? [p,e,d,g,G,a,q,?] ")
+        except KeyboardInterrupt:
+            raise SystemExit('\naborting')
+        else:
+            try:
+                _decide(choice, args, config)
+            except NotFound:
+                logging.debug('decide_whats_next: NotFound')
+                args.id = None
+                args.patterns = []
+            except NotEntered:
+                # Presents the users list of found notes, as patterns
+                # are not nullified
+                logging.debug('decide_whats_next: NotEntered')
+                args.id = None
+
+
+def _decide(choice: str, args: Namespace, config: Config) -> None:
+    if choice == 'p':
+        show.command(args, config)
+    elif choice == 'e':
+        edit_zettel(args, config)
+    elif choice == 'd':
+        remove_zettel(args, config)
+    elif choice == 'g':
+        args.show_cmd = 'text'
+        args.id = None
+        args.ignore_case = False
+        args.patterns = input('Grep patterns: ').split()
+    elif choice == 'G':
+        args.show_cmd = 'text'
+        args.id = None
+        args.ignore_case = True
+        args.patterns = input('Grep patterns: ').split()
+    elif choice == 'a':
+        add_zettel(args, config)
+    elif choice == 'q':
+        raise SystemExit('Bye!')
+    elif choice == '?':
+        print(_get_help_msg(args), end='')
+    else:  # By default print the note again.
+        pass
+
+
+def _get_help_msg(args: Namespace) -> str:
     help_msg_with_id = """\
 p - print current note
 e - edit current note
@@ -77,48 +124,12 @@ a - add a new note
 q - quit
 ? - print help
 """
-    prompt = "What's next? [p,e,d,g,G,a,q,?] "
-    while True:
-        help_msg = help_msg_with_id if args.id else help_msg_with_patterns
-        try:
-            choice = input(prompt)
-        except KeyboardInterrupt:
-            raise SystemExit('\naborting')
-        else:
-            try:
-                if choice == 'p':
-                    show.command(args, config)
-                elif choice == 'e':
-                    edit_zettel(args, config)
-                elif choice == 'd':
-                    remove_zettel(args, config)
-                elif choice == 'g':
-                    args.show_cmd = 'text'
-                    args.id = None
-                    args.ignore_case = False
-                    args.patterns = input('Grep patterns: ').split()
-                elif choice == 'G':
-                    args.show_cmd = 'text'
-                    args.id = None
-                    args.ignore_case = True
-                    args.patterns = input('Grep patterns: ').split()
-                elif choice == 'a':
-                    add_zettel(args, config)
-                elif choice == 'q':
-                    raise SystemExit('Bye!')
-                elif choice == '?':
-                    print(help_msg, end='')
-                else:  # By default print the note again.
-                    pass
-            except NotFound:
-                logging.info('decide_whats_next: NotFound')
-                args.id = None
-                args.patterns = []
-            except NotEntered:
-                # Presents the users list of found notes, as patterns
-                # are not nullified
-                logging.info('decide_whats_next: NotEntered')
-                args.id = None
+    status = f"""
+ID: {args.id}
+patterns: {args.patterns}
+"""
+    help_msg = help_msg_with_id if args.id else help_msg_with_patterns
+    return help_msg + ''.center(50, '-') + status
 
 
 def get_remote_url(args: Namespace, config: Config) -> None:
