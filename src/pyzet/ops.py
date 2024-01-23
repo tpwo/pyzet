@@ -87,12 +87,12 @@ def _decide(choice: str, args: Namespace, config: Config) -> None:
         args.show_cmd = 'text'
         args.id = None
         args.ignore_case = False
-        args.patterns = input('Grep patterns: ').split()
+        args.patterns = _get_grep_patterns()
     elif choice == 'G':
         args.show_cmd = 'text'
         args.id = None
         args.ignore_case = True
-        args.patterns = input('Grep patterns: ').split()
+        args.patterns = _get_grep_patterns()
     elif choice == 'a':
         add_zettel(args, config)
     elif choice == 'q':
@@ -101,6 +101,16 @@ def _decide(choice: str, args: Namespace, config: Config) -> None:
         print(_get_help_msg(args), end='')
     else:  # By default print the note again.
         pass
+
+
+def _get_grep_patterns() -> list[str]:
+    try:
+        patterns = input('Grep patterns: ').split()
+    except KeyboardInterrupt:
+        print('\ncancelled, press again to quit')
+        raise NotEntered
+    else:
+        return patterns
 
 
 def _get_help_msg(args: Namespace) -> str:
