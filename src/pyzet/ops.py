@@ -32,31 +32,9 @@ def decide_whats_next(args: Namespace, config: Config) -> None:
     This function is intended to be called recursively, so it keeps the
     state of the program and input arguments intact.
     """
-    # TODO: this is ugly, I'd prefer to find a better solution.
-    #
-    # Another TODO is how to enable user to switch pretty, tags &
+    # TODO: how to enable user to switch pretty, tags &
     # show_cmd during the session
-    #
-    # TODO: colors would be nice to have here, so generated msgs are
-    # easier to grasp.
-    args.id = None
-    try:
-        args.patterns
-    except AttributeError:
-        args.patterns = []
-    try:
-        args.show_cmd
-    except AttributeError:
-        args.show_cmd = 'text'
-    try:
-        args.tags
-    except AttributeError:
-        args.tags = False
-    try:
-        args.pretty
-    except AttributeError:
-        args.pretty = False
-
+    _populate_args(args)
     while True:
         try:
             choice = input("What's next? [p,e,d,g,G,a,q,?] ")
@@ -74,6 +52,27 @@ def decide_whats_next(args: Namespace, config: Config) -> None:
                 # are not nullified
                 logging.debug('decide_whats_next: NotEntered')
                 args.id = None
+
+
+def _populate_args(args: Namespace) -> None:
+    # TODO: this is ugly, I'd prefer to find a better solution.
+    args.id = None
+    try:
+        args.patterns
+    except AttributeError:
+        args.patterns = []
+    try:
+        args.show_cmd
+    except AttributeError:
+        args.show_cmd = 'text'
+    try:
+        args.tags
+    except AttributeError:
+        args.tags = False
+    try:
+        args.pretty
+    except AttributeError:
+        args.pretty = False
 
 
 def _decide(choice: str, args: Namespace, config: Config) -> None:
