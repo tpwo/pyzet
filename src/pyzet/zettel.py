@@ -109,8 +109,8 @@ def get_from_grep(
     args: AppState, config: Config, create_if_not_found: bool = True
 ) -> dict[int, Zettel]:
     if _patterns_empty(args.patterns):
-        msg = 'ERROR: provided patterns are incorrect (empty or whitespace)'
-        raise SystemExit(msg)
+        print('Wrong value provided (empty or whitespace)!')
+        raise NotFound
     opts = ['-I', '--all-match', '--name-only']
     if args.ignore_case:
         opts.append('--ignore-case')
