@@ -51,32 +51,17 @@ def get_all(path: Path, is_reversed: bool = False) -> list[Zettel]:
     return items
 
 
-def get_from_grep(
+def select_from_grep(
     args: AppState, config: Config, create_if_not_found: bool = True
 ) -> Zettel:
-    if _patterns_empty(args.patterns):
-        msg = 'ERROR: provided patterns are incorrect (empty or whitespace)'
-        raise SystemExit(msg)
-    opts = ['-I', '--all-match', '--name-only']
-    if args.ignore_case:
-        opts.append('--ignore-case')
-    opts.extend(
-        [*parse_grep_patterns(args.patterns), '--', f'*/{C.ZETTEL_FILENAME}']
-    )
-    try:
-        out = get_git_output(config, 'grep', opts).decode()
-    except subprocess.CalledProcessError:
-        print('No zettels found!')
-        raise NotFound
-
-    matches: dict[int, Zettel] = {}
-    for idx, filename in enumerate(out.splitlines(), start=1):
-        matches[idx] = get(Path(config.repo, filename))
+    matches = get_from_grep(args, config, create_if_not_found)
 
     num_matches = len(matches)
     confirmation_threshold = 50
     if num_matches > confirmation_threshold:
-        prompt = f'Found {num_matches} matches. Continue? (y/N): '
+        prompt = (
+            f'Are you sure to continue with {num_matches} matches? (y/N): '
+        )
         try:
             if input(prompt) != 'y':
                 print('aborting')
@@ -85,7 +70,6 @@ def get_from_grep(
             print('\naborting')
             raise NotFound
 
-    print(f'Found {num_matches} matches:')
     zero_padding = len(str(num_matches))
     for idx, zet in matches.items():
         print(f'[{str(idx).zfill(zero_padding)}] {get_repr(zet, args)}')
@@ -119,6 +103,30 @@ def get_from_grep(
         except KeyboardInterrupt:
             print('\naborting')
             raise NotEntered
+
+
+def get_from_grep(
+    args: AppState, config: Config, create_if_not_found: bool = True
+) -> dict[int, Zettel]:
+    if _patterns_empty(args.patterns):
+        msg = 'ERROR: provided patterns are incorrect (empty or whitespace)'
+        raise SystemExit(msg)
+    opts = ['-I', '--all-match', '--name-only']
+    if args.ignore_case:
+        opts.append('--ignore-case')
+    opts.extend(
+        [*parse_grep_patterns(args.patterns), '--', f'*/{C.ZETTEL_FILENAME}']
+    )
+    try:
+        out = get_git_output(config, 'grep', opts).decode()
+    except subprocess.CalledProcessError:
+        print('No zettels found!')
+        raise NotFound
+
+    matches: dict[int, Zettel] = {}
+    for idx, filename in enumerate(out.splitlines(), start=1):
+        matches[idx] = get(Path(config.repo, filename))
+    return matches
 
 
 def _patterns_empty(patterns: list[str]) -> bool:

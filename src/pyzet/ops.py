@@ -60,16 +60,13 @@ def _decide(choice: str, args: AppState, config: Config) -> None:
         edit_zettel(args, config)
     elif choice == 'd':
         remove_zettel(args, config)
-    elif choice == 'g':
+    elif choice in {'g', 'G'}:
         args.show_cmd = 'text'
         args.id = None
-        args.ignore_case = False
+        args.ignore_case = choice == 'G'
         args.patterns = _get_grep_patterns()
-    elif choice == 'G':
-        args.show_cmd = 'text'
-        args.id = None
-        args.ignore_case = True
-        args.patterns = _get_grep_patterns()
+        matches = zettel.get_from_grep(args, config)
+        print(f'Found {len(matches)} matches')
     elif choice == 'a':
         add_zettel(args, config)
     elif choice == 'q':
@@ -208,7 +205,7 @@ def edit_zettel(args: AppState, config: Config) -> None:
     if args.id is not None:
         zet = zettel.get_from_id(args.id, config.repo)
     elif args.patterns:
-        zet = zettel.get_from_grep(args, config)
+        zet = zettel.select_from_grep(args, config)
     else:
         zet = zettel.get_last(config.repo)
 
@@ -298,7 +295,7 @@ def remove_zettel(args: AppState, config: Config) -> None:
     if args.id is not None:
         zet = zettel.get_from_id(args.id, config.repo)
     elif args.patterns:
-        zet = zettel.get_from_grep(args, config, create_if_not_found=False)
+        zet = zettel.select_from_grep(args, config, create_if_not_found=False)
     else:
         raise SystemExit
     prompt = (
