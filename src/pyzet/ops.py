@@ -1,8 +1,4 @@
-"""Logic for handling top-level user's operations.
-
-These operations should either return 0 if successful, or raise
-SystemExit if something goes wrong.
-"""
+"""Logic for handling top-level user's operations."""
 from __future__ import annotations
 
 import itertools
