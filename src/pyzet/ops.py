@@ -211,10 +211,10 @@ def _open_file(filename: Path, config: Config) -> None:
     try:
         cmd = (config.editor, *config.editor_args, filename.as_posix())
         subprocess.run(cmd)
-    except FileNotFoundError:
+    except FileNotFoundError as err:
         raise SystemExit(
             f'ERROR: cannot open {filename.as_posix()} with {editor_path}.'
-        )
+        ) from err
 
 
 def remove_zettel(args: Namespace, config: Config) -> int:

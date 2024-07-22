@@ -145,10 +145,10 @@ def valid_id(id_: str) -> str:
     """Gradually checks if given string is a valid zettel id."""
     try:
         int(id_)
-    except ValueError:
+    except ValueError as err:
         raise argparse.ArgumentTypeError(
             f"'{id_}' is not a valid zettel id (not an integer)"
-        )
+        ) from err
     if len(id_) != const.ZULU_FORMAT_LEN:
         raise argparse.ArgumentTypeError(
             f"'{id_}' is not a valid zettel id ({_get_id_err_details(id_)})"
@@ -157,8 +157,10 @@ def valid_id(id_: str) -> str:
         datetime.strptime(id_, const.ZULU_DATETIME_FORMAT).replace(
             tzinfo=timezone.utc
         )
-    except ValueError:
-        raise argparse.ArgumentTypeError(f"'{id_}' is not a valid zettel id")
+    except ValueError as err:
+        raise argparse.ArgumentTypeError(
+            f"'{id_}' is not a valid zettel id"
+        ) from err
     else:
         return id_
 

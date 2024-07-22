@@ -44,7 +44,7 @@ extend-select = [
     "F",
     "W",
     "UP",
-    # "B",
+    "B",
     "SIM",
     "PT",
     "D",

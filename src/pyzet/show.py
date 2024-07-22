@@ -76,8 +76,8 @@ def command(args: Namespace, config: Config) -> int:
     try:
         if input('Enter editor (y/N)? ') != 'y':
             raise SystemExit('aborting')
-    except KeyboardInterrupt:
-        raise SystemExit('\naborting')
+    except KeyboardInterrupt as err:
+        raise SystemExit('\naborting') from err
     else:
         return edit_zettel(args, config)
 

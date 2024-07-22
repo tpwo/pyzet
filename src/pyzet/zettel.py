@@ -74,17 +74,17 @@ def get_from_grep(
     )
     try:
         out = get_git_output(config, 'grep', opts).decode()
-    except subprocess.CalledProcessError:
+    except subprocess.CalledProcessError as err:
         if create_if_not_found:
             try:
                 if input('No zettels found. Create a new one? (y/N) ') != 'y':
-                    raise SystemExit('aborting')
-            except KeyboardInterrupt:
-                raise SystemExit('\naborting')
+                    raise SystemExit('aborting') from err
+            except KeyboardInterrupt as exc:
+                raise SystemExit('\naborting') from exc
             else:
                 raise ZettelNotFoundError
         else:
-            raise SystemExit('ERROR: no zettels found')
+            raise SystemExit('ERROR: no zettels found') from err
 
     matches: dict[int, Zettel] = {}
     for idx, filename in enumerate(out.splitlines(), start=1):
@@ -97,8 +97,8 @@ def get_from_grep(
         try:
             if input(prompt) != 'y':
                 raise SystemExit('aborting')
-        except KeyboardInterrupt:
-            raise SystemExit('\naborting')
+        except KeyboardInterrupt as err:
+            raise SystemExit('\naborting') from err
 
     print(f'Found {num_matches} matches:')
     zero_padding = len(str(num_matches))
@@ -109,22 +109,22 @@ def get_from_grep(
         try:
             if input('Continue? (Y/n): ') != 'n':
                 return matches[1]
-        except KeyboardInterrupt:
-            raise SystemExit('\naborting')
+        except KeyboardInterrupt as err:
+            raise SystemExit('\naborting') from err
         else:
             raise SystemExit('aborting')
     try:
         user_input = input('Open (press enter to cancel): ')
-    except KeyboardInterrupt:
-        raise SystemExit('\naborting')
+    except KeyboardInterrupt as err:
+        raise SystemExit('\naborting') from err
 
     if user_input == '':
         raise SystemExit('aborting')
 
     try:
         return matches[int(user_input)]
-    except KeyError:
-        raise SystemExit('ERROR: wrong zettel ID')
+    except KeyError as err:
+        raise SystemExit('ERROR: wrong zettel ID') from err
 
 
 def _patterns_empty(patterns: list[str]) -> bool:
@@ -136,8 +136,8 @@ def get_from_id(id_: str, repo: Path) -> Zettel:
     """Get zettel from its ID given repo path."""
     try:
         return get_from_dir(Path(repo, const.ZETDIR, id_))
-    except FileNotFoundError:
-        raise SystemExit(f"ERROR: zettel '{id_}' doesn't exist.")
+    except FileNotFoundError as err:
+        raise SystemExit(f"ERROR: zettel '{id_}' doesn't exist.") from err
 
 
 def get_last(repo: Path) -> Zettel:

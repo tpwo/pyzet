@@ -40,8 +40,8 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     try:
         return _parse_args(args)
-    except BrokenPipeError:
-        raise SystemExit
+    except BrokenPipeError as err:
+        raise SystemExit from err
 
 
 def _get_parser() -> tuple[ArgumentParser, dict[str, ArgumentParser]]:

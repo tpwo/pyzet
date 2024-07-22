@@ -28,11 +28,11 @@ def get(args: Namespace) -> Config:
     try:
         with open(args.config) as file:
             yaml_cfg = yaml.safe_load(file)
-    except FileNotFoundError:
+    except FileNotFoundError as err:
         raise SystemExit(
             f"ERROR: config file at '{Path(args.config).as_posix()}' "
             "not found.\nAdd it or use '--config' flag."
-        )
+        ) from err
     config = _process_yaml(yaml_cfg, args.config, args.repo)
     # if we initialize repo, the folder may not exist
     if args.command == 'init':
@@ -63,11 +63,11 @@ def _process_yaml(
             repo_raw = yaml_cfg['repo']
             assert isinstance(repo_raw, str)
             repo = Path(repo_raw).expanduser()
-        except KeyError:
+        except KeyError as err:
             raise SystemExit(
                 "ERROR: field 'repo' missing from"
                 f" '{Path(config_file).as_posix()}'."
-            )
+            ) from err
 
     editor = yaml_cfg.get('editor', const.VIM_PATH)
     assert isinstance(editor, str)
