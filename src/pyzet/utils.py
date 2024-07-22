@@ -9,6 +9,7 @@ import subprocess
 import sys
 from argparse import ArgumentParser
 from datetime import datetime
+from datetime import timezone
 from typing import TYPE_CHECKING
 from typing import Iterable
 
@@ -153,7 +154,9 @@ def valid_id(id_: str) -> str:
             f"'{id_}' is not a valid zettel id ({_get_id_err_details(id_)})"
         )
     try:
-        datetime.strptime(id_, C.ZULU_DATETIME_FORMAT)
+        datetime.strptime(id_, C.ZULU_DATETIME_FORMAT).replace(
+            tzinfo=timezone.utc
+        )
     except ValueError:
         raise argparse.ArgumentTypeError(f"'{id_}' is not a valid zettel id")
     else:

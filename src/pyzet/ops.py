@@ -12,6 +12,7 @@ import shutil
 import subprocess
 from collections import Counter
 from datetime import datetime
+from datetime import timezone
 from glob import glob
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -91,7 +92,7 @@ def _is_empty(folder: Path) -> bool:
 
 def add_zettel(config: Config) -> int:
     """Adds zettel and commits changes with zettel title as the message."""
-    id_ = datetime.utcnow().strftime(C.ZULU_DATETIME_FORMAT)
+    id_ = datetime.now(tz=timezone.utc).strftime(C.ZULU_DATETIME_FORMAT)
 
     zettel_dir = Path(config.repo, C.ZETDIR, id_)
     zettel_dir.mkdir(parents=True, exist_ok=True)

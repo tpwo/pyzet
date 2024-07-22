@@ -5,6 +5,7 @@ import os
 import re
 import subprocess
 from datetime import datetime
+from datetime import timezone
 from pathlib import Path
 from typing import TYPE_CHECKING
 from typing import NamedTuple
@@ -184,9 +185,13 @@ def get_repr(zet: Zettel, args: Namespace) -> str:
     return f'{zet.id} -- {zet.title}{tags}'
 
 
-def get_timestamp(id_: str) -> datetime:
-    """Parses zettel ID into a datetime object."""
-    return datetime.strptime(id_, C.ZULU_DATETIME_FORMAT)
+def get_timestamp(id_: str) -> str:
+    """Parses zettel ID into a `YYYY-MM-DD HH:MM:SS` str."""
+    return (
+        datetime.strptime(id_, C.ZULU_DATETIME_FORMAT)
+        .replace(tzinfo=timezone.utc)
+        .strftime(C.PRETTY_DATETIME_FORMAT)
+    )
 
 
 def get_md_link(zet: Zettel) -> str:

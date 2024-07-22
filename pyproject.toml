@@ -52,7 +52,7 @@ extend-select = [
     "FBT",
     "A",
     "C4",
-    # "DTZ",
+    "DTZ",
     "ISC",
     "LOG",
     "INP",
