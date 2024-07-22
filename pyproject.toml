@@ -2,6 +2,12 @@
 requires = ["setuptools>=42.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[tool.coverage.run]
+plugins = ["covdefaults"]
+
+[tool.coverage.report]
+fail_under = 1
+
 [tool.mypy]
 check_untyped_defs = true
 disallow_any_generics = true
