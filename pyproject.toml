@@ -78,7 +78,6 @@ ignore = [
     "D107",
     "D203",
     "D213",
-    "E203", # TODO: verify if needed
     "E501",
     "ISC001",
     "RUF001",
