@@ -63,7 +63,7 @@ def clean_zet_repo(
 
 
 def init_repo(config: Config, branch_name: str) -> int:
-    """Initializes a git repository in a given path."""
+    """Initialize a git repository in a given path."""
     # We create both main ZK folder, and the folder that keeps all the
     # zettels. This is split, as each one can raise an Exception, and
     # we'd like to have a nice error message in such case.
@@ -75,7 +75,7 @@ def init_repo(config: Config, branch_name: str) -> int:
 
 
 def _create_empty_folder(path: Path) -> None:
-    """Creates empty folder or does nothing if it exists."""
+    """Create empty folder or does nothing if it exists."""
     if path.exists():
         if not path.is_dir():
             raise SystemExit(
@@ -95,7 +95,7 @@ def _is_empty(folder: Path) -> bool:
 
 
 def add_zettel(config: Config) -> int:
-    """Adds zettel and commits changes with zettel title as the message."""
+    """Add zettel and commits changes with zettel title as the message."""
     id_ = datetime.now(tz=timezone.utc).strftime(const.ZULU_DATETIME_FORMAT)
 
     zettel_dir = Path(config.repo, const.ZETDIR, id_)
@@ -172,7 +172,7 @@ def edit_zettel(args: Namespace, config: Config) -> int:
 
 
 def _get_files_touched_last_commit(config: Config) -> bytes:
-    """Returns Git output listing files touched in the last commit."""
+    """Return Git output listing files touched in the last commit."""
     return get_git_output(config, 'diff', ('--name-only', 'HEAD', 'HEAD^'))
 
 
@@ -183,7 +183,7 @@ def _get_edit_commit_msg(zettel_path: Path, title: str, config: Config) -> str:
 
 
 def _was_committed_to_git(filepath: Path, config: Config) -> bool:
-    """Returns True if a file was committed to git.
+    """Return True if a file was committed to git.
 
     If 'git log' output is empty, the file wasn't committed.
     """
@@ -191,7 +191,7 @@ def _was_committed_to_git(filepath: Path, config: Config) -> bool:
 
 
 def _file_was_modified(filepath: Path, config: Config) -> bool:
-    """Returns True if a file was modified in a working dir."""
+    """Return True if a file was modified in a working dir."""
     # Run 'git add' to avoid false negatives, as 'git diff --staged' is
     # used for detection. This is important when there are external
     # factors that impact the committing process (like pre-commit).
@@ -218,7 +218,7 @@ def _open_file(filename: Path, config: Config) -> None:
 
 
 def remove_zettel(args: Namespace, config: Config) -> int:
-    """Removes zettel and commits changes with 'RM:' in the message."""
+    """Remove zettel and commits changes with 'RM:' in the message."""
     if args.patterns:
         zet = zettel.get_from_grep(args, config, create_if_not_found=False)
     elif args.id is not None:
@@ -270,7 +270,7 @@ def list_tags(repo: Path, *, is_reversed: bool) -> int:
 
 
 def info(config: Config) -> int:
-    """Prints info about ZK repo."""
+    """Print info about ZK repo."""
     print(_get_info(config))
     return 0
 
@@ -298,7 +298,7 @@ def _bytes_to_mb(bytes_: int) -> float:
 
 
 def _get_wc_output(config: Config) -> tuple[int, int, int]:
-    """Uses wc and glob to count the number of lines in md files.
+    """Use wc and glob to count the number of lines in md files.
 
     wc output shows total number of lines, words, and bytes in the last
     line, so we parse it to get out the value.
@@ -329,7 +329,7 @@ def _count_tags(repo: Path) -> int:
 
 
 def _get_git_size_stats(config: Config) -> tuple[float, float]:
-    """Runs 'git count-objects -v' and parses the output.
+    """Run 'git count-objects -v' and parses the output.
 
     'size' and 'size-pack' values are returned.
     """

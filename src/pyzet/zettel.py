@@ -34,7 +34,7 @@ class Zettel(NamedTuple):
 
 
 def get_all(path: Path, *, is_reversed: bool = False) -> list[Zettel]:
-    """Gets all zettels from a given repo."""
+    """Get all zettels from a given repo."""
     if not path.is_dir():
         raise SystemExit(f"ERROR: folder {path} doesn't exist.")
     items: list[Zettel] = []
@@ -127,12 +127,12 @@ def get_from_grep(
 
 
 def _patterns_empty(patterns: list[str]) -> bool:
-    """Returns True if all provided patterns are empty str or whitespace."""
+    """Return True if all provided patterns are empty str or whitespace."""
     return all(s == '' or s.isspace() for s in patterns)
 
 
 def get_from_id(id_: str, repo: Path) -> Zettel:
-    """Gets zettel from its ID given repo path."""
+    """Get zettel from its ID given repo path."""
     try:
         return get_from_dir(Path(repo, const.ZETDIR, id_))
     except FileNotFoundError:
@@ -140,17 +140,17 @@ def get_from_id(id_: str, repo: Path) -> Zettel:
 
 
 def get_last(repo: Path) -> Zettel:
-    """Gets the last zettel from a given repo."""
+    """Get the last zettel from a given repo."""
     return get_all(Path(repo, const.ZETDIR), is_reversed=True)[0]
 
 
 def get_from_dir(dirpath: Path) -> Zettel:
-    """Gets zettel from a directory named after its ID."""
+    """Get zettel from a directory named after its ID."""
     return get(Path(dirpath, const.ZETTEL_FILENAME))
 
 
 def get(path: Path) -> Zettel:
-    """Gets zettel from a full path."""
+    """Get zettel from a full path."""
     if path.is_dir():
         raise ValueError
 
@@ -190,7 +190,7 @@ def get_repr(zet: Zettel, args: Namespace) -> str:
 
 
 def get_timestamp(id_: str) -> str:
-    """Parses zettel ID into a `YYYY-MM-DD HH:MM:SS` str."""
+    """Parse zettel ID into a `YYYY-MM-DD HH:MM:SS` str."""
     return (
         datetime.strptime(id_, const.ZULU_DATETIME_FORMAT)
         .replace(tzinfo=timezone.utc)
@@ -199,7 +199,7 @@ def get_timestamp(id_: str) -> str:
 
 
 def get_md_link(zet: Zettel) -> str:
-    """Returns a representation of a zettel that is a relative Markdown link.
+    """Return a representation of a zettel that is a relative Markdown link.
 
     Asterisk at the beginning is a Markdown syntax for an unordered list,
     as links to zettels are usually just used in references section of a
@@ -209,7 +209,7 @@ def get_md_link(zet: Zettel) -> str:
 
 
 def get_markdown_title(title_line: str, id_: str) -> str:
-    """Extracts Markdown title if it is formatted correctly.
+    """Extract Markdown title if it is formatted correctly.
 
     Otherwise, returns the whole line and logs a warning. 'title_line'
     arg should have newline characters stripped.
@@ -229,14 +229,14 @@ def get_markdown_title(title_line: str, id_: str) -> str:
 
 
 def get_tags(line: str) -> tuple[str, ...]:
-    """Parses tags from a line of text."""
+    """Parse tags from a line of text."""
     tags = tuple(sorted(tag.lstrip('#') for tag in line.split()))
     logging.debug('get_tags: got %s', tags)
     return tags
 
 
 def get_tags_str(zettel: Zettel) -> str:
-    """Parses zettel tags into a printable repr."""
+    """Parse zettel tags into a printable repr."""
     if zettel.tags == ():
         raise ValueError
     else:
@@ -244,7 +244,7 @@ def get_tags_str(zettel: Zettel) -> str:
 
 
 def _get_first_and_last_line(path: Path) -> tuple[str, str]:
-    """Gets the first and the last line from a given file.
+    """Get the first and the last line from a given file.
 
     It uses file.seek() to look from the end of the file. It's fast but
     requires the file to be opened in binary mode.

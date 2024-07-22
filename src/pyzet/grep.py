@@ -85,7 +85,7 @@ def parse_grep_patterns(patterns: list[str]) -> list[str]:
 
 
 def _add_git_grep_pattern(pattern: str) -> tuple[str, str, str]:
-    """Uses 'git grep' syntax for including multiple patterns.
+    """Use 'git grep' syntax for including multiple patterns.
 
     This approach works only with --all-match, i.e. only a file that
     includes all of patterns will be matched.

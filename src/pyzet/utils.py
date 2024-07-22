@@ -67,7 +67,7 @@ def get_git_output(
 
 
 def _convert_ssh_to_https(remote: str) -> str:
-    """Converts Git SSH url into HTTPS url."""
+    """Convert Git SSH url into HTTPS url."""
     return 'https://' + remote.partition('git@')[-1].replace(':', '/')
 
 
@@ -95,7 +95,7 @@ def setup_logger(level: int) -> None:
 
 
 def compute_log_level(verbosity: int) -> int:
-    """Matches chosen verbosity with default log levels from logging module.
+    """Match chosen verbosity with default log levels from logging module.
 
     Each verbosity increase (i.e. adding `-v` flag) should decrease a
     logging level by some value which is below called as
@@ -164,7 +164,7 @@ def valid_id(id_: str) -> str:
 
 
 def _get_id_err_details(id_: str) -> str:
-    """Generates error msg based on the diff in expected and actual chars."""
+    """Generate error msg based on the diff in expected and actual chars."""
     num = len(id_) - const.ZULU_FORMAT_LEN
     s = 's' if num > 1 else ''
     diff = 'long' if num > 0 else 'short'

@@ -83,7 +83,7 @@ def command(args: Namespace, config: Config) -> int:
 
 
 def show_zettel(zet: Zettel) -> None:
-    """Prints zettel text prepended with centered ID as a header."""
+    """Print zettel text prepended with centered ID as a header."""
     fillchar = '='
     print(f' {zet.id} '.center(const.ZETTEL_WIDTH, fillchar))
     with open(zet.path, encoding='utf-8') as file:
@@ -97,7 +97,7 @@ def _remote_dot_git(remote: str) -> str:
 
 
 def _get_zettel_url(repo_url: str, branch: str, id_: str) -> str:
-    """Returns zettel URL for the most popular Git online hostings."""
+    """Return zettel URL for the most popular Git online hostings."""
     if 'github.com' in repo_url:
         return f'{repo_url}/tree/{branch}/{const.ZETDIR}/{id_}'
     if 'gitlab.com' in repo_url:

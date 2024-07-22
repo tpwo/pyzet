@@ -47,7 +47,7 @@ extend-select = [
     # "B",
     # "SIM",
     "PT",
-    # "D",
+    "D",
     "N",
     "FBT",
     "A",

@@ -16,13 +16,15 @@ if TYPE_CHECKING:
 
 
 class Config(NamedTuple):
+    """Pyzet config representation."""
+
     repo: Path
     editor: str
     editor_args: tuple[str, ...]
 
 
 def get(args: Namespace) -> Config:
-    """Gets config from YAML."""
+    """Get config from YAML."""
     try:
         with open(args.config) as file:
             yaml_cfg = yaml.safe_load(file)
@@ -49,7 +51,7 @@ def get(args: Namespace) -> Config:
 def _process_yaml(
     yaml_cfg: dict[str, object], config_file: str, repo_path: str | None = None
 ) -> Config:
-    """Processes YAML config file.
+    """Process YAML config file.
 
     Only 'repo' field is required. If other fields are missing,
     a default value will be used.

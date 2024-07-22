@@ -4,4 +4,4 @@ from __future__ import annotations
 
 
 class ZettelNotFoundError(Exception):
-    pass
+    """Exception raised when a zettel cannot be found."""
