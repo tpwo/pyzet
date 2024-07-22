@@ -3,3 +3,6 @@
 
 # Migrate from blue, pyupgrade and flake8 to ruff
 d0298840aef52fb392c848b862ed3015ddb4f943
+
+# Rename `C` -> `const`
+0bd139cf8aca6707975ddfbc4744a031a4cc78a5
