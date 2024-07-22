@@ -13,7 +13,7 @@ from tests.conftest import TEST_CFG
 
 
 @pytest.fixture()
-def set_info_lvl(caplog):
+def _set_info_lvl(caplog):
     caplog.set_level(logging.INFO)
 
 
@@ -41,7 +41,7 @@ def test_help(capsys):
         pytest.param(('-b', 'foobar'), 'foobar', id='custom branch'),
     ],
 )
-@pytest.mark.usefixtures('set_info_lvl')
+@pytest.mark.usefixtures('_set_info_lvl')
 def test_init_repo_flag(tmp_path, capfd, caplog, opts, branch):
     main([*TEST_CFG, '--repo', tmp_path.as_posix(), 'init', *opts])
 
@@ -66,7 +66,7 @@ def test_init_repo_flag(tmp_path, capfd, caplog, opts, branch):
         pytest.param(('-b', 'foobar'), 'foobar', id='custom branch'),
     ],
 )
-@pytest.mark.usefixtures('set_info_lvl')
+@pytest.mark.usefixtures('_set_info_lvl')
 def test_init_custom_target(tmp_path, capfd, caplog, opts, branch):
     main([*TEST_CFG, 'init', tmp_path.as_posix(), *opts])
 
@@ -84,7 +84,7 @@ def test_init_custom_target(tmp_path, capfd, caplog, opts, branch):
     assert err == ''
 
 
-@pytest.mark.usefixtures('set_info_lvl')
+@pytest.mark.usefixtures('_set_info_lvl')
 def test_init_repo_flag_and_custom_target(tmp_path, capfd, caplog):
     # Custom target should be preferred over repo passed with '--repo'
     repo_dir = Path(tmp_path, 'repo-dir')

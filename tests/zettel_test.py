@@ -163,5 +163,5 @@ def test_get_markdown_title_warning(test_input, caplog):
 
 
 def test_get_markdown_value_error():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match='Empty zettel title found'):
         get_markdown_title('', id_='20211016205159')
