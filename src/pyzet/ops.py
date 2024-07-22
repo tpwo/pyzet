@@ -19,6 +19,7 @@ from typing import TYPE_CHECKING
 
 import pyzet.constants as const
 from pyzet import zettel
+from pyzet.exceptions import AbortError
 from pyzet.exceptions import ZettelNotFoundError
 from pyzet.utils import call_git
 from pyzet.utils import get_git_output
@@ -230,7 +231,7 @@ def remove_zettel(args: Namespace, config: Config) -> int:
         'that might be inside. Are you sure? (y/N): '
     )
     if input(prompt) != 'y':
-        raise SystemExit('aborting')
+        raise AbortError
 
     # All files in given zettel folder are removed one by one. This
     # might be slower than shutil.rmtree() but gives nice log entry for

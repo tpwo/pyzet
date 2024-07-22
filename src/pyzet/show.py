@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 
 import pyzet.constants as const
 from pyzet import zettel
+from pyzet.exceptions import AbortError
 from pyzet.ops import edit_zettel
 from pyzet.utils import add_pattern_args
 from pyzet.utils import get_git_remote_url
@@ -75,9 +76,10 @@ def command(args: Namespace, config: Config) -> int:
 
     try:
         if input('Enter editor (y/N)? ') != 'y':
-            raise SystemExit('aborting')
+            raise AbortError
     except KeyboardInterrupt as err:
-        raise SystemExit('\naborting') from err
+        raise AbortError from err
+
     else:
         return edit_zettel(args, config)
 

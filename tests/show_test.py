@@ -72,7 +72,7 @@ def test_show_patterns_not_matching_pattern(pyzet_init):
     ) as excinfo:
         main([*TEST_CFG, '--repo', pyzet_init, 'show', 'text', 'zet'])
     (msg,) = excinfo.value.args
-    assert msg == 'aborting'
+    assert msg == '\naborting'
 
 
 def test_show_patterns_empty_repo(pyzet_init):
@@ -81,7 +81,7 @@ def test_show_patterns_empty_repo(pyzet_init):
     ) as excinfo:
         main([*TEST_CFG, '--repo', pyzet_init, 'show', 'text', 'zet'])
     (msg,) = excinfo.value.args
-    assert msg == 'aborting'
+    assert msg == '\naborting'
 
 
 def test_show_utf8(capsys):

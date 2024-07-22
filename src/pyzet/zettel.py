@@ -12,6 +12,7 @@ from typing import TYPE_CHECKING
 from typing import NamedTuple
 
 import pyzet.constants as const
+from pyzet.exceptions import AbortError
 from pyzet.exceptions import ZettelNotFoundError
 from pyzet.grep import parse_grep_patterns
 from pyzet.utils import get_git_output
@@ -78,9 +79,9 @@ def get_from_grep(
         if create_if_not_found:
             try:
                 if input('No zettels found. Create a new one? (y/N) ') != 'y':
-                    raise SystemExit('aborting') from err
+                    raise AbortError from err
             except KeyboardInterrupt as exc:
-                raise SystemExit('\naborting') from exc
+                raise AbortError from exc
             else:
                 raise ZettelNotFoundError
         else:
@@ -96,9 +97,9 @@ def get_from_grep(
         prompt = f'Found {num_matches} matches. Continue? (y/N): '
         try:
             if input(prompt) != 'y':
-                raise SystemExit('aborting')
+                raise AbortError
         except KeyboardInterrupt as err:
-            raise SystemExit('\naborting') from err
+            raise AbortError from err
 
     print(f'Found {num_matches} matches:')
     zero_padding = len(str(num_matches))
@@ -110,16 +111,16 @@ def get_from_grep(
             if input('Continue? (Y/n): ') != 'n':
                 return matches[1]
         except KeyboardInterrupt as err:
-            raise SystemExit('\naborting') from err
+            raise AbortError from err
         else:
-            raise SystemExit('aborting')
+            raise AbortError
     try:
         user_input = input('Open (press enter to cancel): ')
     except KeyboardInterrupt as err:
-        raise SystemExit('\naborting') from err
+        raise AbortError from err
 
     if user_input == '':
-        raise SystemExit('aborting')
+        raise AbortError
 
     try:
         return matches[int(user_input)]
