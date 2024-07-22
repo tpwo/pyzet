@@ -50,7 +50,7 @@ extend-select = [
     # "D",
     # "N",
     "FBT",
-    # "A",
+    "A",
     "C4",
     # "DTZ",
     "ISC",

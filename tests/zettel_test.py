@@ -97,8 +97,8 @@ def test_get():
         tags=('another-tag', 'tag-after-two-spaces', 'test-tag'),
         path=Path('testing/zet/docs/20211016205158/README.md'),
     )
-    dir = Path(f'testing/zet/{C.ZETDIR}/20211016205158/{C.ZETTEL_FILENAME}')
-    actual = zettel.get(dir)
+    dir_ = Path(f'testing/zet/{C.ZETDIR}/20211016205158/{C.ZETTEL_FILENAME}')
+    actual = zettel.get(dir_)
     assert actual == expected
 
 
@@ -109,8 +109,8 @@ def test_get_from_dir():
         tags=('another-tag', 'tag-after-two-spaces', 'test-tag'),
         path=Path('testing/zet/docs/20211016205158/README.md'),
     )
-    dir = Path(f'testing/zet/{C.ZETDIR}/20211016205158')
-    actual = zettel.get_from_dir(dir)
+    dir_ = Path(f'testing/zet/{C.ZETDIR}/20211016205158')
+    actual = zettel.get_from_dir(dir_)
     assert actual == expected
 
 

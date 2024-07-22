@@ -271,25 +271,25 @@ def info(config: Config) -> int:
 
 
 def _get_info(config: Config) -> str:
-    dir = Path(config.repo, C.ZETDIR)
-    zettels = zettel.get_all(dir)
-    lines, words, bytes = _get_wc_output(config)
+    dir_ = Path(config.repo, C.ZETDIR)
+    zettels = zettel.get_all(dir_)
+    lines, words, bytes_ = _get_wc_output(config)
     git_size, git_size_pack = _get_git_size_stats(config)
     return f"""\
 Number of notes:       {len(zettels)}
 Number of lines:       {lines}
 Number of words:       {words}
-Number of bytes:       {bytes}
+Number of bytes:       {bytes_}
 Number of tags:        {_count_tags(config.repo)}
 Number of unique tags: {len(_get_tags(config.repo))}
-Size on disk:          {_bytes_to_mb(bytes)} MiB
+Size on disk:          {_bytes_to_mb(bytes_)} MiB
 Git repo size:         {git_size} MiB
 Git repo size-pack:    {git_size_pack} MiB\
 """
 
 
-def _bytes_to_mb(bytes: int) -> float:
-    return round(bytes / 1024 / 1024, 2)
+def _bytes_to_mb(bytes_: int) -> float:
+    return round(bytes_ / 1024 / 1024, 2)
 
 
 def _get_wc_output(config: Config) -> tuple[int, int, int]:
@@ -303,8 +303,8 @@ def _get_wc_output(config: Config) -> tuple[int, int, int]:
     cmd = ('wc', *files)
     wc_out = subprocess.run(cmd, capture_output=True).stdout.decode().strip()
     last_line = wc_out.split('\n')[-1].strip()
-    lines, words, bytes, _ = last_line.split()
-    return int(lines), int(words), int(bytes)
+    lines, words, bytes_, _ = last_line.split()
+    return int(lines), int(words), int(bytes_)
 
 
 def _get_tags(repo: Path) -> Counter[str]:
@@ -319,8 +319,8 @@ def _get_tags(repo: Path) -> Counter[str]:
 
 
 def _count_tags(repo: Path) -> int:
-    dir = Path(repo, C.ZETDIR)
-    return sum(len(zettel.tags) for zettel in zettel.get_all(dir))
+    dir_ = Path(repo, C.ZETDIR)
+    return sum(len(zettel.tags) for zettel in zettel.get_all(dir_))
 
 
 def _get_git_size_stats(config: Config) -> tuple[float, float]:
