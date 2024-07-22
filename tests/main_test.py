@@ -124,9 +124,10 @@ def test_init_error_config_file_missing():
 
 
 def test_edit_error_editor_not_found():
-    with pytest.raises(SystemExit) as excinfo:
-        with mock.patch('builtins.input', return_value='1'):
-            main(['-c', 'testing/pyzet-wrong.yaml', 'edit', 'zet test entry'])
+    with pytest.raises(SystemExit) as excinfo, mock.patch(
+        'builtins.input', return_value='1'
+    ):
+        main(['-c', 'testing/pyzet-wrong.yaml', 'edit', 'zet test entry'])
     (msg,) = excinfo.value.args
     assert msg == "ERROR: editor 'not-vim' cannot be found."
 
