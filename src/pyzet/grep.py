@@ -1,13 +1,17 @@
 from __future__ import annotations
 
-from argparse import _SubParsersAction
-from argparse import ArgumentParser
-from argparse import Namespace
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pyzet.constants as C
-from pyzet.config import Config
 from pyzet.utils import call_git
+
+if TYPE_CHECKING:
+    from argparse import ArgumentParser
+    from argparse import Namespace
+    from argparse import _SubParsersAction
+
+    from pyzet.config import Config
 
 
 def define_grep_cli(subparsers: _SubParsersAction[ArgumentParser]) -> None:

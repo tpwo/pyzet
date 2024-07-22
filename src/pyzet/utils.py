@@ -9,11 +9,15 @@ import subprocess
 import sys
 from argparse import ArgumentParser
 from datetime import datetime
-from pathlib import Path
+from typing import TYPE_CHECKING
 from typing import Iterable
 
 import pyzet.constants as C
-from pyzet.config import Config
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from pyzet.config import Config
 
 
 def call_git(

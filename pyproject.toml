@@ -31,3 +31,55 @@ disallow_untyped_defs = false
 [[tool.mypy.overrides]]
 module = "tests.*"
 disallow_untyped_defs = false
+
+[tool.ruff]
+line-length = 79
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.ruff.lint]
+extend-select = [
+    "E",
+    "F",
+    "W",
+    "UP",
+    # "B",
+    # "SIM",
+    # "PT",
+    # "D",
+    # "N",
+    # "FBT",
+    # "A",
+    "C4",
+    # "DTZ",
+    "ISC",
+    "LOG",
+    "INP",
+    "PIE",
+    "RSE",
+    "SLF",
+    "SLOT",
+    "TID",
+    "TCH",
+    "ARG",
+    "TD",
+    "ERA",
+    "PGH",
+    # "TRY",
+    "FLY",
+    "FURB",
+    "RUF",
+]
+ignore = [
+    "D100",
+    "D103",
+    "D104",
+    "D107",
+    "D203",
+    "D213",
+    "E203", # TODO: verify if needed
+    "E501",
+    "ISC001",
+    "RUF001",
+]

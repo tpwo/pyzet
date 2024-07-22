@@ -1,9 +1,12 @@
 from __future__ import annotations
 
-from argparse import _SubParsersAction
-from argparse import ArgumentParser
+from typing import TYPE_CHECKING
 
 import pyzet.constants as C
+
+if TYPE_CHECKING:
+    from argparse import ArgumentParser
+    from argparse import _SubParsersAction
 
 
 def define_sample_config_cli(

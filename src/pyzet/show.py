@@ -1,17 +1,21 @@
 from __future__ import annotations
 
-from argparse import _SubParsersAction
-from argparse import ArgumentParser
-from argparse import Namespace
+from typing import TYPE_CHECKING
 
 import pyzet.constants as C
 from pyzet import zettel
-from pyzet.config import Config
 from pyzet.ops import edit_zettel
 from pyzet.utils import add_pattern_args
 from pyzet.utils import get_git_remote_url
-from pyzet.zettel import get_md_link
 from pyzet.zettel import Zettel
+from pyzet.zettel import get_md_link
+
+if TYPE_CHECKING:
+    from argparse import ArgumentParser
+    from argparse import Namespace
+    from argparse import _SubParsersAction
+
+    from pyzet.config import Config
 
 
 def get_parser(

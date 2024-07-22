@@ -12,7 +12,7 @@ from pyzet.main import main
 from tests.conftest import TEST_CFG
 
 
-@pytest.fixture
+@pytest.fixture()
 def set_info_lvl(caplog):
     caplog.set_level(logging.INFO)
 
@@ -36,10 +36,10 @@ def test_help(capsys):
 
 @pytest.mark.parametrize(
     ('opts', 'branch'),
-    (
+    [
         pytest.param((), 'main', id='default branch'),
         pytest.param(('-b', 'foobar'), 'foobar', id='custom branch'),
-    ),
+    ],
 )
 @pytest.mark.usefixtures('set_info_lvl')
 def test_init_repo_flag(tmp_path, capfd, caplog, opts, branch):
@@ -61,10 +61,10 @@ def test_init_repo_flag(tmp_path, capfd, caplog, opts, branch):
 
 @pytest.mark.parametrize(
     ('opts', 'branch'),
-    (
+    [
         pytest.param((), 'main', id='default branch'),
         pytest.param(('-b', 'foobar'), 'foobar', id='custom branch'),
-    ),
+    ],
 )
 @pytest.mark.usefixtures('set_info_lvl')
 def test_init_custom_target(tmp_path, capfd, caplog, opts, branch):

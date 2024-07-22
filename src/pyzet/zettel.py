@@ -4,9 +4,9 @@ import logging
 import os
 import re
 import subprocess
-from argparse import Namespace
 from datetime import datetime
 from pathlib import Path
+from typing import TYPE_CHECKING
 from typing import NamedTuple
 
 import pyzet.constants as C
@@ -14,6 +14,9 @@ from pyzet.exceptions import CreateNewZettel
 from pyzet.grep import parse_grep_patterns
 from pyzet.utils import Config
 from pyzet.utils import get_git_output
+
+if TYPE_CHECKING:
+    from argparse import Namespace
 
 
 class Zettel(NamedTuple):
@@ -119,7 +122,7 @@ def get_from_grep(
 
 def _patterns_empty(patterns: list[str]) -> bool:
     """Returns True if all provided patterns are empty str or whitespace."""
-    return all('' == s or s.isspace() for s in patterns)
+    return all(s == '' or s.isspace() for s in patterns)
 
 
 def get_from_id(id_: str, repo: Path) -> Zettel:
@@ -149,10 +152,7 @@ def get(path: Path) -> Zettel:
     if title_line == '':
         raise ValueError
 
-    if tags_line.startswith(4 * ' '):
-        tags = get_tags(tags_line.strip())
-    else:
-        tags = tuple()
+    tags = get_tags(tags_line.strip()) if tags_line.startswith(4 * ' ') else ()
 
     id_ = path.parent.name
 
@@ -227,7 +227,7 @@ def get_tags(line: str) -> tuple[str, ...]:
 
 def get_tags_str(zettel: Zettel) -> str:
     """Parses zettel tags into a printable repr."""
-    if zettel.tags == tuple():
+    if zettel.tags == ():
         raise ValueError
     else:
         return '#' + ' #'.join(zettel.tags)

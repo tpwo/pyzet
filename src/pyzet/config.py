@@ -1,14 +1,18 @@
 """Logic for parsing pyzet config file."""
+
 from __future__ import annotations
 
-from argparse import Namespace
 from pathlib import Path
+from typing import TYPE_CHECKING
 from typing import Iterable
 from typing import NamedTuple
 
 import yaml
 
 import pyzet.constants as C
+
+if TYPE_CHECKING:
+    from argparse import Namespace
 
 
 class Config(NamedTuple):

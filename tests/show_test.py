@@ -100,7 +100,7 @@ def test_show_mdlink(capsys):
 
 @pytest.mark.parametrize(
     ('raw', 'expected'),
-    (
+    [
         (
             'https://github.com/tpwo/pyzet',
             'https://github.com/tpwo/pyzet/tree/main/docs/20211016205159',
@@ -125,7 +125,7 @@ def test_show_mdlink(capsys):
             'git@bitbucket.org:user/repo.git',
             'https://bitbucket.org/user/repo/src/main/docs/20211016205159',
         ),
-    ),
+    ],
 )
 def test_show_url(raw, expected, pyzet_init, capsys):
     subprocess.run(('git', '-C', pyzet_init, 'remote', 'add', 'origin', raw))

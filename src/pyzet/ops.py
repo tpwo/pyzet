@@ -3,25 +3,30 @@
 These operations should either return 0 if successful, or raise
 SystemExit if something goes wrong.
 """
+
 from __future__ import annotations
 
 import itertools
 import logging
 import shutil
 import subprocess
-from argparse import Namespace
 from collections import Counter
 from datetime import datetime
 from glob import glob
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pyzet.constants as C
 from pyzet import zettel
-from pyzet.config import Config
 from pyzet.exceptions import CreateNewZettel
 from pyzet.utils import call_git
 from pyzet.utils import get_git_output
 from pyzet.utils import get_git_remote_url
+
+if TYPE_CHECKING:
+    from argparse import Namespace
+
+    from pyzet.config import Config
 
 
 def get_remote_url(args: Namespace, config: Config) -> int:
