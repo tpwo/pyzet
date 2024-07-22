@@ -30,8 +30,9 @@ repos:
   rev: v1.11.0
   hooks:
   - id: mypy
-    args: [--non-interactive, --install-types]
-    additional_dependencies: [pytest]
+    additional_dependencies:
+    - pytest
+    - types-PyYAML
 - repo: https://github.com/codespell-project/codespell
   rev: v2.3.0
   hooks:
