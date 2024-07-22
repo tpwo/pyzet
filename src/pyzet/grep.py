@@ -3,7 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-import pyzet.constants as C
+import pyzet.constants as const
 from pyzet.utils import call_git
 
 if TYPE_CHECKING:
@@ -55,7 +55,7 @@ def grep(args: Namespace, config: Config) -> int:
         config,
         'grep',
         tuple(grep_opts),
-        path=Path(config.repo, C.ZETDIR),
+        path=Path(config.repo, const.ZETDIR),
     )
 
 

@@ -4,7 +4,7 @@ import argparse
 from argparse import ArgumentParser
 from argparse import Namespace
 
-import pyzet.constants as C
+import pyzet.constants as const
 from pyzet import show
 from pyzet import utils
 from pyzet.config import get
@@ -54,14 +54,14 @@ def _get_parser() -> tuple[ArgumentParser, dict[str, ArgumentParser]]:
     parser.add_argument(
         '-c',
         '--config',
-        default=C.DEFAULT_CFG_LOCATION,
+        default=const.DEFAULT_CFG_LOCATION,
         help='which config file to use (default: %(default)s)',
     )
     parser.add_argument(
         '-V',
         '--version',
         action='version',
-        version=f'%(prog)s {C.VERSION}',
+        version=f'%(prog)s {const.VERSION}',
     )
     parser.add_argument(
         '-v',
@@ -85,7 +85,7 @@ def _get_parser() -> tuple[ArgumentParser, dict[str, ArgumentParser]]:
     init_parser.add_argument(
         '-b',
         '--initial-branch',
-        default=C.DEFAULT_BRANCH,
+        default=const.DEFAULT_BRANCH,
         help='initial branch name (default: %(default)s)',
     )
 
@@ -142,7 +142,8 @@ def _get_parser() -> tuple[ArgumentParser, dict[str, ArgumentParser]]:
     )
 
     clean_parser = subparsers.add_parser(
-        'clean', help=f"delete empty folders in '{C.ZETDIR}' folder in ZK repo"
+        'clean',
+        help=f"delete empty folders in '{const.ZETDIR}' folder in ZK repo",
     )
     clean_parser.add_argument(
         '-d',
@@ -176,7 +177,7 @@ def _get_parser() -> tuple[ArgumentParser, dict[str, ArgumentParser]]:
     )
     remote_parser.add_argument(
         '--name',
-        default=C.DEFAULT_REMOTE_NAME,
+        default=const.DEFAULT_REMOTE_NAME,
         help='name of git repo remote (default: %(default)s)',
     )
 

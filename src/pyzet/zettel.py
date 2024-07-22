@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 from typing import NamedTuple
 
-import pyzet.constants as C
+import pyzet.constants as const
 from pyzet.exceptions import CreateNewZettel
 from pyzet.grep import parse_grep_patterns
 from pyzet.utils import get_git_output
@@ -65,7 +65,11 @@ def get_from_grep(
     if args.ignore_case:
         opts.append('--ignore-case')
     opts.extend(
-        [*parse_grep_patterns(args.patterns), '--', f'*/{C.ZETTEL_FILENAME}']
+        [
+            *parse_grep_patterns(args.patterns),
+            '--',
+            f'*/{const.ZETTEL_FILENAME}',
+        ]
     )
     try:
         out = get_git_output(config, 'grep', opts).decode()
@@ -130,19 +134,19 @@ def _patterns_empty(patterns: list[str]) -> bool:
 def get_from_id(id_: str, repo: Path) -> Zettel:
     """Gets zettel from its ID given repo path."""
     try:
-        return get_from_dir(Path(repo, C.ZETDIR, id_))
+        return get_from_dir(Path(repo, const.ZETDIR, id_))
     except FileNotFoundError:
         raise SystemExit(f"ERROR: zettel '{id_}' doesn't exist.")
 
 
 def get_last(repo: Path) -> Zettel:
     """Gets the last zettel from a given repo."""
-    return get_all(Path(repo, C.ZETDIR), is_reversed=True)[0]
+    return get_all(Path(repo, const.ZETDIR), is_reversed=True)[0]
 
 
 def get_from_dir(dirpath: Path) -> Zettel:
     """Gets zettel from a directory named after its ID."""
-    return get(Path(dirpath, C.ZETTEL_FILENAME))
+    return get(Path(dirpath, const.ZETTEL_FILENAME))
 
 
 def get(path: Path) -> Zettel:
@@ -188,9 +192,9 @@ def get_repr(zet: Zettel, args: Namespace) -> str:
 def get_timestamp(id_: str) -> str:
     """Parses zettel ID into a `YYYY-MM-DD HH:MM:SS` str."""
     return (
-        datetime.strptime(id_, C.ZULU_DATETIME_FORMAT)
+        datetime.strptime(id_, const.ZULU_DATETIME_FORMAT)
         .replace(tzinfo=timezone.utc)
-        .strftime(C.PRETTY_DATETIME_FORMAT)
+        .strftime(const.PRETTY_DATETIME_FORMAT)
     )
 
 
@@ -215,7 +219,7 @@ def get_markdown_title(title_line: str, id_: str) -> str:
     """
     if title_line == '':
         raise ValueError('Empty zettel title found')
-    result = re.match(C.MARKDOWN_TITLE, title_line)
+    result = re.match(const.MARKDOWN_TITLE, title_line)
     if not result:
         logging.warning('wrong title formatting: %s "%s"', id_, title_line)
         return title_line

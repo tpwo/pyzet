@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import pyzet.constants as C
+import pyzet.constants as const
 
 if TYPE_CHECKING:
     from argparse import ArgumentParser
@@ -13,7 +13,7 @@ def define_sample_config_cli(
     subparsers: _SubParsersAction[ArgumentParser],
 ) -> None:
     sample_config_parser = subparsers.add_parser(
-        'sample-config', help=f'produce a sample {C.CONFIG_FILE} file'
+        'sample-config', help=f'produce a sample {const.CONFIG_FILE} file'
     )
     sample_config_parser.add_argument('kind', choices=('unix', 'windows'))
 
@@ -21,21 +21,21 @@ def define_sample_config_cli(
 _header = f"""\
 # See https://github.com/tpwo/pyzet for more information.
 #
-# Put this file at {C.DEFAULT_CFG_LOCATION.as_posix()}
+# Put this file at {const.DEFAULT_CFG_LOCATION.as_posix()}
 # Below options use global paths, but feel free
 # to use program name directly if it's on your PATH."""
 
 SAMPLE_CONFIG_UNIX = f"""\
 {_header}
 repo: ~/zet
-editor: {C.vim_unix_path}
+editor: {const.vim_unix_path}
 editor_args: []
 """
 
 SAMPLE_CONFIG_WINDOWS = f"""\
 {_header}
 repo: ~/zet
-editor: {C.vim_win_path}
+editor: {const.vim_win_path}
 editor_args: []
 """
 

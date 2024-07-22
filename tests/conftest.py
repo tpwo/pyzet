@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import pytest
 
-from pyzet import constants as C
+from pyzet import constants as const
 from pyzet.main import main
 
-TEST_CFG = ('--config', f'testing/{C.CONFIG_FILE}')
+TEST_CFG = ('--config', f'testing/{const.CONFIG_FILE}')
 
 
 @pytest.fixture()

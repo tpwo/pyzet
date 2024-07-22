@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-import pyzet.constants as C
+import pyzet.constants as const
 from pyzet import zettel
 from pyzet.zettel import Zettel
 from pyzet.zettel import get_all
@@ -13,7 +13,7 @@ from pyzet.zettel import get_markdown_title
 
 
 def test_get_all():
-    actual = get_all(path=Path('testing/zet', C.ZETDIR))
+    actual = get_all(path=Path('testing/zet', const.ZETDIR))
     expected = [
         Zettel(
             title='Zet test entry',
@@ -38,7 +38,7 @@ def test_get_all():
 
 
 def test_get_all_reverse():
-    actual = get_all(path=Path('testing/zet', C.ZETDIR), is_reversed=True)
+    actual = get_all(path=Path('testing/zet', const.ZETDIR), is_reversed=True)
     expected = [
         Zettel(
             title='Zettel with UTF-8',
@@ -64,7 +64,7 @@ def test_get_all_reverse():
 
 def test_get_all_skip_file(tmp_path):
     zettel = 'testing/zet/docs/20220101220852'
-    zet_repo = Path(tmp_path, C.ZETDIR)
+    zet_repo = Path(tmp_path, const.ZETDIR)
     zet_repo.mkdir()
     shutil.copytree(zettel, Path(zet_repo, '20220101220852'))
 
@@ -97,7 +97,9 @@ def test_get():
         tags=('another-tag', 'tag-after-two-spaces', 'test-tag'),
         path=Path('testing/zet/docs/20211016205158/README.md'),
     )
-    dir_ = Path(f'testing/zet/{C.ZETDIR}/20211016205158/{C.ZETTEL_FILENAME}')
+    dir_ = Path(
+        f'testing/zet/{const.ZETDIR}/20211016205158/{const.ZETTEL_FILENAME}'
+    )
     actual = zettel.get(dir_)
     assert actual == expected
 
@@ -109,7 +111,7 @@ def test_get_from_dir():
         tags=('another-tag', 'tag-after-two-spaces', 'test-tag'),
         path=Path('testing/zet/docs/20211016205158/README.md'),
     )
-    dir_ = Path(f'testing/zet/{C.ZETDIR}/20211016205158')
+    dir_ = Path(f'testing/zet/{const.ZETDIR}/20211016205158')
     actual = zettel.get_from_dir(dir_)
     assert actual == expected
 

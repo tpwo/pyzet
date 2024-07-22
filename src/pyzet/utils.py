@@ -13,7 +13,7 @@ from datetime import timezone
 from typing import TYPE_CHECKING
 from typing import Iterable
 
-import pyzet.constants as C
+import pyzet.constants as const
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -149,12 +149,12 @@ def valid_id(id_: str) -> str:
         raise argparse.ArgumentTypeError(
             f"'{id_}' is not a valid zettel id (not an integer)"
         )
-    if len(id_) != C.ZULU_FORMAT_LEN:
+    if len(id_) != const.ZULU_FORMAT_LEN:
         raise argparse.ArgumentTypeError(
             f"'{id_}' is not a valid zettel id ({_get_id_err_details(id_)})"
         )
     try:
-        datetime.strptime(id_, C.ZULU_DATETIME_FORMAT).replace(
+        datetime.strptime(id_, const.ZULU_DATETIME_FORMAT).replace(
             tzinfo=timezone.utc
         )
     except ValueError:
@@ -165,7 +165,7 @@ def valid_id(id_: str) -> str:
 
 def _get_id_err_details(id_: str) -> str:
     """Generates error msg based on the diff in expected and actual chars."""
-    num = len(id_) - C.ZULU_FORMAT_LEN
+    num = len(id_) - const.ZULU_FORMAT_LEN
     s = 's' if num > 1 else ''
     diff = 'long' if num > 0 else 'short'
     return f'{num} char{s} too {diff}'

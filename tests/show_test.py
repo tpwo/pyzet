@@ -6,7 +6,7 @@ from unittest import mock
 
 import pytest
 
-from pyzet import constants as C
+from pyzet import constants as const
 from pyzet.main import main
 from tests.conftest import TEST_CFG
 
@@ -130,9 +130,9 @@ def test_show_mdlink(capsys):
 def test_show_url(raw, expected, pyzet_init, capsys):
     subprocess.run(('git', '-C', pyzet_init, 'remote', 'add', 'origin', raw))
     id_ = '20211016205159'
-    test_zettel = Path(pyzet_init, C.ZETDIR, id_)
+    test_zettel = Path(pyzet_init, const.ZETDIR, id_)
     test_zettel.mkdir(parents=True)
-    with open(Path(test_zettel, C.ZETTEL_FILENAME), 'w') as file:
+    with open(Path(test_zettel, const.ZETTEL_FILENAME), 'w') as file:
         file.write('# Test')
 
     with mock.patch('builtins.input', return_value='\n'):

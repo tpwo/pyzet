@@ -17,7 +17,7 @@ from glob import glob
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-import pyzet.constants as C
+import pyzet.constants as const
 from pyzet import zettel
 from pyzet.exceptions import CreateNewZettel
 from pyzet.utils import call_git
@@ -36,7 +36,9 @@ def get_remote_url(args: Namespace, config: Config) -> int:
 
 
 def list_zettels(args: Namespace, path: Path) -> int:
-    for zet in zettel.get_all(Path(path, C.ZETDIR), is_reversed=args.reverse):
+    for zet in zettel.get_all(
+        Path(path, const.ZETDIR), is_reversed=args.reverse
+    ):
         print(zettel.get_repr(zet, args))
     return 0
 
@@ -45,7 +47,9 @@ def clean_zet_repo(
     repo_path: Path, *, is_dry_run: bool, is_force: bool
 ) -> int:
     is_any_empty = False
-    for folder in sorted(Path(repo_path, C.ZETDIR).iterdir(), reverse=True):
+    for folder in sorted(
+        Path(repo_path, const.ZETDIR).iterdir(), reverse=True
+    ):
         if folder.is_dir() and _is_empty(folder):
             is_any_empty = True
             if is_force and not is_dry_run:
@@ -64,7 +68,7 @@ def init_repo(config: Config, branch_name: str) -> int:
     # zettels. This is split, as each one can raise an Exception, and
     # we'd like to have a nice error message in such case.
     _create_empty_folder(config.repo)
-    _create_empty_folder(Path(config.repo, C.ZETDIR))
+    _create_empty_folder(Path(config.repo, const.ZETDIR))
     call_git(config, 'init', ('--initial-branch', branch_name))
     logging.info(f"init: create git repo '{config.repo.absolute()}'")
     return 0
@@ -92,12 +96,12 @@ def _is_empty(folder: Path) -> bool:
 
 def add_zettel(config: Config) -> int:
     """Adds zettel and commits changes with zettel title as the message."""
-    id_ = datetime.now(tz=timezone.utc).strftime(C.ZULU_DATETIME_FORMAT)
+    id_ = datetime.now(tz=timezone.utc).strftime(const.ZULU_DATETIME_FORMAT)
 
-    zettel_dir = Path(config.repo, C.ZETDIR, id_)
+    zettel_dir = Path(config.repo, const.ZETDIR, id_)
     zettel_dir.mkdir(parents=True, exist_ok=True)
 
-    zettel_path = Path(zettel_dir, C.ZETTEL_FILENAME)
+    zettel_path = Path(zettel_dir, const.ZETTEL_FILENAME)
 
     with open(zettel_path, 'w+') as file:
         file.write('')
@@ -145,7 +149,7 @@ def edit_zettel(args: Namespace, config: Config) -> int:
     else:
         if _file_was_modified(zet.path, config):
             output = _get_files_touched_last_commit(config).decode('utf-8')
-            if output == f'{C.ZETDIR}/{zet.id}/{C.ZETTEL_FILENAME}\n':
+            if output == f'{const.ZETDIR}/{zet.id}/{const.ZETTEL_FILENAME}\n':
                 # If we touch the same zettel as in the last commit,
                 # than we automatically squash the new changes with the
                 # last commit, so the Git history can be simplified.
@@ -272,7 +276,7 @@ def info(config: Config) -> int:
 
 
 def _get_info(config: Config) -> str:
-    dir_ = Path(config.repo, C.ZETDIR)
+    dir_ = Path(config.repo, const.ZETDIR)
     zettels = zettel.get_all(dir_)
     lines, words, bytes_ = _get_wc_output(config)
     git_size, git_size_pack = _get_git_size_stats(config)
@@ -300,7 +304,7 @@ def _get_wc_output(config: Config) -> tuple[int, int, int]:
     line, so we parse it to get out the value.
     """
     repo = config.repo.as_posix()
-    files = glob(f'{repo}/{C.ZETDIR}/**/*.md', recursive=True)
+    files = glob(f'{repo}/{const.ZETDIR}/**/*.md', recursive=True)
     cmd = ('wc', *files)
     wc_out = subprocess.run(cmd, capture_output=True).stdout.decode().strip()
     last_line = wc_out.split('\n')[-1].strip()
@@ -309,7 +313,7 @@ def _get_wc_output(config: Config) -> tuple[int, int, int]:
 
 
 def _get_tags(repo: Path) -> Counter[str]:
-    zettels = zettel.get_all(Path(repo, C.ZETDIR))
+    zettels = zettel.get_all(Path(repo, const.ZETDIR))
     all_tags = itertools.chain.from_iterable(
         t for t in (z.tags for z in zettels)
     )
@@ -320,7 +324,7 @@ def _get_tags(repo: Path) -> Counter[str]:
 
 
 def _count_tags(repo: Path) -> int:
-    dir_ = Path(repo, C.ZETDIR)
+    dir_ = Path(repo, const.ZETDIR)
     return sum(len(zettel.tags) for zettel in zettel.get_all(dir_))
 
 

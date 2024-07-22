@@ -7,7 +7,7 @@ from unittest import mock
 
 import pytest
 
-import pyzet.constants as C
+import pyzet.constants as const
 from pyzet.main import main
 from tests.conftest import TEST_CFG
 
@@ -49,7 +49,7 @@ def test_init_repo_flag(tmp_path, capfd, caplog, opts, branch):
     assert tmp_path.name in out
     assert err == ''
     assert f"init: create git repo '{tmp_path}'" in caplog.text
-    assert Path(tmp_path, C.ZETDIR).exists()
+    assert Path(tmp_path, const.ZETDIR).exists()
 
     # Verify if the branch name was assigned correctly
     # by checking `pyzet status` output.
@@ -74,7 +74,7 @@ def test_init_custom_target(tmp_path, capfd, caplog, opts, branch):
     assert tmp_path.name in out
     assert err == ''
     assert f"init: create git repo '{tmp_path}'" in caplog.text
-    assert Path(tmp_path, C.ZETDIR).exists()
+    assert Path(tmp_path, const.ZETDIR).exists()
 
     # Verify if the branch name was assigned correctly
     # by checking `pyzet status` output.
@@ -95,8 +95,8 @@ def test_init_repo_flag_and_custom_target(tmp_path, capfd, caplog):
     assert init_dir.name in out
     assert err == ''
     assert f"init: create git repo '{init_dir}'" in caplog.text
-    assert Path(init_dir, C.ZETDIR).exists()
-    assert not Path(repo_dir, C.ZETDIR).exists()
+    assert Path(init_dir, const.ZETDIR).exists()
+    assert not Path(repo_dir, const.ZETDIR).exists()
 
 
 def test_init_error_folder_exists():
@@ -254,11 +254,11 @@ def test_list_link_reverse(capsys):
 
 def test_list_warning_empty_folder(tmp_path, caplog):
     id_ = '20211016205158'
-    Path(tmp_path, C.ZETDIR, id_).mkdir(parents=True)
+    Path(tmp_path, const.ZETDIR, id_).mkdir(parents=True)
 
-    zettel2 = Path(tmp_path, C.ZETDIR, '20211016205159')
+    zettel2 = Path(tmp_path, const.ZETDIR, '20211016205159')
     zettel2.mkdir(parents=True)
-    with open(Path(zettel2, C.ZETTEL_FILENAME), 'w') as file:
+    with open(Path(zettel2, const.ZETTEL_FILENAME), 'w') as file:
         file.write('# Test')
 
     main([*TEST_CFG, '--repo', tmp_path.as_posix(), 'list'])
@@ -266,7 +266,7 @@ def test_list_warning_empty_folder(tmp_path, caplog):
 
 
 def test_list_error_no_zettels(tmp_path):
-    Path(tmp_path, C.ZETDIR).mkdir(parents=True)
+    Path(tmp_path, const.ZETDIR).mkdir(parents=True)
     with pytest.raises(SystemExit) as excinfo:
         main([*TEST_CFG, '--repo', tmp_path.as_posix(), 'list'])
     (msg,) = excinfo.value.args
@@ -298,7 +298,7 @@ def test_tags_reverse(capsys):
 
 def test_clean(tmp_path, capsys):
     id_ = '20211016205158'
-    Path(tmp_path, C.ZETDIR, id_).mkdir(parents=True)
+    Path(tmp_path, const.ZETDIR, id_).mkdir(parents=True)
 
     main([*TEST_CFG, '--repo', tmp_path.as_posix(), 'clean'])
 
@@ -312,7 +312,7 @@ def test_clean(tmp_path, capsys):
 
 def test_clean_force(tmp_path, capsys):
     id_ = '20211016205158'
-    Path(tmp_path, C.ZETDIR, id_).mkdir(parents=True)
+    Path(tmp_path, const.ZETDIR, id_).mkdir(parents=True)
 
     main([*TEST_CFG, '--repo', tmp_path.as_posix(), 'clean', '--force'])
 
@@ -324,7 +324,7 @@ def test_clean_force(tmp_path, capsys):
 
 def test_clean_dry_run(tmp_path, capsys):
     id_ = '20211016205158'
-    Path(tmp_path, C.ZETDIR, id_).mkdir(parents=True)
+    Path(tmp_path, const.ZETDIR, id_).mkdir(parents=True)
 
     main([*TEST_CFG, '--repo', tmp_path.as_posix(), 'clean', '--dry-run'])
 
@@ -333,19 +333,19 @@ def test_clean_dry_run(tmp_path, capsys):
         out == f"will delete {id_}\nuse '--force' to proceed with deletion\n"
     )
     assert err == ''
-    assert Path(tmp_path, C.ZETDIR, id_).exists()
+    assert Path(tmp_path, const.ZETDIR, id_).exists()
 
 
 def test_clean_dry_run_and_force(tmp_path, capsys):
     id_ = '20211016205158'
-    Path(tmp_path, C.ZETDIR, id_).mkdir(parents=True)
+    Path(tmp_path, const.ZETDIR, id_).mkdir(parents=True)
 
     main([*TEST_CFG, '--repo', tmp_path.as_posix(), 'clean', '-df'])
 
     out, err = capsys.readouterr()
     assert out == f'will delete {id_}\n'
     assert err == ''
-    assert Path(tmp_path, C.ZETDIR, id_).exists()
+    assert Path(tmp_path, const.ZETDIR, id_).exists()
 
 
 remotes = (
