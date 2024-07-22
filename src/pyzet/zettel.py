@@ -12,11 +12,12 @@ from typing import NamedTuple
 import pyzet.constants as C
 from pyzet.exceptions import CreateNewZettel
 from pyzet.grep import parse_grep_patterns
-from pyzet.utils import Config
 from pyzet.utils import get_git_output
 
 if TYPE_CHECKING:
     from argparse import Namespace
+
+    from pyzet.config import Config
 
 
 class Zettel(NamedTuple):
