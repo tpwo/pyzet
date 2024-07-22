@@ -32,7 +32,7 @@ class Zettel(NamedTuple):
     path: Path
 
 
-def get_all(path: Path, is_reversed: bool = False) -> list[Zettel]:
+def get_all(path: Path, *, is_reversed: bool = False) -> list[Zettel]:
     """Gets all zettels from a given repo."""
     if not path.is_dir():
         raise SystemExit(f"ERROR: folder {path} doesn't exist.")
@@ -55,7 +55,7 @@ def get_all(path: Path, is_reversed: bool = False) -> list[Zettel]:
 
 
 def get_from_grep(
-    args: Namespace, config: Config, create_if_not_found: bool = True
+    args: Namespace, config: Config, *, create_if_not_found: bool = True
 ) -> Zettel:
     if _patterns_empty(args.patterns):
         msg = 'ERROR: provided patterns are incorrect (empty or whitespace)'

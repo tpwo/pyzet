@@ -49,7 +49,7 @@ extend-select = [
     "PT",
     # "D",
     # "N",
-    # "FBT",
+    "FBT",
     # "A",
     "C4",
     # "DTZ",

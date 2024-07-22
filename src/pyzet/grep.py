@@ -45,7 +45,9 @@ def define_grep_cli(subparsers: _SubParsersAction[ArgumentParser]) -> None:
 
 def grep(args: Namespace, config: Config) -> int:
     grep_opts = _build_grep_options(
-        args.ignore_case, args.line_number, args.title
+        ignore_case=args.ignore_case,
+        line_number=args.line_number,
+        title=args.title,
     )
     patterns = parse_grep_patterns(args.patterns)
     grep_opts.extend(patterns)
@@ -58,7 +60,7 @@ def grep(args: Namespace, config: Config) -> int:
 
 
 def _build_grep_options(
-    ignore_case: bool, line_number: bool, title: bool
+    *, ignore_case: bool, line_number: bool, title: bool
 ) -> list[str]:
     opts = ['-I', '--heading', '--break', '--all-match']
     if ignore_case:

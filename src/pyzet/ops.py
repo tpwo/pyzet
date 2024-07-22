@@ -35,12 +35,14 @@ def get_remote_url(args: Namespace, config: Config) -> int:
 
 
 def list_zettels(args: Namespace, path: Path) -> int:
-    for zet in zettel.get_all(Path(path, C.ZETDIR), args.reverse):
+    for zet in zettel.get_all(Path(path, C.ZETDIR), is_reversed=args.reverse):
         print(zettel.get_repr(zet, args))
     return 0
 
 
-def clean_zet_repo(repo_path: Path, is_dry_run: bool, is_force: bool) -> int:
+def clean_zet_repo(
+    repo_path: Path, *, is_dry_run: bool, is_force: bool
+) -> int:
     is_any_empty = False
     for folder in sorted(Path(repo_path, C.ZETDIR).iterdir(), reverse=True):
         if folder.is_dir() and _is_empty(folder):
@@ -253,7 +255,7 @@ def _commit_zettel(config: Config, zettel_path: Path, message: str) -> None:
     )
 
 
-def list_tags(repo: Path, is_reversed: bool) -> int:
+def list_tags(repo: Path, *, is_reversed: bool) -> int:
     tags = _get_tags(repo)
     target = (
         tags.most_common() if is_reversed else reversed(tags.most_common())
