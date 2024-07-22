@@ -3,5 +3,5 @@
 from __future__ import annotations
 
 
-class CreateNewZettel(Exception):
+class ZettelNotFoundError(Exception):
     pass

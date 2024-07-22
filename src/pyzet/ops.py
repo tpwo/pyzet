@@ -19,7 +19,7 @@ from typing import TYPE_CHECKING
 
 import pyzet.constants as const
 from pyzet import zettel
-from pyzet.exceptions import CreateNewZettel
+from pyzet.exceptions import ZettelNotFoundError
 from pyzet.utils import call_git
 from pyzet.utils import get_git_output
 from pyzet.utils import get_git_remote_url
@@ -129,7 +129,7 @@ def edit_zettel(args: Namespace, config: Config) -> int:
     if args.patterns:
         try:
             zet = zettel.get_from_grep(args, config)
-        except CreateNewZettel:
+        except ZettelNotFoundError:
             return add_zettel(config)
     elif args.id is not None:
         zet = zettel.get_from_id(args.id, config.repo)

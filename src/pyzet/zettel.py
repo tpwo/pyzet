@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING
 from typing import NamedTuple
 
 import pyzet.constants as const
-from pyzet.exceptions import CreateNewZettel
+from pyzet.exceptions import ZettelNotFoundError
 from pyzet.grep import parse_grep_patterns
 from pyzet.utils import get_git_output
 
@@ -81,7 +81,7 @@ def get_from_grep(
             except KeyboardInterrupt:
                 raise SystemExit('\naborting')
             else:
-                raise CreateNewZettel
+                raise ZettelNotFoundError
         else:
             raise SystemExit('ERROR: no zettels found')
 
