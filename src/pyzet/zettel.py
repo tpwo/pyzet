@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 import logging
 import os
 import re
@@ -175,10 +176,8 @@ def get(path: Path) -> Zettel:
 def get_repr(zet: Zettel, args: Namespace) -> str:
     tags = ''
     if args.tags:
-        try:
+        with contextlib.suppress(ValueError):
             tags = f'  [{get_tags_str(zet)}]'
-        except ValueError:  # No tags found
-            pass
     if args.pretty:
         return f'{get_timestamp(zet.id)} -- {zet.title}{tags}'
     try:
