@@ -4,46 +4,15 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pyzet.constants as const
+from pyzet.config import Config
 from pyzet.utils import call_git
 
 if TYPE_CHECKING:
-    from argparse import ArgumentParser
-    from argparse import Namespace
-    from argparse import _SubParsersAction
-
+    from pyzet.cli import AppState
     from pyzet.config import Config
 
 
-def define_grep_cli(subparsers: _SubParsersAction[ArgumentParser]) -> None:
-    grep_parser = subparsers.add_parser(
-        'grep', help="run 'git grep' with some handy flags in ZK repo"
-    )
-    grep_parser.add_argument(
-        '-i',
-        '--ignore-case',
-        action='store_true',
-        help='case insensitive matching',
-    )
-    grep_parser.add_argument(
-        '-t',
-        '--title',
-        action='store_true',
-        help='add zettel title to matching lines',
-    )
-    grep_parser.add_argument(
-        '-n',
-        '--line-number',
-        action='store_true',
-        help='prefix the line number to matching lines',
-    )
-    grep_parser.add_argument(
-        'patterns',
-        nargs='+',
-        help="grep patterns, pass 'git grep' options after '--'",
-    )
-
-
-def grep(args: Namespace, config: Config) -> int:
+def grep(args: AppState, config: Config) -> None:
     grep_opts = _build_grep_options(
         ignore_case=args.ignore_case,
         line_number=args.line_number,
@@ -51,7 +20,7 @@ def grep(args: Namespace, config: Config) -> int:
     )
     patterns = parse_grep_patterns(args.patterns)
     grep_opts.extend(patterns)
-    return call_git(
+    call_git(
         config,
         'grep',
         tuple(grep_opts),

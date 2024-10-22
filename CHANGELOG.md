@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Changed
+
+* Completely change the flow of the program, which is now based around an infinite loop and asking user what to do next (idea similar to `git add -p`).
+
 ## [0.11.0] -- 2024-01-17
 
 ### Added

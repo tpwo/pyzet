@@ -3,5 +3,9 @@
 from __future__ import annotations
 
 
-class ZettelNotFoundError(Exception):
+class NotFoundError(Exception):
     """Exception raised when a zettel cannot be found."""
+
+
+class NotEnteredError(Exception):
+    """Exception raised when ID wasn't provided."""
