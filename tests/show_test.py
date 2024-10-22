@@ -38,7 +38,7 @@ def test_show_default(capsys):
 
 
 def test_show_patterns(capsys):
-    # TODO: side effect seem to not matter here, namely `\n` also works
+    # Side effects seem to not matter here, namely `\n` also works
     with mock.patch(
         'builtins.input', side_effect=['1', KeyboardInterrupt]
     ), pytest.raises(SystemExit):
