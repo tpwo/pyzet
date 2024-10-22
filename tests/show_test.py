@@ -62,9 +62,7 @@ def test_show_patterns_empty_pattern():
     with pytest.raises(SystemExit) as excinfo:
         main([*TEST_CFG, 'show', 'text', ''])
     (msg,) = excinfo.value.args
-    assert (
-        msg == 'ERROR: provided patterns are incorrect (empty or whitespace)'
-    )
+    assert msg == 'aborting'
 
 
 def test_show_patterns_not_matching_pattern(pyzet_init):

@@ -5,6 +5,7 @@ from pyzet import config
 from pyzet import show
 from pyzet import utils
 from pyzet.cli import get_parser
+from pyzet.exceptions import NotFoundError
 from pyzet.grep import grep
 from pyzet.ops import add_zettel
 from pyzet.ops import clean_zet_repo
@@ -36,6 +37,8 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     try:
         return _parse_args(args)
+    except NotFoundError as err:
+        raise SystemExit('aborting') from err
     except BrokenPipeError as err:
         raise SystemExit from err
 
