@@ -2,16 +2,19 @@ from __future__ import annotations
 
 import argparse
 import logging
-from argparse import _SubParsersAction
 from argparse import ArgumentParser
 from argparse import Namespace
+from argparse import _SubParsersAction
 from dataclasses import dataclass
 from datetime import datetime
-from pathlib import Path
+from typing import TYPE_CHECKING
 from typing import Iterable
 from typing import TypeVar
 
 import pyzet.constants as C
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 @dataclass

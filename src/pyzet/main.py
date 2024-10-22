@@ -36,8 +36,8 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     try:
         return _parse_args(args)
-    except BrokenPipeError:
-        raise SystemExit
+    except BrokenPipeError as err:
+        raise SystemExit from err
 
 
 def _parse_args(args: pyzet.cli.AppState) -> int:

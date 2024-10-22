@@ -6,10 +6,13 @@ import logging
 import shutil
 import subprocess
 import sys
-from pathlib import Path
+from typing import TYPE_CHECKING
 from typing import Iterable
 
-from pyzet.config import Config
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from pyzet.config import Config
 
 
 def call_git(
@@ -57,7 +60,7 @@ def get_git_output(
 
 
 def _convert_ssh_to_https(remote: str) -> str:
-    """Converts Git SSH url into HTTPS url."""
+    """Convert Git SSH url into HTTPS url."""
     return 'https://' + remote.partition('git@')[-1].replace(':', '/')
 
 
@@ -85,7 +88,7 @@ def setup_logger(level: int) -> None:
 
 
 def compute_log_level(verbosity: int) -> int:
-    """Matches chosen verbosity with default log levels from logging module.
+    """Match chosen verbosity with default log levels from logging module.
 
     Each verbosity increase (i.e. adding `-v` flag) should decrease a
     logging level by some value which is below called as

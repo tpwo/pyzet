@@ -1,12 +1,17 @@
 from __future__ import annotations
 
-import pyzet.constants as C
+from typing import TYPE_CHECKING
+
+import pyzet.constants as const
 from pyzet import zettel
-from pyzet.cli import AppState
 from pyzet.config import Config
 from pyzet.utils import get_git_remote_url
-from pyzet.zettel import get_md_link
 from pyzet.zettel import Zettel
+from pyzet.zettel import get_md_link
+
+if TYPE_CHECKING:
+    from pyzet.cli import AppState
+    from pyzet.config import Config
 
 
 def command(args: AppState, config: Config) -> None:
@@ -32,12 +37,12 @@ def command(args: AppState, config: Config) -> None:
 
 
 def show_zettel(zet: Zettel) -> None:
-    """Prints zettel text prepended with centered ID as a header."""
+    """Print zettel text prepended with centered ID as a header."""
     fillchar = '='
-    print(f' {zet.id} '.center(C.ZETTEL_WIDTH, fillchar))
+    print(f' {zet.id} '.center(const.ZETTEL_WIDTH, fillchar))
     with open(zet.path, encoding='utf-8') as file:
         print(file.read(), end='')
-    print(''.center(C.ZETTEL_WIDTH, fillchar))
+    print(''.center(const.ZETTEL_WIDTH, fillchar))
 
 
 def _remote_dot_git(remote: str) -> str:
@@ -46,11 +51,11 @@ def _remote_dot_git(remote: str) -> str:
 
 
 def _get_zettel_url(repo_url: str, branch: str, id_: str) -> str:
-    """Returns zettel URL for the most popular Git online hostings."""
+    """Return zettel URL for the most popular Git online hostings."""
     if 'github.com' in repo_url:
-        return f'{repo_url}/tree/{branch}/{C.ZETDIR}/{id_}'
+        return f'{repo_url}/tree/{branch}/{const.ZETDIR}/{id_}'
     if 'gitlab.com' in repo_url:
-        return f'{repo_url}/-/tree/{branch}/{C.ZETDIR}/{id_}'
+        return f'{repo_url}/-/tree/{branch}/{const.ZETDIR}/{id_}'
     if 'bitbucket.org' in repo_url:
-        return f'{repo_url}/src/{branch}/{C.ZETDIR}/{id_}'
+        return f'{repo_url}/src/{branch}/{const.ZETDIR}/{id_}'
     raise NotImplementedError

@@ -1,4 +1,9 @@
-"""Logic for handling top-level user's operations."""
+"""Logic for handling top-level user's operations.
+
+These operations should either return 0 if successful, or raise
+SystemExit if something goes wrong.
+"""
+
 from __future__ import annotations
 
 import itertools
@@ -7,19 +12,24 @@ import shutil
 import subprocess
 from collections import Counter
 from datetime import datetime
+from datetime import timezone
 from glob import glob
 from pathlib import Path
+from typing import TYPE_CHECKING
 
-import pyzet.constants as C
+import pyzet.constants as const
 from pyzet import show
 from pyzet import zettel
-from pyzet.cli import AppState
 from pyzet.config import Config
 from pyzet.exceptions import NotEntered
 from pyzet.exceptions import NotFound
 from pyzet.utils import call_git
 from pyzet.utils import get_git_output
 from pyzet.utils import get_git_remote_url
+
+if TYPE_CHECKING:
+    from pyzet.cli import AppState
+    from pyzet.config import Config
 
 
 def decide_whats_next(args: AppState, config: Config) -> None:
@@ -117,13 +127,19 @@ def get_remote_url(args: AppState, config: Config) -> None:
 
 
 def list_zettels(args: AppState, path: Path) -> None:
-    for zet in zettel.get_all(Path(path, C.ZETDIR), args.reverse):
+    for zet in zettel.get_all(
+        Path(path, const.ZETDIR), is_reversed=args.reverse
+    ):
         print(zettel.get_repr(zet, args))
 
 
-def clean_zet_repo(repo_path: Path, is_dry_run: bool, is_force: bool) -> None:
+def clean_zet_repo(
+    repo_path: Path, *, is_dry_run: bool, is_force: bool
+) -> None:
     is_any_empty = False
-    for folder in sorted(Path(repo_path, C.ZETDIR).iterdir(), reverse=True):
+    for folder in sorted(
+        Path(repo_path, const.ZETDIR).iterdir(), reverse=True
+    ):
         if folder.is_dir() and _is_empty(folder):
             is_any_empty = True
             if is_force and not is_dry_run:
@@ -141,13 +157,13 @@ def init_repo(config: Config, branch_name: str) -> None:
     # zettels. This is split, as each one can raise an Exception, and
     # we'd like to have a nice error message in such case.
     _create_empty_folder(config.repo)
-    _create_empty_folder(Path(config.repo, C.ZETDIR))
+    _create_empty_folder(Path(config.repo, const.ZETDIR))
     call_git(config, 'init', ('--initial-branch', branch_name))
     logging.info(f"init: create git repo '{config.repo.absolute()}'")
 
 
 def _create_empty_folder(path: Path) -> None:
-    """Creates empty folder or does nothing if it exists."""
+    """Create empty folder or does nothing if it exists."""
     if path.exists():
         if not path.is_dir():
             raise SystemExit(
@@ -168,12 +184,12 @@ def _is_empty(folder: Path) -> bool:
 
 def add_zettel(args: AppState, config: Config) -> None:
     """Adds zettel and commits changes with zettel title as the message."""
-    id_ = datetime.utcnow().strftime(C.ZULU_DATETIME_FORMAT)
+    id_ = datetime.now(tz=timezone.utc).strftime(const.ZULU_DATETIME_FORMAT)
 
-    zettel_dir = Path(config.repo, C.ZETDIR, id_)
+    zettel_dir = Path(config.repo, const.ZETDIR, id_)
     zettel_dir.mkdir(parents=True, exist_ok=True)
 
-    zettel_path = Path(zettel_dir, C.ZETTEL_FILENAME)
+    zettel_path = Path(zettel_dir, const.ZETTEL_FILENAME)
 
     with open(zettel_path, 'w+') as file:
         file.write('')
@@ -219,7 +235,7 @@ def edit_zettel(args: AppState, config: Config) -> None:
     else:
         if _file_was_modified(zet.path, config):
             output = _get_files_touched_last_commit(config).decode('utf-8')
-            if output == f'{C.ZETDIR}/{zet.id}/{C.ZETTEL_FILENAME}\n':
+            if output == f'{const.ZETDIR}/{zet.id}/{const.ZETTEL_FILENAME}\n':
                 # If we touch the same zettel as in the last commit,
                 # than we automatically squash the new changes with the
                 # last commit, so the Git history can be simplified.
@@ -241,7 +257,7 @@ def edit_zettel(args: AppState, config: Config) -> None:
 
 
 def _get_files_touched_last_commit(config: Config) -> bytes:
-    """Returns Git output listing files touched in the last commit."""
+    """Return Git output listing files touched in the last commit."""
     return get_git_output(config, 'diff', ('--name-only', 'HEAD', 'HEAD^'))
 
 
@@ -252,7 +268,7 @@ def _get_edit_commit_msg(zettel_path: Path, title: str, config: Config) -> str:
 
 
 def _was_committed_to_git(filepath: Path, config: Config) -> bool:
-    """Returns True if a file was committed to git.
+    """Return True if a file was committed to git.
 
     If 'git log' output is empty, the file wasn't committed.
     """
@@ -260,7 +276,7 @@ def _was_committed_to_git(filepath: Path, config: Config) -> bool:
 
 
 def _file_was_modified(filepath: Path, config: Config) -> bool:
-    """Returns True if a file was modified in a working dir."""
+    """Return True if a file was modified in a working dir."""
     # Run 'git add' to avoid false negatives, as 'git diff --staged' is
     # used for detection. This is important when there are external
     # factors that impact the committing process (like pre-commit).
@@ -280,10 +296,10 @@ def _open_file(filename: Path, config: Config) -> None:
     try:
         cmd = (config.editor, *config.editor_args, filename.as_posix())
         subprocess.run(cmd)
-    except FileNotFoundError:
+    except FileNotFoundError as err:
         raise SystemExit(
             f'ERROR: cannot open {filename.as_posix()} with {editor_path}.'
-        )
+        ) from err
 
 
 def remove_zettel(args: AppState, config: Config) -> None:
@@ -329,7 +345,7 @@ def _commit_zettel(config: Config, zettel_path: Path, message: str) -> None:
     )
 
 
-def list_tags(repo: Path, is_reversed: bool) -> None:
+def list_tags(repo: Path, *, is_reversed: bool) -> None:
     tags = _get_tags(repo)
     target = (
         tags.most_common() if is_reversed else reversed(tags.most_common())
@@ -343,44 +359,44 @@ def info(config: Config) -> None:
 
 
 def _get_info(config: Config) -> str:
-    dir = Path(config.repo, C.ZETDIR)
-    zettels = zettel.get_all(dir)
-    lines, words, bytes = _get_wc_output(config)
+    dir_ = Path(config.repo, const.ZETDIR)
+    zettels = zettel.get_all(dir_)
+    lines, words, bytes_ = _get_wc_output(config)
     git_size, git_size_pack = _get_git_size_stats(config)
     return f"""\
 Number of notes:       {len(zettels)}
 Number of lines:       {lines}
 Number of words:       {words}
-Number of bytes:       {bytes}
+Number of bytes:       {bytes_}
 Number of tags:        {_count_tags(config.repo)}
 Number of unique tags: {len(_get_tags(config.repo))}
-Size on disk:          {_bytes_to_mb(bytes)} MiB
+Size on disk:          {_bytes_to_mb(bytes_)} MiB
 Git repo size:         {git_size} MiB
 Git repo size-pack:    {git_size_pack} MiB\
 """
 
 
-def _bytes_to_mb(bytes: int) -> float:
-    return round(bytes / 1024 / 1024, 2)
+def _bytes_to_mb(bytes_: int) -> float:
+    return round(bytes_ / 1024 / 1024, 2)
 
 
 def _get_wc_output(config: Config) -> tuple[int, int, int]:
-    """Uses wc and glob to count the number of lines in md files.
+    """Use wc and glob to count the number of lines in md files.
 
     wc output shows total number of lines, words, and bytes in the last
     line, so we parse it to get out the value.
     """
     repo = config.repo.as_posix()
-    files = glob(f'{repo}/{C.ZETDIR}/**/*.md', recursive=True)
+    files = glob(f'{repo}/{const.ZETDIR}/**/*.md', recursive=True)
     cmd = ('wc', *files)
     wc_out = subprocess.run(cmd, capture_output=True).stdout.decode().strip()
     last_line = wc_out.split('\n')[-1].strip()
-    lines, words, bytes, _ = last_line.split()
-    return int(lines), int(words), int(bytes)
+    lines, words, bytes_, _ = last_line.split()
+    return int(lines), int(words), int(bytes_)
 
 
 def _get_tags(repo: Path) -> Counter[str]:
-    zettels = zettel.get_all(Path(repo, C.ZETDIR))
+    zettels = zettel.get_all(Path(repo, const.ZETDIR))
     all_tags = itertools.chain.from_iterable(
         t for t in (z.tags for z in zettels)
     )
@@ -391,12 +407,12 @@ def _get_tags(repo: Path) -> Counter[str]:
 
 
 def _count_tags(repo: Path) -> int:
-    dir = Path(repo, C.ZETDIR)
-    return sum(len(zettel.tags) for zettel in zettel.get_all(dir))
+    dir_ = Path(repo, const.ZETDIR)
+    return sum(len(zettel.tags) for zettel in zettel.get_all(dir_))
 
 
 def _get_git_size_stats(config: Config) -> tuple[float, float]:
-    """Runs 'git count-objects -v' and parses the output.
+    """Run 'git count-objects -v' and parses the output.
 
     'size' and 'size-pack' values are returned.
     """

@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import pytest
 
-import pyzet.constants as C
+import pyzet.constants as const
 from pyzet.main import main
 
-GREP_CMD = ('--config', f'testing/{C.CONFIG_FILE}', 'grep')
+GREP_CMD = ('--config', f'testing/{const.CONFIG_FILE}', 'grep')
 
 
 def test_grep(capfd):

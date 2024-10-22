@@ -1,20 +1,26 @@
 from __future__ import annotations
 
+import contextlib
 import logging
 import os
 import re
 import subprocess
 from datetime import datetime
+from datetime import timezone
 from pathlib import Path
+from typing import TYPE_CHECKING
 from typing import NamedTuple
 
-import pyzet.constants as C
-from pyzet.cli import AppState
+import pyzet.constants as const
 from pyzet.config import Config
 from pyzet.exceptions import NotEntered
 from pyzet.exceptions import NotFound
 from pyzet.grep import parse_grep_patterns
 from pyzet.utils import get_git_output
+
+if TYPE_CHECKING:
+    from pyzet.cli import AppState
+    from pyzet.config import Config
 
 
 class Zettel(NamedTuple):
@@ -29,8 +35,8 @@ class Zettel(NamedTuple):
     path: Path
 
 
-def get_all(path: Path, is_reversed: bool = False) -> list[Zettel]:
-    """Gets all zettels from a given repo."""
+def get_all(path: Path, *, is_reversed: bool = False) -> list[Zettel]:
+    """Get all zettels from a given repo."""
     if not path.is_dir():
         raise SystemExit(f"ERROR: folder {path} doesn't exist.")
     items: list[Zettel] = []
@@ -52,7 +58,7 @@ def get_all(path: Path, is_reversed: bool = False) -> list[Zettel]:
 
 
 def select_from_grep(
-    args: AppState, config: Config, create_if_not_found: bool = True
+    args: AppState, config: Config, *, create_if_not_found: bool = True
 ) -> Zettel:
     matches = get_from_grep(args, config, create_if_not_found)
 
@@ -115,7 +121,11 @@ def get_from_grep(
     if args.ignore_case:
         opts.append('--ignore-case')
     opts.extend(
-        [*parse_grep_patterns(args.patterns), '--', f'*/{C.ZETTEL_FILENAME}']
+        [
+            *parse_grep_patterns(args.patterns),
+            '--',
+            f'*/{const.ZETTEL_FILENAME}',
+        ]
     )
     try:
         out = get_git_output(config, 'grep', opts).decode()
@@ -130,30 +140,30 @@ def get_from_grep(
 
 
 def _patterns_empty(patterns: list[str]) -> bool:
-    """Returns True if all provided patterns are empty str or whitespace."""
-    return all('' == s or s.isspace() for s in patterns)
+    """Return True if all provided patterns are empty str or whitespace."""
+    return all(s == '' or s.isspace() for s in patterns)
 
 
 def get_from_id(id_: str, repo: Path) -> Zettel:
-    """Gets zettel from its ID given repo path."""
+    """Get zettel from its ID given repo path."""
     try:
-        return get_from_dir(Path(repo, C.ZETDIR, id_))
-    except FileNotFoundError:
-        raise SystemExit(f"ERROR: zettel '{id_}' doesn't exist.")
+        return get_from_dir(Path(repo, const.ZETDIR, id_))
+    except FileNotFoundError as err:
+        raise SystemExit(f"ERROR: zettel '{id_}' doesn't exist.") from err
 
 
 def get_last(repo: Path) -> Zettel:
-    """Gets the last zettel from a given repo."""
-    return get_all(Path(repo, C.ZETDIR), is_reversed=True)[0]
+    """Get the last zettel from a given repo."""
+    return get_all(Path(repo, const.ZETDIR), is_reversed=True)[0]
 
 
 def get_from_dir(dirpath: Path) -> Zettel:
-    """Gets zettel from a directory named after its ID."""
-    return get(Path(dirpath, C.ZETTEL_FILENAME))
+    """Get zettel from a directory named after its ID."""
+    return get(Path(dirpath, const.ZETTEL_FILENAME))
 
 
 def get(path: Path) -> Zettel:
-    """Gets zettel from a full path."""
+    """Get zettel from a full path."""
     if path.is_dir():
         raise ValueError
 
@@ -161,10 +171,7 @@ def get(path: Path) -> Zettel:
     if title_line == '':
         raise ValueError
 
-    if tags_line.startswith(4 * ' '):
-        tags = get_tags(tags_line.strip())
-    else:
-        tags = tuple()
+    tags = get_tags(tags_line.strip()) if tags_line.startswith(4 * ' ') else ()
 
     id_ = path.parent.name
 
@@ -181,10 +188,8 @@ def get(path: Path) -> Zettel:
 def get_repr(zet: Zettel, args: AppState) -> str:
     tags = ''
     if args.tags:
-        try:
+        with contextlib.suppress(ValueError):
             tags = f'  [{get_tags_str(zet)}]'
-        except ValueError:  # No tags found
-            pass
     if args.pretty:
         return f'{get_timestamp(zet.id)} -- {zet.title}{tags}'
     try:
@@ -195,13 +200,17 @@ def get_repr(zet: Zettel, args: AppState) -> str:
     return f'{zet.id} -- {zet.title}{tags}'
 
 
-def get_timestamp(id_: str) -> datetime:
-    """Parses zettel ID into a datetime object."""
-    return datetime.strptime(id_, C.ZULU_DATETIME_FORMAT)
+def get_timestamp(id_: str) -> str:
+    """Parse zettel ID into a `YYYY-MM-DD HH:MM:SS` str."""
+    return (
+        datetime.strptime(id_, const.ZULU_DATETIME_FORMAT)
+        .replace(tzinfo=timezone.utc)
+        .strftime(const.PRETTY_DATETIME_FORMAT)
+    )
 
 
 def get_md_link(zet: Zettel) -> str:
-    """Returns a representation of a zettel that is a relative Markdown link.
+    """Return a representation of a zettel that is a relative Markdown link.
 
     Asterisk at the beginning is a Markdown syntax for an unordered list,
     as links to zettels are usually just used in references section of a
@@ -211,7 +220,7 @@ def get_md_link(zet: Zettel) -> str:
 
 
 def get_markdown_title(title_line: str, id_: str) -> str:
-    """Extracts Markdown title if it is formatted correctly.
+    """Extract Markdown title if it is formatted correctly.
 
     Otherwise, returns the whole line and logs a warning. 'title_line'
     arg should have newline characters stripped.
@@ -221,7 +230,7 @@ def get_markdown_title(title_line: str, id_: str) -> str:
     """
     if title_line == '':
         raise ValueError('Empty zettel title found')
-    result = re.match(C.MARKDOWN_TITLE, title_line)
+    result = re.match(const.MARKDOWN_TITLE, title_line)
     if not result:
         logging.warning('wrong title formatting: %s "%s"', id_, title_line)
         return title_line
@@ -231,22 +240,22 @@ def get_markdown_title(title_line: str, id_: str) -> str:
 
 
 def get_tags(line: str) -> tuple[str, ...]:
-    """Parses tags from a line of text."""
+    """Parse tags from a line of text."""
     tags = tuple(sorted(tag.lstrip('#') for tag in line.split()))
     logging.debug('get_tags: got %s', tags)
     return tags
 
 
 def get_tags_str(zettel: Zettel) -> str:
-    """Parses zettel tags into a printable repr."""
-    if zettel.tags == tuple():
+    """Parse zettel tags into a printable repr."""
+    if zettel.tags == ():
         raise ValueError
     else:
         return '#' + ' #'.join(zettel.tags)
 
 
 def _get_first_and_last_line(path: Path) -> tuple[str, str]:
-    """Gets the first and the last line from a given file.
+    """Get the first and the last line from a given file.
 
     It uses file.seek() to look from the end of the file. It's fast but
     requires the file to be opened in binary mode.

@@ -1,16 +1,22 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 
-import pyzet.constants as C
-from pyzet.cli import AppState
+import pyzet.constants as const
 from pyzet.config import Config
 from pyzet.utils import call_git
+
+if TYPE_CHECKING:
+    from pyzet.cli import AppState
+    from pyzet.config import Config
 
 
 def grep(args: AppState, config: Config) -> None:
     grep_opts = _build_grep_options(
-        args.ignore_case, args.line_number, args.title
+        ignore_case=args.ignore_case,
+        line_number=args.line_number,
+        title=args.title,
     )
     patterns = parse_grep_patterns(args.patterns)
     grep_opts.extend(patterns)
@@ -18,12 +24,12 @@ def grep(args: AppState, config: Config) -> None:
         config,
         'grep',
         tuple(grep_opts),
-        path=Path(config.repo, C.ZETDIR),
+        path=Path(config.repo, const.ZETDIR),
     )
 
 
 def _build_grep_options(
-    ignore_case: bool, line_number: bool, title: bool
+    *, ignore_case: bool, line_number: bool, title: bool
 ) -> list[str]:
     opts = ['-I', '--heading', '--break', '--all-match']
     if ignore_case:
@@ -48,7 +54,7 @@ def parse_grep_patterns(patterns: list[str]) -> list[str]:
 
 
 def _add_git_grep_pattern(pattern: str) -> tuple[str, str, str]:
-    """Uses 'git grep' syntax for including multiple patterns.
+    """Use 'git grep' syntax for including multiple patterns.
 
     This approach works only with --all-match, i.e. only a file that
     includes all of patterns will be matched.
