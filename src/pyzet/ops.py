@@ -21,8 +21,8 @@ import pyzet.constants as const
 from pyzet import show
 from pyzet import zettel
 from pyzet.config import Config
-from pyzet.exceptions import NotEntered
-from pyzet.exceptions import NotFound
+from pyzet.exceptions import NotEnteredError
+from pyzet.exceptions import NotFoundError
 from pyzet.utils import call_git
 from pyzet.utils import get_git_output
 from pyzet.utils import get_git_remote_url
@@ -43,16 +43,16 @@ def decide_whats_next(args: AppState, config: Config) -> None:
     while True:
         try:
             choice = input("What's next? [p,e,d,g,G,a,q,?] ")
-        except KeyboardInterrupt:
-            raise SystemExit('\naborting')
+        except KeyboardInterrupt as err:
+            raise SystemExit('\naborting') from err
         else:
             try:
                 _decide(choice, args, config)
-            except NotFound:
+            except NotFoundError:
                 logging.debug('decide_whats_next: NotFound')
                 args.id = None
                 args.patterns = []
-            except NotEntered:
+            except NotEnteredError:
                 # Presents the users list of found notes, as patterns
                 # are not nullified
                 logging.debug('decide_whats_next: NotEntered')
@@ -86,9 +86,9 @@ def _decide(choice: str, args: AppState, config: Config) -> None:
 def _get_grep_patterns() -> list[str]:
     try:
         patterns = input('Grep patterns: ').split()
-    except KeyboardInterrupt:
+    except KeyboardInterrupt as err:
         print('\ncancelled, press again to quit')
-        raise NotEntered
+        raise NotEnteredError from err
     else:
         return patterns
 
@@ -152,7 +152,7 @@ def clean_zet_repo(
 
 
 def init_repo(config: Config, branch_name: str) -> None:
-    """Initializes a git repository in a given path."""
+    """Initialize a git repository in a given path."""
     # We create both main ZK folder, and the folder that keeps all the
     # zettels. This is split, as each one can raise an Exception, and
     # we'd like to have a nice error message in such case.
@@ -183,7 +183,7 @@ def _is_empty(folder: Path) -> bool:
 
 
 def add_zettel(args: AppState, config: Config) -> None:
-    """Adds zettel and commits changes with zettel title as the message."""
+    """Add zettel and commits changes with zettel title as the message."""
     id_ = datetime.now(tz=timezone.utc).strftime(const.ZULU_DATETIME_FORMAT)
 
     zettel_dir = Path(config.repo, const.ZETDIR, id_)
@@ -303,11 +303,11 @@ def _open_file(filename: Path, config: Config) -> None:
 
 
 def remove_zettel(args: AppState, config: Config) -> None:
-    """Removes zettel and commits changes with 'RM:' in the message."""
+    """Remove zettel and commits changes with 'RM:' in the message."""
     if args.id is not None:
         zet = zettel.get_from_id(args.id, config.repo)
     elif args.patterns:
-        zet = zettel.select_from_grep(args, config, create_if_not_found=False)
+        zet = zettel.select_from_grep(args, config)
     else:
         raise SystemExit
     prompt = (
@@ -316,7 +316,7 @@ def remove_zettel(args: AppState, config: Config) -> None:
     )
     if input(prompt) != 'y':
         print('aborting')
-        raise NotEntered
+        raise NotEnteredError
 
     # All files in given zettel folder are removed one by one. This
     # might be slower than shutil.rmtree() but gives nice log entry for
@@ -354,7 +354,7 @@ def list_tags(repo: Path, *, is_reversed: bool) -> None:
 
 
 def info(config: Config) -> None:
-    """Prints info about ZK repo."""
+    """Print info about ZK repo."""
     print(_get_info(config))
 
 

@@ -24,7 +24,7 @@ class Config(NamedTuple):
 
 
 def get(args: AppState) -> Config:
-    """Gets config from YAML."""
+    """Get config from YAML."""
     try:
         with open(args.config) as file:
             yaml_cfg = yaml.safe_load(file)

@@ -7,11 +7,12 @@ from argparse import Namespace
 from argparse import _SubParsersAction
 from dataclasses import dataclass
 from datetime import datetime
+from datetime import timezone
 from typing import TYPE_CHECKING
 from typing import Iterable
 from typing import TypeVar
 
-import pyzet.constants as C
+import pyzet.constants as const
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -19,6 +20,8 @@ if TYPE_CHECKING:
 
 @dataclass
 class AppState:
+    """Represents the current state of the app."""
+
     command: str
     config: str
     id: str | None
@@ -47,10 +50,10 @@ T = TypeVar('T')
 
 
 def populate_args(args_cli: Namespace, parser: ArgumentParser) -> AppState:
-    """Populates AppState with values from CLI and parser defaults."""
+    """Populate AppState with values from CLI and parser defaults."""
 
     def get_initial(name: str) -> T:  # type: ignore[type-var]
-        """Gets initial value from CLI or from parser defaults."""
+        """Get initial value from CLI or from parser defaults."""
         try:
             return args_cli.__getattribute__(name)
         except AttributeError:
@@ -94,14 +97,14 @@ def get_parser() -> tuple[ArgumentParser, dict[str, ArgumentParser]]:
     parser.add_argument(
         '-c',
         '--config',
-        default=C.DEFAULT_CFG_LOCATION,
+        default=const.DEFAULT_CFG_LOCATION,
         help='which config file to use (default: %(default)s)',
     )
     parser.add_argument(
         '-V',
         '--version',
         action='version',
-        version=f'%(prog)s {C.VERSION}',
+        version=f'%(prog)s {const.VERSION}',
     )
     parser.add_argument(
         '-v',
@@ -125,7 +128,7 @@ def get_parser() -> tuple[ArgumentParser, dict[str, ArgumentParser]]:
     init_parser.add_argument(
         '-b',
         '--initial-branch',
-        default=C.DEFAULT_BRANCH,
+        default=const.DEFAULT_BRANCH,
         help='initial branch name (default: %(default)s)',
     )
 
@@ -182,7 +185,8 @@ def get_parser() -> tuple[ArgumentParser, dict[str, ArgumentParser]]:
     )
 
     clean_parser = subparsers.add_parser(
-        'clean', help=f"delete empty folders in '{C.ZETDIR}' folder in ZK repo"
+        'clean',
+        help=f"delete empty folders in '{const.ZETDIR}' folder in ZK repo",
     )
     clean_parser.add_argument(
         '-d',
@@ -216,7 +220,7 @@ def get_parser() -> tuple[ArgumentParser, dict[str, ArgumentParser]]:
     )
     remote_parser.add_argument(
         '--name',
-        default=C.DEFAULT_REMOTE_NAME,
+        default=const.DEFAULT_REMOTE_NAME,
         help='name of git repo remote (default: %(default)s)',
     )
 
@@ -225,7 +229,7 @@ def get_parser() -> tuple[ArgumentParser, dict[str, ArgumentParser]]:
     subparsers.add_parser('query', help='query ZK repo')
 
     sample_config_parser = subparsers.add_parser(
-        'sample-config', help=f'produce a sample {C.CONFIG_FILE} file'
+        'sample-config', help=f'produce a sample {const.CONFIG_FILE} file'
     )
     sample_config_parser.add_argument('kind', choices=('unix', 'windows'))
 
@@ -255,13 +259,13 @@ def get_show_parser(
     )
     url_parser.add_argument(
         '--name',
-        default=C.DEFAULT_REMOTE_NAME,
+        default=const.DEFAULT_REMOTE_NAME,
         help='name of git repo remote (default: %(default)s)',
     )
     url_parser.add_argument(
         '-b',
         '--branch',
-        default=C.DEFAULT_BRANCH,
+        default=const.DEFAULT_BRANCH,
         help='initial branch name (default: %(default)s)',
     )
     add_pattern_args(url_parser)
@@ -337,25 +341,29 @@ def valid_id(id_: str) -> str:
     """Gradually checks if given string is a valid zettel id."""
     try:
         int(id_)
-    except ValueError:
+    except ValueError as err:
         raise argparse.ArgumentTypeError(
             f"'{id_}' is not a valid zettel id (not an integer)"
-        )
-    if len(id_) != C.ZULU_FORMAT_LEN:
+        ) from err
+    if len(id_) != const.ZULU_FORMAT_LEN:
         raise argparse.ArgumentTypeError(
             f"'{id_}' is not a valid zettel id ({_get_id_err_details(id_)})"
         )
     try:
-        datetime.strptime(id_, C.ZULU_DATETIME_FORMAT)
-    except ValueError:
-        raise argparse.ArgumentTypeError(f"'{id_}' is not a valid zettel id")
+        datetime.strptime(id_, const.ZULU_DATETIME_FORMAT).replace(
+            tzinfo=timezone.utc
+        )
+    except ValueError as err:
+        raise argparse.ArgumentTypeError(
+            f"'{id_}' is not a valid zettel id"
+        ) from err
     else:
         return id_
 
 
 def _get_id_err_details(id_: str) -> str:
-    """Generates error msg based on the diff in expected and actual chars."""
-    num = len(id_) - C.ZULU_FORMAT_LEN
+    """Generate error msg based on the diff in expected and actual chars."""
+    num = len(id_) - const.ZULU_FORMAT_LEN
     s = 's' if num > 1 else ''
     diff = 'long' if num > 0 else 'short'
     return f'{num} char{s} too {diff}'
