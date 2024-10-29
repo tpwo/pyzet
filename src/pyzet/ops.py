@@ -72,8 +72,8 @@ def _decide(choice: str, args: AppState, config: Config) -> None:
         args.id = None
         args.ignore_case = choice == 'G'
         args.patterns = _get_grep_patterns()
-        matches = zettel.get_from_grep(args, config)
-        print(f'Found {len(matches)} matches')
+        zettel.get_from_grep(args, config)
+        show.command(args, config)
     elif choice == 'a':
         add_zettel(args, config)
     elif choice == 'q':
