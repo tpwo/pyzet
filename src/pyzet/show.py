@@ -37,6 +37,33 @@ def command(args: AppState, config: Config) -> None:
         show_zettel(zet)
 
 
+def url(args: AppState, config: Config) -> None:
+    if args.id is not None:
+        zet = zettel.get_from_id(args.id, config.repo)
+    elif args.patterns:
+        zet = zettel.select_from_grep(args, config)
+    else:
+        zet = zettel.get_last(config.repo)
+
+    args.id = zet.id
+
+    remote = _remote_dot_git(get_git_remote_url(config, args.name))
+    print(_get_zettel_url(remote, args.branch, zet.id))
+
+
+def mdlink(args: AppState, config: Config) -> None:
+    if args.id is not None:
+        zet = zettel.get_from_id(args.id, config.repo)
+    elif args.patterns:
+        zet = zettel.select_from_grep(args, config)
+    else:
+        zet = zettel.get_last(config.repo)
+
+    args.id = zet.id
+
+    print(get_md_link(zet))
+
+
 def show_zettel(zet: Zettel) -> None:
     """Print zettel text prepended with centered ID as a header."""
     fillchar = '='

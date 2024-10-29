@@ -134,6 +134,25 @@ def get_parser() -> tuple[ArgumentParser, dict[str, ArgumentParser]]:
 
     subparsers.add_parser('add', help='add a new zettel')
 
+    url_parser = subparsers.add_parser('url', help='get URL to a zettel')
+    url_parser.add_argument(
+        '--name',
+        default=const.DEFAULT_REMOTE_NAME,
+        help='name of git repo remote (default: %(default)s)',
+    )
+    url_parser.add_argument(
+        '-b',
+        '--branch',
+        default=const.DEFAULT_BRANCH,
+        help='initial branch name (default: %(default)s)',
+    )
+    add_pattern_args(url_parser)
+
+    mdlink_parser = subparsers.add_parser(
+        'mdlink', help='get Markdown link to a zettel'
+    )
+    add_pattern_args(mdlink_parser)
+
     edit_parser = subparsers.add_parser('edit', help='edit an existing zettel')
     add_pattern_args(edit_parser)
 

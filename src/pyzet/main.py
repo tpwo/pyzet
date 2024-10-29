@@ -49,7 +49,16 @@ def _parse_args(args: AppState) -> int:
         sample_config(args.kind)
         return 0
 
-    looped_cmds = {'add', 'edit', 'rm', 'show', 'print', 'query'}
+    looped_cmds = {
+        'add',
+        'edit',
+        'rm',
+        'show',
+        'url',
+        'mdlink',
+        'print',
+        'query',
+    }
     cfg = config.get(args)
 
     if args.command in looped_cmds:
@@ -64,6 +73,12 @@ def _parse_args(args: AppState) -> int:
 
         if args.command == 'show':
             show.command(args, cfg)
+
+        if args.command == 'url':
+            show.url(args, cfg)
+
+        if args.command == 'mdlink':
+            show.mdlink(args, cfg)
 
         elif args.command == 'print':
             args.show_cmd = 'text'

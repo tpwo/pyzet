@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+
+* `pyzet url` command which prints remote URL to the given zettel (newer way of doing `pyzet show url`)
+* `pyzet mdlink` command which prints Markdown link to the given zettel (newer way of doing `pyzet show mdlink`)
+
 ### Changed
 
 * Completely change the flow of the program, which is now based around an infinite loop and asking user what to do next (idea similar to `git add -p`).
