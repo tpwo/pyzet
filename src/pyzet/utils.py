@@ -1,19 +1,13 @@
 from __future__ import annotations
 
-import argparse
 import functools
 import io
 import logging
 import shutil
 import subprocess
 import sys
-from argparse import ArgumentParser
-from datetime import datetime
-from datetime import timezone
 from typing import TYPE_CHECKING
 from typing import Iterable
-
-import pyzet.constants as const
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -26,13 +20,12 @@ def call_git(
     command: str,
     options: Iterable[str] = (),
     path: Path | None = None,
-) -> int:
+) -> None:
     if path is None:
         path = config.repo
     cmd = (_get_git_bin(), '-C', path.as_posix(), command, *options)
     logging.debug('call_git: subprocess.run(%s)', cmd)
     subprocess.run(cmd)
-    return 0
 
 
 def get_git_remote_url(
@@ -115,59 +108,3 @@ def compute_log_level(verbosity: int) -> int:
     min_log_level = 10  # match DEBUG level
     verbosity_step = 10
     return max(default_log_level - verbosity_step * verbosity, min_log_level)
-
-
-def add_pattern_args(parser: ArgumentParser) -> None:
-    parser.add_argument('patterns', nargs='*', help='grep patterns')
-    parser.add_argument(
-        '-i',
-        '--ignore-case',
-        action='store_true',
-        help='case insensitive matching',
-    )
-    parser.add_argument(
-        '-p',
-        '--pretty',
-        action='store_true',
-        help='use prettier format for printing date and time',
-    )
-    parser.add_argument(
-        '--tags',
-        action='store_true',
-        help='show tags for each zettel',
-    )
-    parser.add_argument(
-        '--id', type=valid_id, help='provide zettel ID instead of patterns'
-    )
-
-
-def valid_id(id_: str) -> str:
-    """Gradually checks if given string is a valid zettel id."""
-    try:
-        int(id_)
-    except ValueError as err:
-        raise argparse.ArgumentTypeError(
-            f"'{id_}' is not a valid zettel id (not an integer)"
-        ) from err
-    if len(id_) != const.ZULU_FORMAT_LEN:
-        raise argparse.ArgumentTypeError(
-            f"'{id_}' is not a valid zettel id ({_get_id_err_details(id_)})"
-        )
-    try:
-        datetime.strptime(id_, const.ZULU_DATETIME_FORMAT).replace(
-            tzinfo=timezone.utc
-        )
-    except ValueError as err:
-        raise argparse.ArgumentTypeError(
-            f"'{id_}' is not a valid zettel id"
-        ) from err
-    else:
-        return id_
-
-
-def _get_id_err_details(id_: str) -> str:
-    """Generate error msg based on the diff in expected and actual chars."""
-    num = len(id_) - const.ZULU_FORMAT_LEN
-    s = 's' if num > 1 else ''
-    diff = 'long' if num > 0 else 'short'
-    return f'{num} char{s} too {diff}'

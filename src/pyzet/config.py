@@ -12,7 +12,7 @@ import yaml
 import pyzet.constants as const
 
 if TYPE_CHECKING:
-    from argparse import Namespace
+    from pyzet.cli import AppState
 
 
 class Config(NamedTuple):
@@ -23,7 +23,7 @@ class Config(NamedTuple):
     editor_args: tuple[str, ...]
 
 
-def get(args: Namespace) -> Config:
+def get(args: AppState) -> Config:
     """Get config from YAML."""
     try:
         with open(args.config) as file:

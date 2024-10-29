@@ -12,13 +12,14 @@ from typing import TYPE_CHECKING
 from typing import NamedTuple
 
 import pyzet.constants as const
-from pyzet.exceptions import ZettelNotFoundError
+from pyzet.config import Config
+from pyzet.exceptions import NotEnteredError
+from pyzet.exceptions import NotFoundError
 from pyzet.grep import parse_grep_patterns
 from pyzet.utils import get_git_output
 
 if TYPE_CHECKING:
-    from argparse import Namespace
-
+    from pyzet.cli import AppState
     from pyzet.config import Config
 
 
@@ -56,12 +57,60 @@ def get_all(path: Path, *, is_reversed: bool = False) -> list[Zettel]:
     return items
 
 
-def get_from_grep(
-    args: Namespace, config: Config, *, create_if_not_found: bool = True
-) -> Zettel:
+def select_from_grep(args: AppState, config: Config) -> Zettel:
+    matches = get_from_grep(args, config)
+
+    num_matches = len(matches)
+    confirmation_threshold = 50
+    if num_matches > confirmation_threshold:
+        prompt = (
+            f'Are you sure to continue with {num_matches} matches? (y/N): '
+        )
+        try:
+            if input(prompt) != 'y':
+                print('aborting')
+                raise NotFoundError
+        except KeyboardInterrupt as err:
+            print('\naborting')
+            raise NotFoundError from err
+
+    zero_padding = len(str(num_matches))
+    for idx, zet in matches.items():
+        print(f'[{str(idx).zfill(zero_padding)}] {get_repr(zet, args)}')
+
+    if num_matches == 1:
+        try:
+            if input('Continue? (Y/n): ') != 'n':
+                args.id = matches[1].id
+                return matches[1]
+        except KeyboardInterrupt as err:
+            print('\naborting')
+            raise NotEnteredError from err
+        else:
+            print('aborting')
+            raise NotEnteredError
+
+    while True:
+        try:
+            user_input = input('Open (press enter to cancel): ')
+            if user_input == '':
+                print('aborting')
+                raise NotEnteredError
+            try:
+                idx = int(user_input)
+                args.id = matches[idx].id
+                return matches[idx]
+            except (KeyError, ValueError):
+                print('Wrong ID provided!')
+        except KeyboardInterrupt as err:
+            print('\naborting')
+            raise NotEnteredError from err
+
+
+def get_from_grep(args: AppState, config: Config) -> dict[int, Zettel]:
     if _patterns_empty(args.patterns):
-        msg = 'ERROR: provided patterns are incorrect (empty or whitespace)'
-        raise SystemExit(msg)
+        print('Wrong value provided (empty or whitespace)!')
+        raise NotFoundError
     opts = ['-I', '--all-match', '--name-only']
     if args.ignore_case:
         opts.append('--ignore-case')
@@ -75,56 +124,13 @@ def get_from_grep(
     try:
         out = get_git_output(config, 'grep', opts).decode()
     except subprocess.CalledProcessError as err:
-        if create_if_not_found:
-            try:
-                if input('No zettels found. Create a new one? (y/N) ') != 'y':
-                    raise SystemExit('aborting') from err
-            except KeyboardInterrupt as exc:
-                raise SystemExit('\naborting') from exc
-            else:
-                raise ZettelNotFoundError
-        else:
-            raise SystemExit('ERROR: no zettels found') from err
+        print('No zettels found!')
+        raise NotFoundError from err
 
     matches: dict[int, Zettel] = {}
     for idx, filename in enumerate(out.splitlines(), start=1):
         matches[idx] = get(Path(config.repo, filename))
-
-    num_matches = len(matches)
-    confirmation_threshold = 50
-    if num_matches > confirmation_threshold:
-        prompt = f'Found {num_matches} matches. Continue? (y/N): '
-        try:
-            if input(prompt) != 'y':
-                raise SystemExit('aborting')
-        except KeyboardInterrupt as err:
-            raise SystemExit('\naborting') from err
-
-    print(f'Found {num_matches} matches:')
-    zero_padding = len(str(num_matches))
-    for idx, zet in matches.items():
-        print(f'[{str(idx).zfill(zero_padding)}] {get_repr(zet, args)}')
-
-    if num_matches == 1:
-        try:
-            if input('Continue? (Y/n): ') != 'n':
-                return matches[1]
-        except KeyboardInterrupt as err:
-            raise SystemExit('\naborting') from err
-        else:
-            raise SystemExit('aborting')
-    try:
-        user_input = input('Open (press enter to cancel): ')
-    except KeyboardInterrupt as err:
-        raise SystemExit('\naborting') from err
-
-    if user_input == '':
-        raise SystemExit('aborting')
-
-    try:
-        return matches[int(user_input)]
-    except KeyError as err:
-        raise SystemExit('ERROR: wrong zettel ID') from err
+    return matches
 
 
 def _patterns_empty(patterns: list[str]) -> bool:
@@ -173,7 +179,7 @@ def get(path: Path) -> Zettel:
     return zettel
 
 
-def get_repr(zet: Zettel, args: Namespace) -> str:
+def get_repr(zet: Zettel, args: AppState) -> str:
     tags = ''
     if args.tags:
         with contextlib.suppress(ValueError):

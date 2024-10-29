@@ -12,9 +12,9 @@ from tests.conftest import TEST_CFG
 
 
 def test_show(capsys):
-    with mock.patch('builtins.input', return_value='\n'), pytest.raises(
-        SystemExit
-    ):
+    with mock.patch(
+        'builtins.input', side_effect=['\n', KeyboardInterrupt]
+    ), pytest.raises(SystemExit):
         main([*TEST_CFG, 'show', 'text', '--id', '20211016205158'])
 
     out, err = capsys.readouterr()
@@ -27,9 +27,9 @@ def test_show(capsys):
 
 def test_show_default(capsys):
     # by default, the command shows a zettel with the highest ID (the newest)
-    with mock.patch('builtins.input', return_value='\n'), pytest.raises(
-        SystemExit
-    ):
+    with mock.patch(
+        'builtins.input', side_effect=['\n', KeyboardInterrupt]
+    ), pytest.raises(SystemExit):
         main([*TEST_CFG, 'show', 'text'])
 
     out, err = capsys.readouterr()
@@ -38,9 +38,10 @@ def test_show_default(capsys):
 
 
 def test_show_patterns(capsys):
-    with mock.patch('builtins.input', return_value='1'), pytest.raises(
-        SystemExit
-    ):
+    # Side effects seem to not matter here, namely `\n` also works
+    with mock.patch(
+        'builtins.input', side_effect=['1', KeyboardInterrupt]
+    ), pytest.raises(SystemExit):
         main([*TEST_CFG, 'show', 'text', 'zet', 'test'])
     out, err = capsys.readouterr()
     assert '# Another zet test entry' in out
@@ -48,9 +49,9 @@ def test_show_patterns(capsys):
 
 
 def test_show_patterns_ignore_case(capsys):
-    with mock.patch('builtins.input', return_value='1'), pytest.raises(
-        SystemExit
-    ):
+    with mock.patch(
+        'builtins.input', side_effect=['1', KeyboardInterrupt]
+    ), pytest.raises(SystemExit):
         main([*TEST_CFG, 'show', 'text', '--ignore-case', 'zet', 'test'])
     out, err = capsys.readouterr()
     assert '# Zet test entry' in out
@@ -61,33 +62,31 @@ def test_show_patterns_empty_pattern():
     with pytest.raises(SystemExit) as excinfo:
         main([*TEST_CFG, 'show', 'text', ''])
     (msg,) = excinfo.value.args
-    assert (
-        msg == 'ERROR: provided patterns are incorrect (empty or whitespace)'
-    )
+    assert msg == 'aborting'
 
 
 def test_show_patterns_not_matching_pattern(pyzet_init):
-    with mock.patch('builtins.input', return_value='\n'), pytest.raises(
-        SystemExit
-    ) as excinfo:
+    with mock.patch(
+        'builtins.input', side_effect=['\n', KeyboardInterrupt]
+    ), pytest.raises(SystemExit) as excinfo:
         main([*TEST_CFG, '--repo', pyzet_init, 'show', 'text', 'zet'])
     (msg,) = excinfo.value.args
     assert msg == 'aborting'
 
 
 def test_show_patterns_empty_repo(pyzet_init):
-    with mock.patch('builtins.input', return_value='\n'), pytest.raises(
-        SystemExit
-    ) as excinfo:
+    with mock.patch(
+        'builtins.input', side_effect=['\n', KeyboardInterrupt]
+    ), pytest.raises(SystemExit) as excinfo:
         main([*TEST_CFG, '--repo', pyzet_init, 'show', 'text', 'zet'])
     (msg,) = excinfo.value.args
     assert msg == 'aborting'
 
 
 def test_show_utf8(capsys):
-    with mock.patch('builtins.input', return_value='\n'), pytest.raises(
-        SystemExit
-    ):
+    with mock.patch(
+        'builtins.input', side_effect=['\n', KeyboardInterrupt]
+    ), pytest.raises(SystemExit):
         main([*TEST_CFG, 'show', 'text', '--id', '20220101220852'])
 
     out, err = capsys.readouterr()
@@ -96,9 +95,9 @@ def test_show_utf8(capsys):
 
 
 def test_show_mdlink(capsys):
-    with mock.patch('builtins.input', return_value='\n'), pytest.raises(
-        SystemExit
-    ):
+    with mock.patch(
+        'builtins.input', side_effect=['\n', KeyboardInterrupt]
+    ), pytest.raises(SystemExit):
         main([*TEST_CFG, 'show', 'mdlink', '--id', '20211016205158'])
 
     out, err = capsys.readouterr()
@@ -143,9 +142,9 @@ def test_show_url(raw, expected, pyzet_init, capsys):
     with open(Path(test_zettel, const.ZETTEL_FILENAME), 'w') as file:
         file.write('# Test')
 
-    with mock.patch('builtins.input', return_value='\n'), pytest.raises(
-        SystemExit
-    ):
+    with mock.patch(
+        'builtins.input', side_effect=['\n', KeyboardInterrupt]
+    ), pytest.raises(SystemExit):
         main([*TEST_CFG, '--repo', pyzet_init, 'show', 'url', '--id', id_])
 
     out, err = capsys.readouterr()
