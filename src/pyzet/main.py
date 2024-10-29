@@ -4,6 +4,7 @@ import pyzet.cli
 from pyzet import config
 from pyzet import show
 from pyzet import utils
+from pyzet.cli import AppState
 from pyzet.cli import get_parser
 from pyzet.exceptions import NotFoundError
 from pyzet.grep import grep
@@ -43,7 +44,7 @@ def main(argv: list[str] | None = None) -> int:
         raise SystemExit from err
 
 
-def _parse_args(args: pyzet.cli.AppState) -> int:
+def _parse_args(args: AppState) -> int:
     if args.command == 'sample-config':
         sample_config(args.kind)
         return 0

@@ -33,7 +33,8 @@ def command(args: AppState, config: Config) -> None:
         remote = _remote_dot_git(get_git_remote_url(config, args.name))
         print(_get_zettel_url(remote, args.branch, zet.id))
     else:
-        raise NotImplementedError
+        # By default show the last zettel
+        show_zettel(zet)
 
 
 def show_zettel(zet: Zettel) -> None:
