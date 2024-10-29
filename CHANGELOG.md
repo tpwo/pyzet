@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed
 
 * Completely change the flow of the program, which is now based around an infinite loop and asking user what to do next (idea similar to `git add -p`).
+* Make `--ignore-case` the default behavior and doesn't allow to change it. It may come back in the future, but for now it's a needless complication.
 
 ### Removed
 

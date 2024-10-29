@@ -14,7 +14,6 @@ if TYPE_CHECKING:
 
 def grep(args: AppState, config: Config) -> None:
     grep_opts = _build_grep_options(
-        ignore_case=args.ignore_case,
         line_number=args.line_number,
         title=args.title,
     )
@@ -28,12 +27,8 @@ def grep(args: AppState, config: Config) -> None:
     )
 
 
-def _build_grep_options(
-    *, ignore_case: bool, line_number: bool, title: bool
-) -> list[str]:
-    opts = ['-I', '--heading', '--break', '--all-match']
-    if ignore_case:
-        opts.append('--ignore-case')
+def _build_grep_options(*, line_number: bool, title: bool) -> list[str]:
+    opts = ['-I', '--heading', '--break', '--all-match', '--ignore-case']
     if line_number:
         opts.append('--line-number')
     if title:

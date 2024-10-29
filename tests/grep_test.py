@@ -13,18 +13,6 @@ def test_grep(capfd):
 
     out, err = capfd.readouterr()
     expected = """\
-20211016223643/README.md
-# Another zet test entry
-"""
-    assert out.replace('\r', '') == expected
-    assert err == ''
-
-
-def test_grep_ignore_case(capfd):
-    main([*GREP_CMD, '--ignore-case', 'zet'])
-
-    out, err = capfd.readouterr()
-    expected = """\
 20211016205158/README.md
 # Zet test entry
 
@@ -303,7 +291,7 @@ def test_grep_multiple_patterns_line_number_different_order(capfd):
 
 def test_grep_with_option_and_pattern(capfd):
     # --and means that matching line should always have its pattern
-    main([*GREP_CMD, '-ti', 'zet', '--', '--and', '-e', 'another'])
+    main([*GREP_CMD, '-t', 'zet', '--', '--and', '-e', 'another'])
 
     out, err = capfd.readouterr()
     expected = """\

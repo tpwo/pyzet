@@ -29,7 +29,6 @@ class AppState:
     tags: bool
     link: bool
     pretty: bool
-    ignore_case: bool
     line_number: bool
     force: bool
     dry_run: bool
@@ -66,7 +65,6 @@ def populate_args(args_cli: Namespace, parser: ArgumentParser) -> AppState:
         tags=get_initial('tags'),
         link=get_initial('link'),
         pretty=get_initial('pretty'),
-        ignore_case=get_initial('ignore_case'),
         line_number=get_initial('line_number'),
         force=get_initial('force'),
         dry_run=get_initial('dry_run'),
@@ -242,12 +240,6 @@ def get_parser() -> ArgumentParser:
 
     query_parser = subparsers.add_parser('query', help='query ZK repo')
     query_parser.add_argument(
-        '-i',
-        '--ignore-case',
-        action='store_true',
-        help='case insensitive matching',
-    )
-    query_parser.add_argument(
         'patterns',
         nargs='+',
         help="grep patterns, pass 'git grep' options after '--'",
@@ -264,12 +256,6 @@ def get_parser() -> ArgumentParser:
 def define_grep_cli(subparsers: _SubParsersAction[ArgumentParser]) -> None:
     grep_parser = subparsers.add_parser(
         'grep', help="run 'git grep' with some handy flags in ZK repo"
-    )
-    grep_parser.add_argument(
-        '-i',
-        '--ignore-case',
-        action='store_true',
-        help='case insensitive matching',
     )
     grep_parser.add_argument(
         '-t',
@@ -303,12 +289,6 @@ def _add_git_cmd_options(parser: ArgumentParser, cmd_name: str) -> None:
 
 def add_pattern_args(parser: ArgumentParser) -> None:
     parser.add_argument('patterns', nargs='*', help='grep patterns')
-    parser.add_argument(
-        '-i',
-        '--ignore-case',
-        action='store_true',
-        help='case insensitive matching',
-    )
     parser.add_argument(
         '-p',
         '--pretty',

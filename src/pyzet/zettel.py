@@ -111,9 +111,7 @@ def get_from_grep(args: AppState, config: Config) -> dict[int, Zettel]:
     if _patterns_empty(args.patterns):
         print('Wrong value provided (empty or whitespace)!')
         raise NotFoundError
-    opts = ['-I', '--all-match', '--name-only']
-    if args.ignore_case:
-        opts.append('--ignore-case')
+    opts = ['-I', '--all-match', '--name-only', '--ignore-case']
     opts.extend(
         [
             *parse_grep_patterns(args.patterns),

@@ -43,7 +43,7 @@ def decide_whats_next(args: AppState, config: Config) -> None:
         if args.patterns:
             _decide(choice='', args=args, config=config)
         try:
-            choice = input("What's next? [e,d,g,G,a,q,?] ")
+            choice = input("What's next? [e,d,g,a,q,?] ")
         except KeyboardInterrupt as err:
             raise SystemExit('\naborting') from err
         else:
@@ -70,7 +70,6 @@ def _decide(choice: str, args: AppState, config: Config) -> None:
         remove_zettel(args, config)
     elif choice in {'g', 'G'}:
         args.id = None
-        args.ignore_case = choice == 'G'
         args.patterns = _get_grep_patterns()
         zettel.get_from_grep(args, config)
         edit_zettel(args, config)
@@ -99,7 +98,6 @@ def _get_help_msg(args: AppState) -> str:
 e - edit current note
 d - delete current note
 g - grep for other notes
-G - grep for other notes (case insensitive)
 a - add a new note
 q - quit
 ? - print help
@@ -108,7 +106,6 @@ q - quit
 e - edit one of matching notes
 d - delete one of matching notes
 g - grep for other notes
-G - grep for other notes (case insensitive)
 a - add a new note
 q - quit
 ? - print help
