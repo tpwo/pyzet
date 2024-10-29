@@ -80,8 +80,6 @@ def select_from_grep(args: AppState, config: Config) -> Zettel:
 
     if num_matches == 1:
         try:
-            # TODO: this might be very annoying in the long time. Maybe
-            # we can just continue automatically?
             if input('Continue? (Y/n): ') != 'n':
                 args.id = matches[1].id
                 return matches[1]
