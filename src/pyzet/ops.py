@@ -312,7 +312,7 @@ def remove_zettel(args: AppState, config: Config) -> None:
     else:
         raise SystemExit
     prompt = (
-        f'{zet.id} will be deleted including all files '
+        f'{zet.id} `{zet.title}` will be deleted including all files '
         'that might be inside. Are you sure? (y/N): '
     )
     if input(prompt) != 'y':
