@@ -310,7 +310,7 @@ def remove_zettel(args: AppState, config: Config) -> None:
     elif args.patterns:
         zet = zettel.select_from_grep(args, config)
     else:
-        raise SystemExit
+        zet = zettel.get_last(config.repo)
     prompt = (
         f'{zet.id} `{zet.title}` will be deleted including all files '
         'that might be inside. Are you sure? (y/N): '
