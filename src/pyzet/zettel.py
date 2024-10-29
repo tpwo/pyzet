@@ -92,7 +92,7 @@ def select_from_grep(args: AppState, config: Config) -> Zettel:
 
     while True:
         try:
-            user_input = input('Open (press enter to cancel): ')
+            user_input = input('#? ')
             if user_input == '':
                 print('aborting')
                 raise NotEnteredError
