@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import pyzet.cli
 from pyzet import config
+from pyzet import ops
 from pyzet import show
 from pyzet import utils
 from pyzet.cli import AppState
@@ -53,9 +54,11 @@ def _parse_args(args: AppState) -> int:
         'url',
         'mdlink',
         'print',
-        'query',
     }
     cfg = config.get(args)
+
+    if args.command == 'query':
+        return ops.query(args, cfg)
 
     if args.command in looped_cmds:
         if args.command == 'add':
@@ -72,10 +75,6 @@ def _parse_args(args: AppState) -> int:
 
         if args.command == 'mdlink':
             show.mdlink(args, cfg)
-
-        if args.command == 'query':
-            # Directly go to decide_whats_next
-            print('Hello there! ', end='')
 
         decide_whats_next(args, cfg)
 

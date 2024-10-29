@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import itertools
 import logging
+import re
 import shutil
 import subprocess
 from collections import Counter
@@ -29,6 +30,62 @@ from pyzet.utils import get_git_remote_url
 if TYPE_CHECKING:
     from pyzet.cli import AppState
     from pyzet.config import Config
+    from pyzet.zettel import Zettel
+
+
+def query(args: AppState, config: Config) -> int:
+    """Query zettel titles (not contents) and allow to open them."""
+    matches = _get_matches(args, config)
+    num_matches = len(matches)
+
+    zero_padding = len(str(num_matches))
+    for idx, zet in matches.items():
+        print(f'[{str(idx).zfill(zero_padding)}] {zettel.get_repr(zet, args)}')
+
+    if num_matches == 1:
+        return _open_single_match(matches[1], config)
+    else:
+        try:
+            return _open_multiple_matches(matches, config)
+        except KeyboardInterrupt as err:
+            raise SystemExit('\naborting') from err
+
+
+def _get_matches(args: AppState, config: Config) -> dict[int, Zettel]:
+    matches: dict[int, Zettel] = {}
+    idx = 1
+    for note in zettel.get_all(Path(config.repo, const.ZETDIR)):
+        if all(
+            re.search(pattern.casefold(), note.title.casefold())
+            for pattern in args.patterns
+        ):
+            matches[idx] = note
+            idx += 1
+    return matches
+
+
+def _open_single_match(note: Zettel, config: Config) -> int:
+    try:
+        if input('Open? (Y/n): ') != 'n':
+            _open_file(note.path, config)
+            return 0
+    except KeyboardInterrupt as err:
+        raise SystemExit('\naborting') from err
+    else:
+        raise SystemExit('aborting')
+
+
+def _open_multiple_matches(matches: dict[int, Zettel], config: Config) -> int:
+    user_input = input('#? ')
+    if user_input == '':
+        raise SystemExit('aborting')
+    idx = int(user_input)
+    try:
+        _open_file(matches[idx].path, config)
+    except (KeyError, ValueError) as err:
+        raise SystemExit('Wrong ID provided!') from err
+    else:
+        return 0
 
 
 def decide_whats_next(args: AppState, config: Config) -> None:
