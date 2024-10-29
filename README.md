@@ -14,7 +14,7 @@ stored.
 
 Prerequisites:
 
-* Python 3.8+
+* Python 3.9+
 * Git 2.25+ (but older also should be fine)
 
 Unix and Windows are supported. You can install pyzet with pip:
