@@ -22,7 +22,6 @@ import pyzet.constants as const
 from pyzet import zettel
 from pyzet.config import Config
 from pyzet.exceptions import NotEnteredError
-from pyzet.exceptions import NotFoundError
 from pyzet.utils import call_git
 from pyzet.utils import get_git_output
 from pyzet.utils import get_git_remote_url
@@ -90,93 +89,6 @@ def _open_multiple_matches(matches: dict[int, Zettel], config: Config) -> int:
             raise SystemExit('Wrong ID provided!') from err
         else:
             return 0
-
-
-def decide_whats_next(args: AppState, config: Config) -> None:
-    """Decides what to do after finishing a command.
-
-    This function is intended to be called recursively, so it keeps the
-    state of the program and input arguments intact.
-    """
-    # TODO: how to enable user to switch options during the session
-    # https://github.com/tpwo/pyzet/issues/61
-    while True:
-        if args.patterns:
-            _decide(choice='', args=args, config=config)
-        try:
-            choice = input("What's next? [e,d,g,a,q,?] ")
-        except KeyboardInterrupt as err:
-            raise SystemExit('\naborting') from err
-        else:
-            try:
-                _decide(choice, args, config)
-            except NotFoundError:
-                logging.debug('decide_whats_next: NotFound')
-                args.id = None
-                args.patterns = []
-            except NotEnteredError:
-                # Presents the users list of found notes, as patterns
-                # are not nullified
-                logging.debug('decide_whats_next: NotEntered')
-                args.id = None
-
-
-def _decide(choice: str, args: AppState, config: Config) -> None:
-    if args.patterns:
-        zettel.get_from_grep(args, config)
-        edit_zettel(args, config)
-    elif choice == 'e':
-        edit_zettel(args, config)
-    elif choice == 'd':
-        remove_zettel(args, config)
-    elif choice in {'g', 'G'}:
-        args.id = None
-        args.patterns = _get_grep_patterns()
-        zettel.get_from_grep(args, config)
-        edit_zettel(args, config)
-    elif choice == 'a':
-        add_zettel(args, config)
-    elif choice == 'q':
-        raise SystemExit('Bye!')
-    elif choice == '?':
-        print(_get_help_msg(args), end='')
-    else:  # By default print the note again.
-        pass
-
-
-def _get_grep_patterns() -> list[str]:
-    try:
-        patterns = input('Grep patterns: ').split()
-    except KeyboardInterrupt as err:
-        print('\ncancelled, press again to quit')
-        raise NotEnteredError from err
-    else:
-        return patterns
-
-
-def _get_help_msg(args: AppState) -> str:
-    help_msg_with_id = """\
-e - edit current note
-d - delete current note
-g - grep for other notes
-a - add a new note
-q - quit
-? - print help
-"""
-    help_msg_with_patterns = """\
-e - edit one of matching notes
-d - delete one of matching notes
-g - grep for other notes
-a - add a new note
-q - quit
-? - print help
-"""
-    status = f"""
-current ID: {args.id}
-patterns: {args.patterns}
-"""
-    help_msg = help_msg_with_id if args.id else help_msg_with_patterns
-    return help_msg + ''.center(27, '-') + status
 
 
 def get_remote_url(args: AppState, config: Config) -> None:

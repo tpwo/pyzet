@@ -11,7 +11,6 @@ from pyzet.exceptions import NotFoundError
 from pyzet.grep import grep
 from pyzet.ops import add_zettel
 from pyzet.ops import clean_zet_repo
-from pyzet.ops import decide_whats_next
 from pyzet.ops import edit_zettel
 from pyzet.ops import get_remote_url
 from pyzet.ops import info
@@ -47,68 +46,40 @@ def _parse_args(args: AppState) -> int:
         sample_config(args.kind)
         return 0
 
-    looped_cmds = {
-        'add',
-        'edit',
-        'rm',
-        'url',
-        'mdlink',
-        'print',
-    }
     cfg = config.get(args)
 
     if args.command == 'query':
         return ops.query(args, cfg)
-
-    if args.command in looped_cmds:
-        if args.command == 'add':
-            add_zettel(args, cfg)
-
-        elif args.command == 'edit':
-            edit_zettel(args, cfg)
-
-        elif args.command == 'rm':
-            remove_zettel(args, cfg)
-
-        if args.command == 'url':
-            show.url(args, cfg)
-
-        if args.command == 'mdlink':
-            show.mdlink(args, cfg)
-
-        decide_whats_next(args, cfg)
-
-    else:
-        if args.command == 'init':
-            init_repo(cfg, args.initial_branch)
-
-        elif args.command == 'list':
-            list_zettels(args, cfg.repo)
-
-        elif args.command == 'tags':
-            list_tags(cfg.repo, is_reversed=args.reverse)
-
-        elif args.command == 'grep':
-            grep(args, cfg)
-
-        elif args.command in {'status', 'push'}:
-            call_git(cfg, args.command, args.options)
-
-        elif args.command == 'remote':
-            get_remote_url(args, cfg)
-
-        elif args.command == 'pull':
-            # --rebase is used to maintain a linear history without merges,
-            # as this seems to be a reasonable approach in ZK repo that is
-            # usually personal.
-            call_git(cfg, 'pull', ('--rebase',))
-
-        elif args.command == 'clean':
-            clean_zet_repo(
-                cfg.repo, is_dry_run=args.dry_run, is_force=args.force
-            )
-
-        elif args.command == 'info':
-            info(cfg)
+    elif args.command == 'add':
+        add_zettel(args, cfg)
+    elif args.command == 'edit':
+        edit_zettel(args, cfg)
+    elif args.command == 'rm':
+        remove_zettel(args, cfg)
+    elif args.command == 'url':
+        show.url(args, cfg)
+    elif args.command == 'mdlink':
+        show.mdlink(args, cfg)
+    elif args.command == 'init':
+        init_repo(cfg, args.initial_branch)
+    elif args.command == 'list':
+        list_zettels(args, cfg.repo)
+    elif args.command == 'tags':
+        list_tags(cfg.repo, is_reversed=args.reverse)
+    elif args.command == 'grep':
+        grep(args, cfg)
+    elif args.command in {'status', 'push'}:
+        call_git(cfg, args.command, args.options)
+    elif args.command == 'remote':
+        get_remote_url(args, cfg)
+    elif args.command == 'pull':
+        # --rebase is used to maintain a linear history without merges,
+        # as this seems to be a reasonable approach in ZK repo that is
+        # usually personal.
+        call_git(cfg, 'pull', ('--rebase',))
+    elif args.command == 'clean':
+        clean_zet_repo(cfg.repo, is_dry_run=args.dry_run, is_force=args.force)
+    elif args.command == 'info':
+        info(cfg)
 
     return 0

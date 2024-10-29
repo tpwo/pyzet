@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import subprocess
 from pathlib import Path
-from unittest import mock
 
 import pytest
 
@@ -12,10 +11,7 @@ from tests.conftest import TEST_CFG
 
 
 def test_mdlink(capsys):
-    with mock.patch(
-        'builtins.input', side_effect=['\n', KeyboardInterrupt]
-    ), pytest.raises(SystemExit):
-        main([*TEST_CFG, 'mdlink', '--id', '20211016205158'])
+    main([*TEST_CFG, 'mdlink', '--id', '20211016205158'])
 
     out, err = capsys.readouterr()
     assert out == '* [20211016205158](../20211016205158) Zet test entry\n'
@@ -59,10 +55,7 @@ def test_url(raw, expected, pyzet_init, capsys):
     with open(Path(test_zettel, const.ZETTEL_FILENAME), 'w') as file:
         file.write('# Test')
 
-    with mock.patch(
-        'builtins.input', side_effect=['\n', KeyboardInterrupt]
-    ), pytest.raises(SystemExit):
-        main([*TEST_CFG, '--repo', pyzet_init, 'url', '--id', id_])
+    main([*TEST_CFG, '--repo', pyzet_init, 'url', '--id', id_])
 
     out, err = capsys.readouterr()
     assert out == expected + '\n'
