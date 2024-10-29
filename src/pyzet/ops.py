@@ -79,13 +79,17 @@ def _open_multiple_matches(matches: dict[int, Zettel], config: Config) -> int:
     user_input = input('#? ')
     if user_input == '':
         raise SystemExit('aborting')
-    idx = int(user_input)
     try:
-        _open_file(matches[idx].path, config)
-    except (KeyError, ValueError) as err:
+        idx = int(user_input)
+    except ValueError as err:
         raise SystemExit('Wrong ID provided!') from err
     else:
-        return 0
+        try:
+            _open_file(matches[idx].path, config)
+        except KeyError as err:
+            raise SystemExit('Wrong ID provided!') from err
+        else:
+            return 0
 
 
 def decide_whats_next(args: AppState, config: Config) -> None:
