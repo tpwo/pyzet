@@ -240,7 +240,18 @@ def get_parser() -> ArgumentParser:
 
     subparsers.add_parser('info', help='show stats about ZK repo')
 
-    subparsers.add_parser('query', help='query ZK repo')
+    query_parser = subparsers.add_parser('query', help='query ZK repo')
+    query_parser.add_argument(
+        '-i',
+        '--ignore-case',
+        action='store_true',
+        help='case insensitive matching',
+    )
+    query_parser.add_argument(
+        'patterns',
+        nargs='+',
+        help="grep patterns, pass 'git grep' options after '--'",
+    )
 
     sample_config_parser = subparsers.add_parser(
         'sample-config', help=f'produce a sample {const.CONFIG_FILE} file'

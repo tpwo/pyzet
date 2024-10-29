@@ -40,6 +40,8 @@ def decide_whats_next(args: AppState, config: Config) -> None:
     # TODO: how to enable user to switch options during the session
     # https://github.com/tpwo/pyzet/issues/61
     while True:
+        if args.patterns:
+            _decide(choice='', args=args, config=config)
         try:
             choice = input("What's next? [e,d,g,G,a,q,?] ")
         except KeyboardInterrupt as err:
@@ -59,7 +61,10 @@ def decide_whats_next(args: AppState, config: Config) -> None:
 
 
 def _decide(choice: str, args: AppState, config: Config) -> None:
-    if choice == 'e':
+    if args.patterns:
+        zettel.get_from_grep(args, config)
+        edit_zettel(args, config)
+    elif choice == 'e':
         edit_zettel(args, config)
     elif choice == 'd':
         remove_zettel(args, config)
