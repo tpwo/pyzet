@@ -15,6 +15,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 * Completely change the flow of the program, which is now based around an infinite loop and asking user what to do next (idea similar to `git add -p`).
 
+### Removed
+
+* BREAKING CHANGE: `pyzet show` command and the concept of printing zettel. Instead, always open them in a configured editor.
+* BREAKING CHANGE: `pyzet print` command which was a shorhand for `pyzet show text`.
+
 ## [0.11.0] -- 2024-01-17
 
 ### Added

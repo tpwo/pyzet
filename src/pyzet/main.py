@@ -25,14 +25,11 @@ from pyzet.utils import call_git
 def main(argv: list[str] | None = None) -> int:
     utils.configure_console_print_utf8()
 
-    parser, subparsers = get_parser()
+    parser = get_parser()
     args_cli = parser.parse_args(argv)
     utils.setup_logger(utils.compute_log_level(args_cli.verbose))
     args = pyzet.cli.populate_args(args_cli, parser)
 
-    if args.command == 'show' and args.show_cmd is None:
-        subparsers['show'].print_usage()
-        return 0
     if args.command is None:
         parser.print_usage()
         return 0
@@ -53,7 +50,6 @@ def _parse_args(args: AppState) -> int:
         'add',
         'edit',
         'rm',
-        'show',
         'url',
         'mdlink',
         'print',
@@ -71,18 +67,11 @@ def _parse_args(args: AppState) -> int:
         elif args.command == 'rm':
             remove_zettel(args, cfg)
 
-        if args.command == 'show':
-            show.command(args, cfg)
-
         if args.command == 'url':
             show.url(args, cfg)
 
         if args.command == 'mdlink':
             show.mdlink(args, cfg)
-
-        elif args.command == 'print':
-            args.show_cmd = 'text'
-            show.command(args, cfg)
 
         if args.command == 'query':
             # Directly go to decide_whats_next

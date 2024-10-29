@@ -26,7 +26,6 @@ class AppState:
     config: str
     id: str | None
     patterns: list[str]
-    show_cmd: str
     tags: bool
     link: bool
     pretty: bool
@@ -64,7 +63,6 @@ def populate_args(args_cli: Namespace, parser: ArgumentParser) -> AppState:
         config=get_initial('config'),
         id=get_initial('id'),
         patterns=get_initial('patterns'),
-        show_cmd=get_initial('show_cmd'),
         tags=get_initial('tags'),
         link=get_initial('link'),
         pretty=get_initial('pretty'),
@@ -87,11 +85,10 @@ def populate_args(args_cli: Namespace, parser: ArgumentParser) -> AppState:
     return state
 
 
-def get_parser() -> tuple[ArgumentParser, dict[str, ArgumentParser]]:
+def get_parser() -> ArgumentParser:
     parser = argparse.ArgumentParser(
         prog='pyzet', formatter_class=argparse.RawTextHelpFormatter
     )
-    subparsers_dict = {}
 
     parser.add_argument('-r', '--repo', help='point to a custom ZK repo')
     parser.add_argument(
@@ -158,8 +155,6 @@ def get_parser() -> tuple[ArgumentParser, dict[str, ArgumentParser]]:
 
     remove_parser = subparsers.add_parser('rm', help='remove a zettel')
     add_pattern_args(remove_parser)
-
-    subparsers_dict['show'] = get_show_parser(subparsers)
 
     print_parser = subparsers.add_parser(
         'print',
@@ -252,44 +247,7 @@ def get_parser() -> tuple[ArgumentParser, dict[str, ArgumentParser]]:
     )
     sample_config_parser.add_argument('kind', choices=('unix', 'windows'))
 
-    return parser, subparsers_dict
-
-
-def get_show_parser(
-    subparsers: _SubParsersAction[ArgumentParser],
-) -> ArgumentParser:
-    show_parser = subparsers.add_parser(
-        'show', help='show zettel in a chosen representation'
-    )
-    show_subparsers = show_parser.add_subparsers(dest='show_cmd')
-
-    text_parser = show_subparsers.add_parser(
-        'text', help='show zettel as plain text'
-    )
-    add_pattern_args(text_parser)
-
-    link_parser = show_subparsers.add_parser(
-        'mdlink', help='show zettel as a Markdown link'
-    )
-    add_pattern_args(link_parser)
-
-    url_parser = show_subparsers.add_parser(
-        'url', help='show zettel as an URL'
-    )
-    url_parser.add_argument(
-        '--name',
-        default=const.DEFAULT_REMOTE_NAME,
-        help='name of git repo remote (default: %(default)s)',
-    )
-    url_parser.add_argument(
-        '-b',
-        '--branch',
-        default=const.DEFAULT_BRANCH,
-        help='initial branch name (default: %(default)s)',
-    )
-    add_pattern_args(url_parser)
-
-    return show_parser
+    return parser
 
 
 def define_grep_cli(subparsers: _SubParsersAction[ArgumentParser]) -> None:

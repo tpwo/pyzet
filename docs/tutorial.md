@@ -101,29 +101,8 @@ output:
     1 file changed, 14 insertions(+)
     create mode 100644 docs/20220126232605/README.md
 
-Now, you can run `pyzet show text` to see your zettel:
-
-    $ pyzet show text
-    ============================ 20220126232605 ============================
-    # This is my first zettel created with pyzet
-
-    The above line is the title of this zettel, and this is part of
-    its contents. It's a good practice to wrap lines like that, so zettels
-    are easier to read in the terminal.
-
-    Refs:
-
-    * This way you can add links\
-      <https://github.com/tpwo/pyzet>
-
-    Tags:
-
-        #tutorial
-
-Also, in `pyzet show` you can output other information like URLs or
-Markdown relative links. See more with `pyzet show -h`.
-
-If you made a typo, you can edit your zettel with `pyzet edit` command.
+Now, you can run `pyzet edit` to open your once more.
+Here you can edit it.
 
 Now, let's make a second zettel with `pyzet add`:
 
@@ -137,20 +116,10 @@ Tags:
     #tutorial #example-tag
 ```
 
-Again, you can show it with `pyzet show text`:
-
-    $ pyzet show text
-    ============================ 20220123233028 ============================
-    # This is my second zettel
-
-    A short one :D
-
-    Tags:
-
-        #tutorial #example-tag
+Again, you can show it with `pyzet edit`.
 
 You might ask, "well, how can I show the first zettel now?". The
-behavior of `pyzet show` is simple: by default it shows the zettel with
+behavior of `pyzet edit` is simple: by default it shows the zettel with
 the highest ID (i.e. the last one). To see older zettels, you have to
 provide an ID.
 
@@ -172,16 +141,12 @@ UTC+0 to make sure that each ID is unique (at least, as long as you
 don't try to create multiple zettels at the same second :p)
 
 You can see that my ID of the first zettel was `20220126232605`. We can
-now paste it to the `show text` command:
+now paste it to the `edit` command:
 
-    $ pyzet show text --id 20220126232605
+    $ pyzet edit --id 20220126232605
     ============================ 20220126232605 ============================
     # This is my first zettel created with pyzet
     <snip>
-
-We mentioned that you can edit a zettel with `pyzet edit` command. As
-you might guess, it also works with the last zettel by default, and you
-need to provide an ID to edit an older zettel.
 
 ## Rage quit option
 

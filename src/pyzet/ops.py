@@ -18,7 +18,6 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pyzet.constants as const
-from pyzet import show
 from pyzet import zettel
 from pyzet.config import Config
 from pyzet.exceptions import NotEnteredError
@@ -38,12 +37,11 @@ def decide_whats_next(args: AppState, config: Config) -> None:
     This function is intended to be called recursively, so it keeps the
     state of the program and input arguments intact.
     """
-    # TODO: how to enable user to switch pretty, tags &
-    # show_cmd during the session
+    # TODO: how to enable user to switch options during the session
     # https://github.com/tpwo/pyzet/issues/61
     while True:
         try:
-            choice = input("What's next? [p,e,d,g,G,a,q,?] ")
+            choice = input("What's next? [e,d,g,G,a,q,?] ")
         except KeyboardInterrupt as err:
             raise SystemExit('\naborting') from err
         else:
@@ -61,19 +59,16 @@ def decide_whats_next(args: AppState, config: Config) -> None:
 
 
 def _decide(choice: str, args: AppState, config: Config) -> None:
-    if choice == 'p':
-        show.command(args, config)
-    elif choice == 'e':
+    if choice == 'e':
         edit_zettel(args, config)
     elif choice == 'd':
         remove_zettel(args, config)
     elif choice in {'g', 'G'}:
-        args.show_cmd = 'text'
         args.id = None
         args.ignore_case = choice == 'G'
         args.patterns = _get_grep_patterns()
         zettel.get_from_grep(args, config)
-        show.command(args, config)
+        edit_zettel(args, config)
     elif choice == 'a':
         add_zettel(args, config)
     elif choice == 'q':
@@ -96,7 +91,6 @@ def _get_grep_patterns() -> list[str]:
 
 def _get_help_msg(args: AppState) -> str:
     help_msg_with_id = """\
-p - print current note
 e - edit current note
 d - delete current note
 g - grep for other notes
@@ -106,7 +100,6 @@ q - quit
 ? - print help
 """
     help_msg_with_patterns = """\
-p - print one of matching notes
 e - edit one of matching notes
 d - delete one of matching notes
 g - grep for other notes
