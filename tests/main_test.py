@@ -12,7 +12,7 @@ from pyzet.main import main
 from tests.conftest import TEST_CFG
 
 
-@pytest.fixture()
+@pytest.fixture
 def _set_info_lvl(caplog):
     caplog.set_level(logging.INFO)
 
