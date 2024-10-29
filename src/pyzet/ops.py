@@ -315,9 +315,13 @@ def remove_zettel(args: AppState, config: Config) -> None:
         f'{zet.id} `{zet.title}` will be deleted including all files '
         'that might be inside. Are you sure? (y/N): '
     )
-    if input(prompt) != 'y':
-        print('aborting')
-        raise NotEnteredError
+    try:
+        if input(prompt) != 'y':
+            print('aborting')
+            raise NotEnteredError
+    except KeyboardInterrupt:
+        print('\naborting')
+        raise NotEnteredError from KeyboardInterrupt
 
     # All files in given zettel folder are removed one by one. This
     # might be slower than shutil.rmtree() but gives nice log entry for
