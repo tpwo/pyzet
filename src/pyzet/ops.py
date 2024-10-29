@@ -40,6 +40,7 @@ def decide_whats_next(args: AppState, config: Config) -> None:
     """
     # TODO: how to enable user to switch pretty, tags &
     # show_cmd during the session
+    # https://github.com/tpwo/pyzet/issues/61
     while True:
         try:
             choice = input("What's next? [p,e,d,g,G,a,q,?] ")
