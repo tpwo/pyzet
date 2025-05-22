@@ -93,7 +93,7 @@ Then you can easily run:
     twine check dist/*   # checks if the build isn't completely broken
     twine upload dist/*  # asks for username and password
 
-It's best to use token (`__token__` as username) for the last command.
+Make sure to generate an API token in PyPI.org in order to upload the new version.
 
 ## Inspiration and further reading
 
