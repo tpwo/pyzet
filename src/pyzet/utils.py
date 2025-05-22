@@ -7,9 +7,9 @@ import shutil
 import subprocess
 import sys
 from typing import TYPE_CHECKING
-from typing import Iterable
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
     from pathlib import Path
 
     from pyzet.config import Config

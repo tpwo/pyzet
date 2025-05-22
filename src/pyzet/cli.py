@@ -9,12 +9,12 @@ from dataclasses import dataclass
 from datetime import datetime
 from datetime import timezone
 from typing import TYPE_CHECKING
-from typing import Iterable
 from typing import TypeVar
 
 import pyzet.constants as const
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
     from pathlib import Path
 
 
