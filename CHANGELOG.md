@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.12.0] -- 2025-05-22
+
 ### Added
 
 * `pyzet query` command which lists zettels which titles (not *contents*) match provided patterns.
@@ -20,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 * BREAKING CHANGE: `pyzet show` command and the concept of printing zettel. Instead, always open them in a configured editor.
 * BREAKING CHANGE: `pyzet print` command which was a shorhand for `pyzet show text`.
+* Support for Python 3.8
 
 ## [0.11.0] -- 2024-01-17
 
@@ -173,7 +176,8 @@ Initial release.
 
 <!-- Links -->
 
-[Unreleased]: https://github.com/tpwo/pyzet/compare/v0.11.0...HEAD
+[Unreleased]: https://github.com/tpwo/pyzet/compare/v0.12.0...HEAD
+[0.12.0]: https://github.com/tpwo/pyzet/releases/tag/v0.12.0
 [0.11.0]: https://github.com/tpwo/pyzet/releases/tag/v0.11.0
 [0.10.0]: https://github.com/tpwo/pyzet/releases/tag/v0.10.0
 [0.9.0]: https://github.com/tpwo/pyzet/releases/tag/v0.9.0
