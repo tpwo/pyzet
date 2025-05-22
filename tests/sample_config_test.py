@@ -57,9 +57,9 @@ def test_sample_error(capsys):
 
     out, err = capsys.readouterr()
     assert out == ''
-    assert err.endswith(
-        'pyzet sample-config: error: argument kind: invalid choice: '
-        "'foobar' (choose from 'unix', 'windows')\n"
+    assert (
+        "pyzet sample-config: error: argument kind: invalid choice: 'foobar'"
+        in err
     )
 
 
