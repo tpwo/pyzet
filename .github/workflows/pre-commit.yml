@@ -16,6 +16,8 @@ jobs:
     - uses: actions/checkout@v4
     - uses: astral-sh/setup-uv@v5
     - uses: actions/setup-python@v4
+      with:
+        python-version: 3.13
     - name: Install pre-commit
       run: uv tool install pre-commit --with pre-commit-uv
     - name: Install hooks
