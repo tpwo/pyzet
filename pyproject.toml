@@ -15,7 +15,7 @@ classifiers = [
 ]
 keywords = ["cli", "git", "markdown", "notes", "zettelkasten"]
 urls = {Homepage = "https://github.com/tpwo/pyzet"}
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = ["pyyaml>=6.0"]
 
 [project.readme]
