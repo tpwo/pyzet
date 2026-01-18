@@ -148,9 +148,9 @@ def test_list(capsys):
 
     out, err = capsys.readouterr()
     assert out == (
-        '20211016205158 -- Zet test entry\n'
-        '20211016223643 -- Another zet test entry\n'
         '20220101220852 -- Zettel with UTF-8\n'
+        '20211016223643 -- Another zet test entry\n'
+        '20211016205158 -- Zet test entry\n'
     )
     assert err == ''
 
@@ -160,9 +160,9 @@ def test_list_reverse(capsys):
 
     out, err = capsys.readouterr()
     assert out == (
-        '20220101220852 -- Zettel with UTF-8\n'
-        '20211016223643 -- Another zet test entry\n'
         '20211016205158 -- Zet test entry\n'
+        '20211016223643 -- Another zet test entry\n'
+        '20220101220852 -- Zettel with UTF-8\n'
     )
     assert err == ''
 
@@ -172,9 +172,9 @@ def test_list_pretty(capsys):
 
     out, err = capsys.readouterr()
     assert out == (
-        '2021-10-16 20:51:58 -- Zet test entry\n'
-        '2021-10-16 22:36:43 -- Another zet test entry\n'
         '2022-01-01 22:08:52 -- Zettel with UTF-8\n'
+        '2021-10-16 22:36:43 -- Another zet test entry\n'
+        '2021-10-16 20:51:58 -- Zet test entry\n'
     )
     assert err == ''
 
@@ -184,9 +184,9 @@ def test_list_pretty_reverse(capsys):
 
     out, err = capsys.readouterr()
     assert out == (
-        '2022-01-01 22:08:52 -- Zettel with UTF-8\n'
-        '2021-10-16 22:36:43 -- Another zet test entry\n'
         '2021-10-16 20:51:58 -- Zet test entry\n'
+        '2021-10-16 22:36:43 -- Another zet test entry\n'
+        '2022-01-01 22:08:52 -- Zettel with UTF-8\n'
     )
     assert err == ''
 
@@ -196,10 +196,10 @@ def test_list_tags(capsys):
 
     out, err = capsys.readouterr()
     assert out == (
+        '20220101220852 -- Zettel with UTF-8\n'
+        '20211016223643 -- Another zet test entry  [#test-tag]\n'
         '20211016205158 -- Zet test entry  '
         '[#another-tag #tag-after-two-spaces #test-tag]\n'
-        '20211016223643 -- Another zet test entry  [#test-tag]\n'
-        '20220101220852 -- Zettel with UTF-8\n'
     )
     assert err == ''
 
@@ -209,10 +209,10 @@ def test_list_tags_reverse(capsys):
 
     out, err = capsys.readouterr()
     assert out == (
-        '20220101220852 -- Zettel with UTF-8\n'
-        '20211016223643 -- Another zet test entry  [#test-tag]\n'
         '20211016205158 -- Zet test entry  '
         '[#another-tag #tag-after-two-spaces #test-tag]\n'
+        '20211016223643 -- Another zet test entry  [#test-tag]\n'
+        '20220101220852 -- Zettel with UTF-8\n'
     )
     assert err == ''
 
@@ -222,10 +222,10 @@ def test_list_tags_pretty(capsys):
 
     out, err = capsys.readouterr()
     assert out == (
+        '2022-01-01 22:08:52 -- Zettel with UTF-8\n'
+        '2021-10-16 22:36:43 -- Another zet test entry  [#test-tag]\n'
         '2021-10-16 20:51:58 -- Zet test entry  '
         '[#another-tag #tag-after-two-spaces #test-tag]\n'
-        '2021-10-16 22:36:43 -- Another zet test entry  [#test-tag]\n'
-        '2022-01-01 22:08:52 -- Zettel with UTF-8\n'
     )
     assert err == ''
 
@@ -235,9 +235,9 @@ def test_list_link(capsys):
 
     out, err = capsys.readouterr()
     assert out == (
-        '* [20211016205158](../20211016205158) Zet test entry\n'
-        '* [20211016223643](../20211016223643) Another zet test entry\n'
         '* [20220101220852](../20220101220852) Zettel with UTF-8\n'
+        '* [20211016223643](../20211016223643) Another zet test entry\n'
+        '* [20211016205158](../20211016205158) Zet test entry\n'
     )
     assert err == ''
 
@@ -247,9 +247,9 @@ def test_list_link_reverse(capsys):
 
     out, err = capsys.readouterr()
     assert out == (
-        '* [20220101220852](../20220101220852) Zettel with UTF-8\n'
-        '* [20211016223643](../20211016223643) Another zet test entry\n'
         '* [20211016205158](../20211016205158) Zet test entry\n'
+        '* [20211016223643](../20211016223643) Another zet test entry\n'
+        '* [20220101220852](../20220101220852) Zettel with UTF-8\n'
     )
     assert err == ''
 
@@ -286,7 +286,14 @@ def test_tags(capsys):
     main([*TEST_CFG, 'tags'])
 
     out, err = capsys.readouterr()
-    assert out == '1\t#another-tag\n1\t#tag-after-two-spaces\n2\t#test-tag\n'
+    assert (
+        out
+        == """\
+2\t#test-tag
+1\t#another-tag
+1\t#tag-after-two-spaces
+"""
+    )
     assert err == ''
 
 
@@ -294,7 +301,14 @@ def test_tags_reverse(capsys):
     main([*TEST_CFG, 'tags', '--reverse'])
 
     out, err = capsys.readouterr()
-    assert out == '2\t#test-tag\n1\t#tag-after-two-spaces\n1\t#another-tag\n'
+    assert (
+        out
+        == """\
+1\t#another-tag
+1\t#tag-after-two-spaces
+2\t#test-tag
+"""
+    )
     assert err == ''
 
 

@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+### Added
+
+* Long output of pyzet commands is now displayed via a pager. Default manpager is used for that (configured via `MANPAGER` env var).
+* BREAKING CHANGE: because of the above, now the zettels are displayed with newest at the top, and tags are displayed with the most popular at the top. When pager is opened its cursor is at the top which was the reason for this change.
+
 ### Changed
 
 * Default editor is no longer hard-coded, but it's taken from `EDITOR` or `VISUAL` env variables. It still can be overwritten using `editor` field in the config file.

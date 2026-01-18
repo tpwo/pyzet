@@ -25,6 +25,7 @@ from pyzet.exceptions import NotEnteredError
 from pyzet.utils import call_git
 from pyzet.utils import get_git_output
 from pyzet.utils import get_git_remote_url
+from pyzet.utils import page_output
 
 if TYPE_CHECKING:
     from pyzet.cli import AppState
@@ -96,10 +97,18 @@ def get_remote_url(args: AppState, config: Config) -> None:
 
 
 def list_zettels(args: AppState, path: Path) -> None:
-    for zet in zettel.get_all(
-        Path(path, const.ZETDIR), is_reversed=args.reverse
-    ):
-        print(zettel.get_repr(zet, args))
+    """Show all zettels from a given repo.
+
+    By default they're displayed in a descending order, but it can be reversed.
+    """
+    lines = [
+        zettel.get_repr(zet, args)
+        for zet in zettel.get_all(
+            Path(path, const.ZETDIR), is_reversed=args.reverse
+        )
+    ]
+    if lines:
+        page_output('\n'.join(lines))
 
 
 def clean_zet_repo(
@@ -319,11 +328,21 @@ def _commit_zettel(config: Config, zettel_path: Path, message: str) -> None:
 
 
 def list_tags(repo: Path, *, is_reversed: bool) -> None:
-    tags = _get_tags(repo)
+    """Show all tags from a given repo along with their count.
+
+    By default they're displayed in a descending order of the count, but it can
+    be reversed.
+
+    Regardless of this option, tags with the same number of usages are always
+    displayed alphabetically.
+    """
+    tags = _get_tags(repo, is_reversed=is_reversed)
     target = (
-        tags.most_common() if is_reversed else reversed(tags.most_common())
+        reversed(tags.most_common()) if is_reversed else tags.most_common()
     )
-    print(*(f'{occurrences}\t#{tag}' for tag, occurrences in target), sep='\n')
+    lines = [f'{occurrences}\t#{tag}' for tag, occurrences in target]
+    if lines:
+        page_output('\n'.join(lines))
 
 
 def info(config: Config) -> None:
@@ -368,15 +387,15 @@ def _get_wc_output(config: Config) -> tuple[int, int, int]:
     return int(lines), int(words), int(bytes_)
 
 
-def _get_tags(repo: Path) -> Counter[str]:
+def _get_tags(repo: Path, *, is_reversed: bool = False) -> Counter[str]:
     zettels = zettel.get_all(Path(repo, const.ZETDIR))
     all_tags = itertools.chain.from_iterable(
         t for t in (z.tags for z in zettels)
     )
-    # Chain is reverse sorted for the correct alphabetical displaying of
+    # Chain from above is now sorted for the correct alphabetical displaying of
     # tag counts. This is because Counter's most_common() method
     # remembers the insertion order.
-    return Counter(sorted(all_tags, reverse=True))
+    return Counter(sorted(all_tags, reverse=is_reversed))
 
 
 def _count_tags(repo: Path) -> int:

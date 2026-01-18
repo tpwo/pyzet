@@ -36,11 +36,15 @@ class Zettel(NamedTuple):
 
 
 def get_all(path: Path, *, is_reversed: bool = False) -> list[Zettel]:
-    """Get all zettels from a given repo."""
+    """Get all zettels from a given repo.
+
+    First zettel in the list is the newest one (the last one added),
+    but it can be reversed with `is_reversed`.
+    """
     if not path.is_dir():
         raise SystemExit(f"ERROR: folder {path} doesn't exist.")
     items: list[Zettel] = []
-    for item in sorted(path.iterdir(), reverse=is_reversed):
+    for item in sorted(path.iterdir(), reverse=not is_reversed):
         if item.is_dir():
             try:
                 items.append(get_from_dir(item))
@@ -146,7 +150,7 @@ def get_from_id(id_: str, repo: Path) -> Zettel:
 
 def get_last(repo: Path) -> Zettel:
     """Get the last zettel from a given repo."""
-    return get_all(Path(repo, const.ZETDIR), is_reversed=True)[0]
+    return get_all(Path(repo, const.ZETDIR), is_reversed=False)[0]
 
 
 def get_from_dir(dirpath: Path) -> Zettel:

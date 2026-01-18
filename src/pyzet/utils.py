@@ -4,6 +4,7 @@ import functools
 import io
 import logging
 import os
+import pydoc
 import shutil
 import subprocess
 import sys
@@ -143,3 +144,31 @@ def get_default_editor() -> str:
                 'ERROR: cannot get the default editor\n'
                 f'Define `EDITOR` or `VISUAL` env var or configure `editor` in `{DEFAULT_CFG_LOCATION}`.'
             )
+
+
+def page_output(text: str) -> None:
+    """Display text in a pager only if output is longer than terminal height.
+
+    Replicates the `-F` / `--quit-if-one-screen` option from less, i.e.
+    automatically exits/prints directly if the entire file can be displayed on
+    the first screen. Uses the system pager (less, more, etc.) if available and
+    output is longer than terminal height. Otherwise, prints directly to
+    stdout.
+    """
+    lines = text.splitlines()
+
+    # NOTE: This can fail if not running in interactive terminal (e.g. CI), but
+    # now it's not called in this use cases.
+    _, terminal_height = shutil.get_terminal_size()
+
+    # Terminal height minus one for command prompt and one for safety margin
+    available_height = max(terminal_height - 2, 1)
+
+    if len(lines) <= available_height:
+        # Output fits on screen, print directly without paging
+        print(text)
+    else:
+        # This is not documented, but works out of the box without running any
+        # subprocesses and looking at env variables. Reference:
+        # https://stackoverflow.com/a/18234081/14458327
+        pydoc.pager(text)

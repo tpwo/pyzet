@@ -131,8 +131,8 @@ The simplest way is to show a list of all zettels, and copy it. You can
 do it with `pyzet list`:
 
     $ pyzet list
-    20220126232605 -- This is my first zettel created with pyzet
     20220126232716 -- This is my second zettel
+    20220126232605 -- This is my first zettel created with pyzet
 
 BTW, these numbers are not random. They actually follow special
 timestamp format that consists of the current year, month, day, hour,

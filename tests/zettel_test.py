@@ -16,10 +16,10 @@ def test_get_all():
     actual = get_all(path=Path('testing/zet', const.ZETDIR))
     expected = [
         Zettel(
-            title='Zet test entry',
-            id='20211016205158',
-            tags=('another-tag', 'tag-after-two-spaces', 'test-tag'),
-            path=Path('testing/zet/docs/20211016205158/README.md'),
+            title='Zettel with UTF-8',
+            id='20220101220852',
+            tags=(),
+            path=Path('testing/zet/docs/20220101220852/README.md'),
         ),
         Zettel(
             title='Another zet test entry',
@@ -28,10 +28,10 @@ def test_get_all():
             path=Path('testing/zet/docs/20211016223643/README.md'),
         ),
         Zettel(
-            title='Zettel with UTF-8',
-            id='20220101220852',
-            tags=(),
-            path=Path('testing/zet/docs/20220101220852/README.md'),
+            title='Zet test entry',
+            id='20211016205158',
+            tags=('another-tag', 'tag-after-two-spaces', 'test-tag'),
+            path=Path('testing/zet/docs/20211016205158/README.md'),
         ),
     ]
     assert actual == expected
@@ -41,10 +41,10 @@ def test_get_all_reverse():
     actual = get_all(path=Path('testing/zet', const.ZETDIR), is_reversed=True)
     expected = [
         Zettel(
-            title='Zettel with UTF-8',
-            id='20220101220852',
-            tags=(),
-            path=Path('testing/zet/docs/20220101220852/README.md'),
+            title='Zet test entry',
+            id='20211016205158',
+            tags=('another-tag', 'tag-after-two-spaces', 'test-tag'),
+            path=Path('testing/zet/docs/20211016205158/README.md'),
         ),
         Zettel(
             title='Another zet test entry',
@@ -53,10 +53,10 @@ def test_get_all_reverse():
             path=Path('testing/zet/docs/20211016223643/README.md'),
         ),
         Zettel(
-            title='Zet test entry',
-            id='20211016205158',
-            tags=('another-tag', 'tag-after-two-spaces', 'test-tag'),
-            path=Path('testing/zet/docs/20211016205158/README.md'),
+            title='Zettel with UTF-8',
+            id='20220101220852',
+            tags=(),
+            path=Path('testing/zet/docs/20220101220852/README.md'),
         ),
     ]
     assert actual == expected
