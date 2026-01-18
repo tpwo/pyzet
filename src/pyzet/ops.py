@@ -289,7 +289,7 @@ def remove_zettel(args: AppState, config: Config) -> None:
         zet = zettel.get_last(config.repo)
     prompt = (
         f'{zet.id} `{zet.title}` will be deleted including all files '
-        'that might be inside. Are you sure? (y/N): '
+        'that might be inside.\nAre you sure? (y/N): '
     )
     try:
         if input(prompt) != 'y':
