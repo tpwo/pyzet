@@ -58,8 +58,9 @@ with Git, and they will be discussed later in this tutorial.
 
 Now, you can proceed with adding your first zettel with `pyzet add`.
 
-The text editor should open. By default, it will be Vim. If you prefer
-something else, you can add another line to the config file:
+The text editor should open. By default, it is editor defined by `EDITOR` or
+`VISUAL` env variables. If you prefer something else, you can add another line
+to the config file:
 
     editor: <path-to-your-editor>
 

@@ -18,8 +18,6 @@ from pyzet.ops import init_repo
 from pyzet.ops import list_tags
 from pyzet.ops import list_zettels
 from pyzet.ops import remove_zettel
-from pyzet.sample_config import sample_config
-from pyzet.utils import call_git
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -43,7 +41,7 @@ def main(argv: list[str] | None = None) -> int:
 
 def _parse_args(args: AppState) -> int:
     if args.command == 'sample-config':
-        sample_config(args.kind)
+        print(utils.sample_config())
         return 0
 
     cfg = config.get(args)
@@ -69,14 +67,14 @@ def _parse_args(args: AppState) -> int:
     elif args.command == 'grep':
         grep(args, cfg)
     elif args.command in {'status', 'push'}:
-        call_git(cfg, args.command, args.options)
+        utils.call_git(cfg, args.command, args.options)
     elif args.command == 'remote':
         get_remote_url(args, cfg)
     elif args.command == 'pull':
         # --rebase is used to maintain a linear history without merges,
         # as this seems to be a reasonable approach in ZK repo that is
         # usually personal.
-        call_git(cfg, 'pull', ('--rebase',))
+        utils.call_git(cfg, 'pull', ('--rebase',))
     elif args.command == 'clean':
         clean_zet_repo(cfg.repo, is_dry_run=args.dry_run, is_force=args.force)
     elif args.command == 'info':

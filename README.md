@@ -47,8 +47,8 @@ editor_args: []
 
 * `repo`: the location of the ZK Git repo
 
-* `editor` (default: `/usr/bin/vim`): path to the editor used to add and
-  edit zettels
+* `editor`: use it to overwrite the default editor (by default we refer to
+  `EDITOR` and `VISUAL` env variables)
 
 * `editor_args` (default: empty): optional list of CLI arguments which
   should be passed to the editor

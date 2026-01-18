@@ -3,10 +3,13 @@ from __future__ import annotations
 import functools
 import io
 import logging
+import os
 import shutil
 import subprocess
 import sys
 from typing import TYPE_CHECKING
+
+from pyzet.constants import DEFAULT_CFG_LOCATION
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -108,3 +111,35 @@ def compute_log_level(verbosity: int) -> int:
     min_log_level = 10  # match DEBUG level
     verbosity_step = 10
     return max(default_log_level - verbosity_step * verbosity, min_log_level)
+
+
+def sample_config() -> str:
+    return f"""\
+# See https://github.com/tpwo/pyzet for more information.
+#
+# Put this file at {DEFAULT_CFG_LOCATION}
+# Below options use global paths, but feel free
+# to use program name directly if it's on your PATH.
+repo: ~/zet
+editor: {get_default_editor()}
+editor_args: []\
+"""
+
+
+def get_default_editor() -> str:
+    """Get default editor PATH.
+
+    On Windows it's the default path to Vim bundled with Git for Windows.
+
+    On different systems (i.e. Unix) we refer to `EDITOR`, and then `VISUAL` env vars.
+    """
+    if editor := os.getenv('EDITOR'):
+        return editor
+    else:
+        if visual := os.getenv('VISUAL'):
+            return visual
+        else:
+            raise SystemExit(
+                'ERROR: cannot get the default editor\n'
+                f'Define `EDITOR` or `VISUAL` env var or configure `editor` in `{DEFAULT_CFG_LOCATION}`.'
+            )

@@ -9,7 +9,7 @@ from typing import NamedTuple
 
 import yaml
 
-import pyzet.constants as const
+from pyzet.utils import get_default_editor
 
 if TYPE_CHECKING:
     from pyzet.cli import AppState
@@ -69,7 +69,8 @@ def _process_yaml(
                 f" '{Path(config_file).as_posix()}'."
             ) from err
 
-    editor = yaml_cfg.get('editor', const.VIM_PATH)
+    if not (editor := yaml_cfg.get('editor')):
+        editor = get_default_editor()
     assert isinstance(editor, str)
 
     editor_args = yaml_cfg.get('editor_args', [])

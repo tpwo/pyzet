@@ -41,7 +41,6 @@ class AppState:
     name: str
     branch: str
     verbose: int
-    kind: str
 
 
 T = TypeVar('T')
@@ -77,7 +76,6 @@ def populate_args(args_cli: Namespace, parser: ArgumentParser) -> AppState:
         name=get_initial('name'),
         branch=get_initial('branch'),
         verbose=get_initial('verbose'),
-        kind=get_initial('kind'),
     )
     logging.info(f'populate_args: {state}')
     return state
@@ -245,10 +243,9 @@ def get_parser() -> ArgumentParser:
         help="grep patterns, pass 'git grep' options after '--'",
     )
 
-    sample_config_parser = subparsers.add_parser(
+    subparsers.add_parser(
         'sample-config', help=f'produce a sample {const.CONFIG_FILE} file'
     )
-    sample_config_parser.add_argument('kind', choices=('unix', 'windows'))
 
     return parser
 
