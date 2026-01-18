@@ -190,7 +190,7 @@ def get_repr(zet: Zettel, args: AppState) -> str:
     tags = ''
     if args.tags:
         with contextlib.suppress(ValueError):
-            tags = f'  [{get_tags_str(zet)}]'
+            tags = '\n' + 4 * ' ' + get_tags_str(zet)
     if args.pretty:
         return f'{get_timestamp(zet.id)} -- {zet.title}{tags}'
     else:

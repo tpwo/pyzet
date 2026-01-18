@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 * Default editor is no longer hard-coded, but it's taken from `EDITOR` or `VISUAL` env variables. It still can be overwritten using `editor` field in the config file.
 * BREAKING CHANGE: `git grep` output is now reversed when selecting zettels using grep patterns. This causes newer notes to have lower IDs. They are also displayed at the top.
 * Use `--pretty` output by default which now can be disabled with `--no-pretty` flag.
+* Update formatting of `pyzet list --tags`. Tags are now displayed in a new line with 4 space of indentation.
 
 ### Fixed
 
