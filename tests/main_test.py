@@ -148,21 +148,9 @@ def test_list(capsys):
 
     out, err = capsys.readouterr()
     assert out == (
-        '20220101220852 -- Zettel with UTF-8\n'
-        '20211016223643 -- Another zet test entry\n'
-        '20211016205158 -- Zet test entry\n'
-    )
-    assert err == ''
-
-
-def test_list_reverse(capsys):
-    main([*TEST_CFG, 'list', '--reverse'])
-
-    out, err = capsys.readouterr()
-    assert out == (
-        '20211016205158 -- Zet test entry\n'
-        '20211016223643 -- Another zet test entry\n'
-        '20220101220852 -- Zettel with UTF-8\n'
+        '2022-01-01 22:08:52 -- Zettel with UTF-8\n'
+        '2021-10-16 22:36:43 -- Another zet test entry\n'
+        '2021-10-16 20:51:58 -- Zet test entry\n'
     )
     assert err == ''
 
@@ -179,6 +167,54 @@ def test_list_pretty(capsys):
     assert err == ''
 
 
+def test_list_no_pretty(capsys):
+    main([*TEST_CFG, 'list', '--no-pretty'])
+
+    out, err = capsys.readouterr()
+    assert out == (
+        '20220101220852 -- Zettel with UTF-8\n'
+        '20211016223643 -- Another zet test entry\n'
+        '20211016205158 -- Zet test entry\n'
+    )
+    assert err == ''
+
+
+def test_list_reverse(capsys):
+    main([*TEST_CFG, 'list', '--reverse'])
+
+    out, err = capsys.readouterr()
+    assert out == (
+        '2021-10-16 20:51:58 -- Zet test entry\n'
+        '2021-10-16 22:36:43 -- Another zet test entry\n'
+        '2022-01-01 22:08:52 -- Zettel with UTF-8\n'
+    )
+    assert err == ''
+
+
+def test_list_reverse_pretty(capsys):
+    main([*TEST_CFG, 'list', '--reverse', '--pretty'])
+
+    out, err = capsys.readouterr()
+    assert out == (
+        '2021-10-16 20:51:58 -- Zet test entry\n'
+        '2021-10-16 22:36:43 -- Another zet test entry\n'
+        '2022-01-01 22:08:52 -- Zettel with UTF-8\n'
+    )
+    assert err == ''
+
+
+def test_list_reverse_no_pretty(capsys):
+    main([*TEST_CFG, 'list', '--reverse', '--no-pretty'])
+
+    out, err = capsys.readouterr()
+    assert out == (
+        '20211016205158 -- Zet test entry\n'
+        '20211016223643 -- Another zet test entry\n'
+        '20220101220852 -- Zettel with UTF-8\n'
+    )
+    assert err == ''
+
+
 def test_list_pretty_reverse(capsys):
     main([*TEST_CFG, 'list', '--pretty', '--reverse'])
 
@@ -191,8 +227,8 @@ def test_list_pretty_reverse(capsys):
     assert err == ''
 
 
-def test_list_tags(capsys):
-    main([*TEST_CFG, 'list', '--tags'])
+def test_list_tags_no_pretty(capsys):
+    main([*TEST_CFG, 'list', '--tags', '--no-pretty'])
 
     out, err = capsys.readouterr()
     assert out == (
@@ -204,8 +240,8 @@ def test_list_tags(capsys):
     assert err == ''
 
 
-def test_list_tags_reverse(capsys):
-    main([*TEST_CFG, 'list', '--tags', '--reverse'])
+def test_list_tags_reverse_no_pretty(capsys):
+    main([*TEST_CFG, 'list', '--tags', '--reverse', '--no-pretty'])
 
     out, err = capsys.readouterr()
     assert out == (
@@ -213,6 +249,19 @@ def test_list_tags_reverse(capsys):
         '[#another-tag #tag-after-two-spaces #test-tag]\n'
         '20211016223643 -- Another zet test entry  [#test-tag]\n'
         '20220101220852 -- Zettel with UTF-8\n'
+    )
+    assert err == ''
+
+
+def test_list_tags(capsys):
+    main([*TEST_CFG, 'list', '--tags'])
+
+    out, err = capsys.readouterr()
+    assert out == (
+        '2022-01-01 22:08:52 -- Zettel with UTF-8\n'
+        '2021-10-16 22:36:43 -- Another zet test entry  [#test-tag]\n'
+        '2021-10-16 20:51:58 -- Zet test entry  '
+        '[#another-tag #tag-after-two-spaces #test-tag]\n'
     )
     assert err == ''
 
@@ -230,8 +279,8 @@ def test_list_tags_pretty(capsys):
     assert err == ''
 
 
-def test_list_link(capsys):
-    main([*TEST_CFG, 'list', '--link'])
+def test_list_link_no_pretty(capsys):
+    main([*TEST_CFG, 'list', '--link', '--no-pretty'])
 
     out, err = capsys.readouterr()
     assert out == (
@@ -242,8 +291,8 @@ def test_list_link(capsys):
     assert err == ''
 
 
-def test_list_link_reverse(capsys):
-    main([*TEST_CFG, 'list', '--link', '--reverse'])
+def test_list_link_reverse_no_pretty(capsys):
+    main([*TEST_CFG, 'list', '--link', '--reverse', '--no-pretty'])
 
     out, err = capsys.readouterr()
     assert out == (

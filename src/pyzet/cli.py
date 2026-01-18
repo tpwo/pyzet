@@ -160,10 +160,10 @@ def get_parser() -> ArgumentParser:
 
     list_parser = subparsers.add_parser('list', help='list all zettels')
     list_parser.add_argument(
-        '-p',
         '--pretty',
-        action='store_true',
-        help='use prettier format for printing date and time',
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help='enable/disable prettier format for printing date and time (default: enabled)',
     )
     list_parser.add_argument(
         '--tags',
@@ -287,10 +287,10 @@ def _add_git_cmd_options(parser: ArgumentParser, cmd_name: str) -> None:
 def add_pattern_args(parser: ArgumentParser) -> None:
     parser.add_argument('patterns', nargs='*', help='grep patterns')
     parser.add_argument(
-        '-p',
         '--pretty',
-        action='store_true',
-        help='use prettier format for printing date and time',
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help='enable/disable prettier format for printing date and time (default: enabled)',
     )
     parser.add_argument(
         '--tags',
