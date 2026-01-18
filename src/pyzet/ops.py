@@ -91,11 +91,12 @@ def _open_multiple_matches(matches: dict[int, Zettel], config: Config) -> int:
             return 0
 
 
-def get_remote_url(args: AppState, config: Config) -> None:
+def get_remote_url(args: AppState, config: Config) -> int:
     print(get_git_remote_url(config, args.name))
+    return 0
 
 
-def list_zettels(args: AppState, path: Path) -> None:
+def list_zettels(args: AppState, path: Path) -> int:
     """Show all zettels from a given repo.
 
     By default they're displayed in a descending order, but it can be reversed.
@@ -109,10 +110,12 @@ def list_zettels(args: AppState, path: Path) -> None:
     if lines:
         page_output('\n'.join(lines))
 
+    return 0
+
 
 def clean_zet_repo(
     repo_path: Path, *, is_dry_run: bool, is_force: bool
-) -> None:
+) -> int:
     is_any_empty = False
     for folder in sorted(
         Path(repo_path, const.ZETDIR).iterdir(), reverse=True
@@ -126,9 +129,10 @@ def clean_zet_repo(
                 print(f'will delete {folder.name}')
     if is_any_empty and not is_force:
         print("use '--force' to proceed with deletion")
+    return 0
 
 
-def init_repo(config: Config, branch_name: str) -> None:
+def init_repo(config: Config, branch_name: str) -> int:
     """Initialize a git repository in a given path."""
     # We create both main ZK folder, and the folder that keeps all the
     # zettels. This is split, as each one can raise an Exception, and
@@ -137,6 +141,7 @@ def init_repo(config: Config, branch_name: str) -> None:
     _create_empty_folder(Path(config.repo, const.ZETDIR))
     call_git(config, 'init', ('--initial-branch', branch_name))
     logging.info(f"init: create git repo '{config.repo.absolute()}'")
+    return 0
 
 
 def _create_empty_folder(path: Path) -> None:
@@ -159,7 +164,7 @@ def _is_empty(folder: Path) -> bool:
     return not any(Path(folder).iterdir())
 
 
-def add_zettel(args: AppState, config: Config) -> None:
+def add_zettel(config: Config) -> int:
     """Add zettel and commits changes with zettel title as the message."""
     id_ = datetime.now(tz=timezone.utc).strftime(const.ZULU_DATETIME_FORMAT)
 
@@ -186,10 +191,11 @@ def add_zettel(args: AppState, config: Config) -> None:
         _commit_zettel(config, zettel_path, zet.title)
         logging.info(f"add: zettel created '{zettel_path.absolute()}'")
         print(f'{id_} was created')
-        args.id = id_
+
+    return 0
 
 
-def edit_zettel(args: AppState, config: Config) -> None:
+def edit_zettel(args: AppState, config: Config) -> int:
     """Edits zettel and commits changes with 'ED:' in the message."""
     if args.id is not None:
         zet = zettel.get_from_id(args.id, config.repo)
@@ -198,7 +204,6 @@ def edit_zettel(args: AppState, config: Config) -> None:
     else:
         zet = zettel.get_last(config.repo)
 
-    args.id = zet.id
     _open_file(zet.path, config)
 
     try:
@@ -231,6 +236,8 @@ def edit_zettel(args: AppState, config: Config) -> None:
                 print(f'{zet.id} was edited')
         else:
             print(f"{zet.id} wasn't modified")
+
+    return 0
 
 
 def _get_files_touched_last_commit(config: Config) -> bytes:
@@ -279,7 +286,7 @@ def _open_file(filename: Path, config: Config) -> None:
         ) from err
 
 
-def remove_zettel(args: AppState, config: Config) -> None:
+def remove_zettel(args: AppState, config: Config) -> int:
     """Remove zettel and commits changes with 'RM:' in the message."""
     if args.id is not None:
         zet = zettel.get_from_id(args.id, config.repo)
@@ -312,7 +319,8 @@ def remove_zettel(args: AppState, config: Config) -> None:
     zet.path.parent.rmdir()
     logging.info(f"remove: delete folder '{zet.path.parent}'")
     print(f'{zet.id} was removed')
-    args.id = None
+
+    return 0
 
 
 def _commit_zettel(config: Config, zettel_path: Path, message: str) -> None:
@@ -324,7 +332,7 @@ def _commit_zettel(config: Config, zettel_path: Path, message: str) -> None:
     )
 
 
-def list_tags(repo: Path, *, is_reversed: bool) -> None:
+def list_tags(repo: Path, *, is_reversed: bool) -> int:
     """Show all tags from a given repo along with their count.
 
     By default they're displayed in a descending order of the count, but it can
@@ -341,10 +349,13 @@ def list_tags(repo: Path, *, is_reversed: bool) -> None:
     if lines:
         page_output('\n'.join(lines))
 
+    return 0
 
-def info(config: Config) -> None:
+
+def info(config: Config) -> int:
     """Print info about ZK repo."""
     print(_get_info(config))
+    return 0
 
 
 def _get_info(config: Config) -> str:

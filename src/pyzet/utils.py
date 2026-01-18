@@ -24,12 +24,15 @@ def call_git(
     command: str,
     options: Iterable[str] = (),
     path: Path | None = None,
-) -> None:
+) -> int:
+    """Call git with a given command and return subprocess return code."""
     if path is None:
         path = config.repo
     cmd = (_get_git_bin(), '-C', path.as_posix(), command, *options)
     logging.debug('call_git: subprocess.run(%s)', cmd)
-    subprocess.run(cmd)
+    res = subprocess.run(cmd)
+
+    return res.returncode
 
 
 def get_git_remote_url(

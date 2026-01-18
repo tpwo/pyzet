@@ -76,13 +76,11 @@ def select_from_grep(
     if num_matches == 1:
         match = matches[START_COUNT_FROM]
         if skip_confirmation:
-            args.id = match.id
             return match
         else:
             print(f'[1] {get_repr(match, args)}')
             try:
                 if input('Continue? (Y/n): ') != 'n':
-                    args.id = match.id
                     return match
             except KeyboardInterrupt as err:
                 raise SystemExit('\naborting') from err
@@ -108,7 +106,6 @@ def select_from_grep(
                 raise SystemExit('\naborting')
             try:
                 idx = int(user_input)
-                args.id = matches[idx].id
                 return matches[idx]
             except (KeyError, ValueError):
                 print('Wrong ID provided!')

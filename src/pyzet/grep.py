@@ -12,14 +12,14 @@ if TYPE_CHECKING:
     from pyzet.config import Config
 
 
-def grep(args: AppState, config: Config) -> None:
+def grep(args: AppState, config: Config) -> int:
     grep_opts = _build_grep_options(
         line_number=args.line_number,
         title=args.title,
     )
     patterns = parse_grep_patterns(args.patterns)
     grep_opts.extend(patterns)
-    call_git(
+    return call_git(
         config,
         'grep',
         tuple(grep_opts),

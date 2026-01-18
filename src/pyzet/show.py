@@ -13,21 +13,21 @@ if TYPE_CHECKING:
     from pyzet.config import Config
 
 
-def url(args: AppState, config: Config) -> None:
+def url(args: AppState, config: Config) -> int:
     if args.id is not None:
         zet = zettel.get_from_id(args.id, config.repo)
     elif args.patterns:
         zet = zettel.select_from_grep(args, config, skip_confirmation=True)
     else:
         zet = zettel.get_last(config.repo)
-
-    args.id = zet.id
 
     remote = _remote_dot_git(get_git_remote_url(config, args.name))
     print(_get_zettel_url(remote, args.branch, zet.id))
 
+    return 0
 
-def mdlink(args: AppState, config: Config) -> None:
+
+def mdlink(args: AppState, config: Config) -> int:
     if args.id is not None:
         zet = zettel.get_from_id(args.id, config.repo)
     elif args.patterns:
@@ -35,9 +35,9 @@ def mdlink(args: AppState, config: Config) -> None:
     else:
         zet = zettel.get_last(config.repo)
 
-    args.id = zet.id
-
     print(get_md_link(zet))
+
+    return 0
 
 
 def _remote_dot_git(remote: str) -> str:

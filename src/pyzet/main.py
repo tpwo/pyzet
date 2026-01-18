@@ -46,35 +46,37 @@ def _parse_args(args: AppState) -> int:
     if args.command == 'query':
         return ops.query(args, cfg)
     elif args.command == 'add':
-        add_zettel(args, cfg)
+        return add_zettel(cfg)
     elif args.command == 'edit':
-        edit_zettel(args, cfg)
+        return edit_zettel(args, cfg)
     elif args.command == 'rm':
-        remove_zettel(args, cfg)
+        return remove_zettel(args, cfg)
     elif args.command == 'url':
-        show.url(args, cfg)
+        return show.url(args, cfg)
     elif args.command == 'mdlink':
-        show.mdlink(args, cfg)
+        return show.mdlink(args, cfg)
     elif args.command == 'init':
-        init_repo(cfg, args.initial_branch)
+        return init_repo(cfg, args.initial_branch)
     elif args.command == 'list':
-        list_zettels(args, cfg.repo)
+        return list_zettels(args, cfg.repo)
     elif args.command == 'tags':
-        list_tags(cfg.repo, is_reversed=args.reverse)
+        return list_tags(cfg.repo, is_reversed=args.reverse)
     elif args.command == 'grep':
-        grep(args, cfg)
+        return grep(args, cfg)
     elif args.command in {'status', 'push'}:
-        utils.call_git(cfg, args.command, args.options)
+        return utils.call_git(cfg, args.command, args.options)
     elif args.command == 'remote':
-        get_remote_url(args, cfg)
+        return get_remote_url(args, cfg)
     elif args.command == 'pull':
         # --rebase is used to maintain a linear history without merges,
         # as this seems to be a reasonable approach in ZK repo that is
         # usually personal.
-        utils.call_git(cfg, 'pull', ('--rebase',))
+        return utils.call_git(cfg, 'pull', ('--rebase',))
     elif args.command == 'clean':
-        clean_zet_repo(cfg.repo, is_dry_run=args.dry_run, is_force=args.force)
+        return clean_zet_repo(
+            cfg.repo, is_dry_run=args.dry_run, is_force=args.force
+        )
     elif args.command == 'info':
-        info(cfg)
-
-    return 0
+        return info(cfg)
+    else:
+        raise NotImplementedError

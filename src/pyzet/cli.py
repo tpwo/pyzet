@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from pathlib import Path
 
 
-@dataclass
+@dataclass(frozen=True)
 class AppState:
     """Represents the current state of the app."""
 
