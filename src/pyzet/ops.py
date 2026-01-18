@@ -284,7 +284,7 @@ def remove_zettel(args: AppState, config: Config) -> None:
     if args.id is not None:
         zet = zettel.get_from_id(args.id, config.repo)
     elif args.patterns:
-        zet = zettel.select_from_grep(args, config)
+        zet = zettel.select_from_grep(args, config, skip_confirmation=True)
     else:
         zet = zettel.get_last(config.repo)
     prompt = (

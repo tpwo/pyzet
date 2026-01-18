@@ -33,6 +33,12 @@ class Zettel(NamedTuple):
     path: Path
 
 
+# Define from which number we count zettels where user has to interactively
+# provide a number to e.g. open a given zettel. Currently it's 1 which seems to
+# be more user friendly.
+START_COUNT_FROM = 1
+
+
 def get_all(path: Path, *, is_reversed: bool = False) -> list[Zettel]:
     """Get all zettels from a given repo.
 
@@ -59,12 +65,31 @@ def get_all(path: Path, *, is_reversed: bool = False) -> list[Zettel]:
     return items
 
 
-def select_from_grep(args: AppState, config: Config) -> Zettel:
+def select_from_grep(
+    args: AppState, config: Config, *, skip_confirmation: bool = False
+) -> Zettel:
     matches = get_from_grep(args, config)
 
     num_matches = len(matches)
     confirmation_threshold = 50
-    if num_matches > confirmation_threshold:
+
+    if num_matches == 1:
+        match = matches[START_COUNT_FROM]
+        if skip_confirmation:
+            args.id = match.id
+            return match
+        else:
+            print(f'[1] {get_repr(match, args)}')
+            try:
+                if input('Continue? (Y/n): ') != 'n':
+                    args.id = match.id
+                    return match
+            except KeyboardInterrupt as err:
+                raise SystemExit('\naborting') from err
+            else:
+                raise SystemExit('aborting')
+
+    elif num_matches > confirmation_threshold:
         prompt = f'Are you sure to display {num_matches} matches? (y/N): '
         try:
             if input(prompt) != 'y':
@@ -75,16 +100,6 @@ def select_from_grep(args: AppState, config: Config) -> Zettel:
     zero_padding = len(str(num_matches))
     for idx, zet in matches.items():
         print(f'[{str(idx).zfill(zero_padding)}] {get_repr(zet, args)}')
-
-    if num_matches == 1:
-        try:
-            if input('Continue? (Y/n): ') != 'n':
-                args.id = matches[1].id
-                return matches[1]
-        except KeyboardInterrupt as err:
-            raise SystemExit('\naborting') from err
-        else:
-            raise SystemExit('aborting')
 
     while True:
         try:
@@ -118,7 +133,7 @@ def get_from_grep(args: AppState, config: Config) -> dict[int, Zettel]:
         raise SystemExit('No zettels found!') from err
 
     matches: dict[int, Zettel] = {}
-    for idx, filename in enumerate(out.splitlines(), start=1):
+    for idx, filename in enumerate(out.splitlines(), start=START_COUNT_FROM):
         matches[idx] = get(Path(config.repo, filename))
     return matches
 
