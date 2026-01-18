@@ -13,8 +13,6 @@ from typing import NamedTuple
 
 import pyzet.constants as const
 from pyzet.config import Config
-from pyzet.exceptions import NotEnteredError
-from pyzet.exceptions import NotFoundError
 from pyzet.grep import parse_grep_patterns
 from pyzet.utils import get_git_output
 
@@ -67,16 +65,12 @@ def select_from_grep(args: AppState, config: Config) -> Zettel:
     num_matches = len(matches)
     confirmation_threshold = 50
     if num_matches > confirmation_threshold:
-        prompt = (
-            f'Are you sure to continue with {num_matches} matches? (y/N): '
-        )
+        prompt = f'Are you sure to display {num_matches} matches? (y/N): '
         try:
             if input(prompt) != 'y':
-                print('aborting')
-                raise NotFoundError
+                raise SystemExit('aborting')
         except KeyboardInterrupt as err:
-            print('\naborting')
-            raise NotFoundError from err
+            raise SystemExit('\naborting') from err
 
     zero_padding = len(str(num_matches))
     for idx, zet in matches.items():
@@ -88,18 +82,15 @@ def select_from_grep(args: AppState, config: Config) -> Zettel:
                 args.id = matches[1].id
                 return matches[1]
         except KeyboardInterrupt as err:
-            print('\naborting')
-            raise NotEnteredError from err
+            raise SystemExit('\naborting') from err
         else:
-            print('aborting')
-            raise NotEnteredError
+            raise SystemExit('aborting')
 
     while True:
         try:
             user_input = input('#? ')
             if user_input == '':
-                print('aborting')
-                raise NotEnteredError
+                raise SystemExit('\naborting')
             try:
                 idx = int(user_input)
                 args.id = matches[idx].id
@@ -107,14 +98,12 @@ def select_from_grep(args: AppState, config: Config) -> Zettel:
             except (KeyError, ValueError):
                 print('Wrong ID provided!')
         except KeyboardInterrupt as err:
-            print('\naborting')
-            raise NotEnteredError from err
+            raise SystemExit('\naborting') from err
 
 
 def get_from_grep(args: AppState, config: Config) -> dict[int, Zettel]:
     if _patterns_empty(args.patterns):
-        print('Wrong value provided (empty or whitespace)!')
-        raise NotFoundError
+        raise SystemExit('Wrong value provided (empty or whitespace)!')
     opts = ['-I', '--all-match', '--name-only', '--ignore-case']
     opts.extend(
         [
@@ -126,8 +115,7 @@ def get_from_grep(args: AppState, config: Config) -> dict[int, Zettel]:
     try:
         out = get_git_output(config, 'grep', opts).decode()
     except subprocess.CalledProcessError as err:
-        print('No zettels found!')
-        raise NotFoundError from err
+        raise SystemExit('No zettels found!') from err
 
     matches: dict[int, Zettel] = {}
     for idx, filename in enumerate(out.splitlines(), start=1):

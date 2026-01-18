@@ -21,7 +21,6 @@ from typing import TYPE_CHECKING
 import pyzet.constants as const
 from pyzet import zettel
 from pyzet.config import Config
-from pyzet.exceptions import NotEnteredError
 from pyzet.utils import call_git
 from pyzet.utils import get_git_output
 from pyzet.utils import get_git_remote_url
@@ -294,11 +293,9 @@ def remove_zettel(args: AppState, config: Config) -> None:
     )
     try:
         if input(prompt) != 'y':
-            print('aborting')
-            raise NotEnteredError
-    except KeyboardInterrupt:
-        print('\naborting')
-        raise NotEnteredError from KeyboardInterrupt
+            raise SystemExit('aborting')
+    except KeyboardInterrupt as err:
+        raise SystemExit('\naborting') from err
 
     # All files in given zettel folder are removed one by one. This
     # might be slower than shutil.rmtree() but gives nice log entry for
