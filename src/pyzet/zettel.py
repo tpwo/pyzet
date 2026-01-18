@@ -129,8 +129,13 @@ def get_from_grep(args: AppState, config: Config) -> dict[int, Zettel]:
     except subprocess.CalledProcessError as err:
         raise SystemExit('No zettels found!') from err
 
+    # `git grep` output is alphabetical which means that oldest zettels will be
+    # the first showed. We want to reverse it, so matches with the smallest IDs
+    # are newest.
+    lines = reversed(out.splitlines())
+
     matches: dict[int, Zettel] = {}
-    for idx, filename in enumerate(out.splitlines(), start=START_COUNT_FROM):
+    for idx, filename in enumerate(lines, start=START_COUNT_FROM):
         matches[idx] = get(Path(config.repo, filename))
     return matches
 

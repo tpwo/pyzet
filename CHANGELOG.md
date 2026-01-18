@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### Changed
 
 * Default editor is no longer hard-coded, but it's taken from `EDITOR` or `VISUAL` env variables. It still can be overwritten using `editor` field in the config file.
+* BREAKING CHANGE: `git grep` output is now reversed when selecting zettels using grep patterns. This causes newer notes to have lower IDs. They are also displayed at the top.
 
 ### Fixed
 
