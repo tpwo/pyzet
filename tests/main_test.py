@@ -279,30 +279,6 @@ def test_list_tags_pretty(capsys):
     assert err == ''
 
 
-def test_list_link_no_pretty(capsys):
-    main([*TEST_CFG, 'list', '--link', '--no-pretty'])
-
-    out, err = capsys.readouterr()
-    assert out == (
-        '* [20220101220852](../20220101220852) Zettel with UTF-8\n'
-        '* [20211016223643](../20211016223643) Another zet test entry\n'
-        '* [20211016205158](../20211016205158) Zet test entry\n'
-    )
-    assert err == ''
-
-
-def test_list_link_reverse_no_pretty(capsys):
-    main([*TEST_CFG, 'list', '--link', '--reverse', '--no-pretty'])
-
-    out, err = capsys.readouterr()
-    assert out == (
-        '* [20211016205158](../20211016205158) Zet test entry\n'
-        '* [20211016223643](../20211016223643) Another zet test entry\n'
-        '* [20220101220852](../20220101220852) Zettel with UTF-8\n'
-    )
-    assert err == ''
-
-
 def test_list_warning_empty_folder(tmp_path, caplog):
     id_ = '20211016205158'
     Path(tmp_path, const.ZETDIR, id_).mkdir(parents=True)

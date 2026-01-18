@@ -171,13 +171,6 @@ def get_parser() -> ArgumentParser:
         help='show tags for each zettel',
     )
     list_parser.add_argument(
-        '-l',
-        '--link',
-        action='store_true',
-        help='print zettels as relative Markdown'
-        ' links for pasting in other zettels',
-    )
-    list_parser.add_argument(
         '-r',
         '--reverse',
         action='store_true',

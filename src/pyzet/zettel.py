@@ -193,12 +193,8 @@ def get_repr(zet: Zettel, args: AppState) -> str:
             tags = f'  [{get_tags_str(zet)}]'
     if args.pretty:
         return f'{get_timestamp(zet.id)} -- {zet.title}{tags}'
-    try:
-        if args.link:
-            return get_md_link(zet)
-    except AttributeError:  # 'Namespace' object has no attribute 'link'
-        pass
-    return f'{zet.id} -- {zet.title}{tags}'
+    else:
+        return f'{zet.id} -- {zet.title}{tags}'
 
 
 def get_timestamp(id_: str) -> str:

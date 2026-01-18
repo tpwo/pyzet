@@ -22,6 +22,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 * Correctly handle `^C` interrupts by displaying `aborting` stdout for the user. Previously unhandled exceptions were sometimes displayed.
 * Avoid confirmation in most cases when getting zettels from grep patterns, if there is only one found zettel. Now, confirmation to proceed is required only when external editor is opened, i.e. in `pyzet edit` command. All other commands are lightweight, so we proceed automatically. `pyzet remove` command has its own confirmation before deleting anything, so now we avoid double confirmations.
 
+### Removed
+
+* BREAKING CHANGE: remove `pyzet list --link` flag, as Markdown links can be generated with `pyzet mdlink` command.
+* Support for Python 3.9
+
 ## [0.12.0] -- 2025-05-22
 
 ### Added
