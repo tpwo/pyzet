@@ -71,7 +71,7 @@ def select_from_grep(
     matches = get_from_grep(args, config)
 
     num_matches = len(matches)
-    confirmation_threshold = 50
+    confirmation_threshold = 25
 
     if num_matches == 1:
         match = matches[START_COUNT_FROM]
