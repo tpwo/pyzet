@@ -131,23 +131,43 @@ The simplest way is to show a list of all zettels, and copy it. You can
 do it with `pyzet list`:
 
     $ pyzet list
+    2022-01-26 23:27:16 -- This is my second zettel
+    2022-01-26 23:26:05 -- This is my first zettel created with pyzet
+
+Passing `--no-pretty` shows actual folder names in `docs` folder of your zet repo:
+
+    $ pyzet list --no-pretty
     20220126232716 -- This is my second zettel
     20220126232605 -- This is my first zettel created with pyzet
 
-BTW, these numbers are not random. They actually follow special
-timestamp format that consists of the current year, month, day, hour,
-minute, and second in this very exact order. The hour, though, will most
-likely not match your local time. This is done on purpose -- we use
-UTC+0 to make sure that each ID is unique (at least, as long as you
+As you might have guessed, these numbers are not random.
+They follow special timestamp format that consists of the current
+year, month, day, hour, minute, and second in this very exact order.
+The hour, though, will most likely not match your local time.
+This is done on purpose -- we use UTC+0 to make sure
+that each ID is unique (at least, as long as you
 don't try to create multiple zettels at the same second :p)
 
 You can see that my ID of the first zettel was `20220126232605`. We can
 now paste it to the `edit` command:
 
-    $ pyzet edit --id 20220126232605
-    ============================ 20220126232605 ============================
-    # This is my first zettel created with pyzet
-    <snip>
+    pyzet edit --id 20220126232605
+
+Usually it's much easier to use keywords instead:
+
+    $ pyzet edit first
+    [1] 2022-01-26 23:26:05 -- This is my first zettel created with pyzet
+    Continue? (Y/n):    # <press enter to continue or anything else to abort>
+
+If multiple zettels share the same keyword, you're presented with a list to choose from.
+Newest zettels are always showed first:
+
+    $ pyzet edit zettel
+    [1] 2022-01-26 23:27:16 -- This is my second zettel
+    [2] 2022-01-26 23:26:05 -- This is my first zettel created with pyzet
+    #?    # <enter number, e.g. `2` to edit zettel of your choice or enter to abort>
+
+In both cases you can also safely abort with Ctrl+C.
 
 ## Rage quit option
 
