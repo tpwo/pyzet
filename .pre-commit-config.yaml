@@ -1,10 +1,6 @@
 repos:
-- repo: https://github.com/pycqa/isort
-  rev: 7.0.0
-  hooks:
-  - id: isort
 - repo: https://github.com/astral-sh/ruff-pre-commit
-  rev: v0.14.13
+  rev: v0.15.6
   hooks:
   - id: ruff-check
     args: [--fix, --unsafe-fixes, --exit-non-zero-on-fix]
@@ -36,10 +32,10 @@ repos:
     - pytest
     - types-PyYAML
 - repo: https://github.com/codespell-project/codespell
-  rev: v2.4.1
+  rev: v2.4.2
   hooks:
   - id: codespell
 - repo: https://github.com/igorshubovych/markdownlint-cli
-  rev: v0.47.0
+  rev: v0.48.0
   hooks:
   - id: markdownlint
