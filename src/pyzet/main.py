@@ -1,14 +1,12 @@
 # PYTHON_ARGCOMPLETE_OK
 from __future__ import annotations
 
-import pyzet.cli
 import argcomplete
 from pyzet import config
 from pyzet import ops
 from pyzet import show
 from pyzet import utils
-from pyzet.cli import AppState
-from pyzet.cli import get_parser
+from pyzet import cli
 from pyzet.grep import grep
 from pyzet.ops import add_zettel
 from pyzet.ops import clean_zet_repo
@@ -24,11 +22,11 @@ from pyzet.ops import remove_zettel
 def main(argv: list[str] | None = None) -> int:
     utils.configure_console_print_utf8()
 
-    parser = get_parser()
+    parser = cli.get_parser()
     argcomplete.autocomplete(parser)
     args_cli = parser.parse_args(argv)
     utils.setup_logger(utils.compute_log_level(args_cli.verbose))
-    args = pyzet.cli.populate_args(args_cli, parser)
+    args = cli.populate_args(args_cli, parser)
 
     if args.command is None:
         parser.print_usage()
@@ -39,7 +37,7 @@ def main(argv: list[str] | None = None) -> int:
         raise SystemExit from err
 
 
-def _parse_args(args: AppState) -> int:
+def _parse_args(args: cli.AppState) -> int:
     if args.command == 'sample-config':
         print(utils.sample_config())
         return 0
