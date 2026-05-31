@@ -34,6 +34,12 @@ Run `pyzet init` to create Git repo.
 You can read the more detailed tutorial in
 [docs](https://github.com/tpwo/pyzet/blob/main/docs/tutorial.md).
 
+## Shell completion
+
+`pyzet` supports tab completion. To enable it in your shell, add the following to your `.bashrc`, `.zshrc`, or equivalent shell configuration file:
+
+    eval "$(register-python-argcomplete pyzet)"
+
 ## Configuration
 
 A config file should be placed inside `~/.config/pyzet/pyzet.yaml`, and

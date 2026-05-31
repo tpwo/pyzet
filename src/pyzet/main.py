@@ -1,6 +1,8 @@
+# PYTHON_ARGCOMPLETE_OK
 from __future__ import annotations
 
 import pyzet.cli
+import argcomplete
 from pyzet import config
 from pyzet import ops
 from pyzet import show
@@ -23,6 +25,7 @@ def main(argv: list[str] | None = None) -> int:
     utils.configure_console_print_utf8()
 
     parser = get_parser()
+    argcomplete.autocomplete(parser)
     args_cli = parser.parse_args(argv)
     utils.setup_logger(utils.compute_log_level(args_cli.verbose))
     args = pyzet.cli.populate_args(args_cli, parser)
