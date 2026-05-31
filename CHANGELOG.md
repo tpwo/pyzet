@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.13.0] -- 2026-05-31
+
 ### Added
 
 * Long output of pyzet commands is now displayed via a pager. Default manpager is used for that (configured via `MANPAGER` env var).
@@ -17,6 +19,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 * BREAKING CHANGE: `git grep` output is now reversed when selecting zettels using grep patterns. This causes newer notes to have lower IDs. They are also displayed at the top.
 * Use `--pretty` output by default which now can be disabled with `--no-pretty` flag.
 * Update formatting of `pyzet list --tags`. Tags are now displayed in a new line with 4 space of indentation.
+* Reduce `confirmation_threshold` from 50 to 25 to trigger prompt for confirmation more frequently when performing bulk operations.
+* Return status codes in top-level commands.
 
 ### Fixed
 
@@ -198,7 +202,8 @@ Initial release.
 
 <!-- Links -->
 
-[Unreleased]: https://github.com/tpwo/pyzet/compare/v0.12.0...HEAD
+[Unreleased]: https://github.com/tpwo/pyzet/compare/v0.13.0...HEAD
+[0.13.0]: https://github.com/tpwo/pyzet/releases/tag/v0.13.0
 [0.12.0]: https://github.com/tpwo/pyzet/releases/tag/v0.12.0
 [0.11.0]: https://github.com/tpwo/pyzet/releases/tag/v0.11.0
 [0.10.0]: https://github.com/tpwo/pyzet/releases/tag/v0.10.0
