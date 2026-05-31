@@ -74,32 +74,52 @@ See [docs](https://github.com/tpwo/pyzet/blob/main/docs/supported-editors.md).
 
 See [docs](https://github.com/tpwo/pyzet/blob/main/docs/zettel-formatting.md).
 
-## Development installation
+## Development
 
-Development dependencies are stored in `requirements-dev.txt`. To
-install the package in editable mode with the dev dependencies run the
-following after cloning the repo:
+> [!NOTE]
+> `uv` is required for [justfile](justfile) commands to work correctly.
 
-    pip install -e .
-    pip install -r requirements-dev.txt
+Prerequisites:
 
-For running tests more easily, you might also want to install `tox`:
+* [uv](https://github.com/astral-sh/uv) installed and on `PATH`
+* [just](https://github.com/casey/just) installed and on `PATH`
 
-    pip install tox
+### Installation and testing
 
-Then you can easily run:
+Development dependencies are stored in `requirements-dev.txt`. [tox](https://github.com/tox-dev/tox) is used to specify test envs and how to install dependencies.
 
-    tox -e coverage    # pytest with test coverage
-    tox -e pre-commit  # run pre-commit checks on all files
+To install package in the editable mode with dev deps:
 
-## Building
+    just venv
 
-    tox                  # runs all tox envs making sure tests pass
-    pyproject-build      # builds both the wheel and source dist
-    twine check dist/*   # checks if the build isn't completely broken
-    twine upload dist/*  # asks for username and password
+To run pre-commit checks:
 
-Make sure to generate an API token in PyPI.org in order to upload the new version.
+    just pre-commit
+
+To run tests against all supported Python versions:
+
+    just test
+
+To measure code coverage:
+
+    just coverage
+
+To run all the above tests & checks:
+
+    just all
+
+### Building and releasing
+
+To build a new version and verify it with `twine`:
+
+    just build
+
+> [!IMPORTANT]
+> Make sure to generate an API token in PyPI.org in order to upload the new version.
+
+To run all checks, build the package, and release it
+
+    just release
 
 ## Inspiration and further reading
 
