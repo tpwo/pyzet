@@ -2,11 +2,12 @@
 from __future__ import annotations
 
 import argcomplete
+
+from pyzet import cli
 from pyzet import config
 from pyzet import ops
 from pyzet import show
 from pyzet import utils
-from pyzet import cli
 from pyzet.grep import grep
 from pyzet.ops import add_zettel
 from pyzet.ops import clean_zet_repo
