@@ -113,6 +113,17 @@ def test_init_error_file_exists_at_path():
     assert msg == "ERROR: 'README.md' exists and is a file."
 
 
+def test_clean_error_zettel_folder_missing(tmp_path, monkeypatch):
+    monkeypatch.setenv('EDITOR', 'true')
+    with pytest.raises(SystemExit) as excinfo:
+        main([*TEST_CFG, '--repo', tmp_path.as_posix(), 'clean'])
+    (msg,) = excinfo.value.args
+    assert msg == (
+        f"ERROR: folder {tmp_path / const.ZETDIR} doesn't exist. "
+        "Run 'pyzet init' to create a repo."
+    )
+
+
 def test_init_error_config_file_missing():
     with pytest.raises(SystemExit) as excinfo:
         main(['-c', 'some/nonexistent/path', 'init'])
