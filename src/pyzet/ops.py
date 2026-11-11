@@ -116,10 +116,14 @@ def list_zettels(args: AppState, path: Path) -> int:
 def clean_zet_repo(
     repo_path: Path, *, is_dry_run: bool, is_force: bool
 ) -> int:
+    zet_dir = Path(repo_path, const.ZETDIR)
+    if not zet_dir.is_dir():
+        raise SystemExit(
+            f"ERROR: folder {zet_dir} doesn't exist. "
+            "Run 'pyzet init' to create a repo."
+        )
     is_any_empty = False
-    for folder in sorted(
-        Path(repo_path, const.ZETDIR).iterdir(), reverse=True
-    ):
+    for folder in sorted(zet_dir.iterdir(), reverse=True):
         if folder.is_dir() and _is_empty(folder):
             is_any_empty = True
             if is_force and not is_dry_run:
